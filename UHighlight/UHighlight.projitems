@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>f20f2b51-e686-4fa2-9bbb-dfb512b7d56e</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>UHighlight</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)DAL\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)API\IEffectBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeShape.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Volume.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\EffectBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\VolumeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\BaseEditionStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\CubeStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\IEditionStrategy.cs" />
+  </ItemGroup>
+</Project>
