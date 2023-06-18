@@ -13,11 +13,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)API\IEffectBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeTester.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\HighlightedZone.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PlayerArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\VehicleArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ZombieArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ZoneArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Volume.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\EffectBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\VolumeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DAL\VolumeStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\HighlightBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\VolumeTester.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\BaseEditionStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\CubeStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\IEditionStrategy.cs" />

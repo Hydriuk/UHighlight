@@ -115,6 +115,7 @@ namespace UHighlight.VolumeEditors
                 return null;
 
             Dispose();
+
             return volume;
         }
 

@@ -7,8 +7,6 @@ using OpenMod.API.Ioc;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UHighlight.API;
 using UHighlight.Models;
 using UHighlight.VolumeEditors;
@@ -25,11 +23,13 @@ namespace UHighlight.Services
 
         private readonly ICoroutineAdapter _coroutineAdapter;
         private readonly IEffectBuilder _effectBuilder;
+        private readonly IVolumeStore _volumeStore;
 
-        public VolumeEditor(ICoroutineAdapter coroutineAdapter, IEffectBuilder effectBuilder) 
+        public VolumeEditor(ICoroutineAdapter coroutineAdapter, IEffectBuilder effectBuilder, IVolumeStore volumeStore) 
         {
             _coroutineAdapter = coroutineAdapter;
             _effectBuilder = effectBuilder;
+            _volumeStore = volumeStore;
         }
 
         public void Dispose()
@@ -59,6 +59,24 @@ namespace UHighlight.Services
             edition.Cancel();
 
             _editedVolumes.Remove(player);
+        }
+
+        public void Validate(Player player, string category, string name)
+        {
+            if (!_editedVolumes.TryGetValue(player, out IEditionStrategy edition))
+                return;
+
+            Volume? volume = edition.Build();
+
+            if (volume == null)
+                throw new NullReferenceException("The volume is missing a datum to be generated");
+
+            volume.Category = category;
+            volume.Name = name;
+
+            _editedVolumes.Remove(player);
+
+            _volumeStore.Upsert(volume);
         }
     }
 }

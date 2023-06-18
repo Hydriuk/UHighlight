@@ -19,7 +19,7 @@ using UnityEngine;
 namespace UHighlight.Services
 {
 #if OPENMOD
-    [PluginServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
+    [ServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
     public class EffectBuilder : IEffectBuilder
     {

@@ -16,6 +16,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandParent(typeof(HighlightCommand))]
     [Command("create")]
     [CommandAlias("c")]
+    [CommandSyntax("<shape> <material> <color>")]
     [CommandActor(typeof(UnturnedUser))]
     public class CreateCommand : UnturnedCommand
     {

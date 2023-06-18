@@ -24,7 +24,7 @@ namespace UHighlight.OpenMod
 
         protected override async UniTask OnLoadAsync()
         {
-            _serviceProvider.GetRequiredService<IEffectBuilder>();
+
         }
 
         protected override async UniTask OnUnloadAsync()

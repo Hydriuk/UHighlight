@@ -37,6 +37,9 @@
       <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Unturned\Unturned_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="LiteDB, Version=5.0.16.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.5.0.16\lib\net45\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="Rocket.API">
       <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Unturned\Extras\Rocket.Unturned\Rocket.API.dll</HintPath>
       <Private>False</Private>
@@ -79,6 +82,9 @@
     <Compile Include="Commands\HighlightCommand.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="..\..\UnturnedModules\RocketModModules\RocketModModules.projitems" Label="Shared" />
   <Import Project="..\UHighlight\UHighlight.projitems" Label="Shared" />
