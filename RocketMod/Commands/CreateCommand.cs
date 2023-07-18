@@ -1,5 +1,4 @@
 ﻿using Rocket.Unturned.Player;
-using RocketMod;
 using SDG.Unturned;
 using System;
 using UHighlight.Models;
@@ -7,7 +6,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    public static class CreateCommand
+    public class CreateCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {

@@ -77,6 +77,8 @@ namespace UHighlight.Services
             _editedVolumes.Remove(player);
 
             _volumeStore.Upsert(volume);
+
+            _effectBuilder.KillEffect(volume, player);
         }
     }
 }

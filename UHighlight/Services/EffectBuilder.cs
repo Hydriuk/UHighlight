@@ -98,6 +98,22 @@ namespace UHighlight.Services
             ShowEffect(effectParams, unique);
         }
 
+        public void KillEffect(Volume volume, Player player)
+        {
+            TriggerEffectParameters effectParams = BuildEffect(volume);
+
+            effectParams.SetRelevantPlayer(player.GetTransportConnection());
+
+            KillEffect(effectParams);
+        }
+
+        public void KillEffect(Volume volume)
+        {
+            TriggerEffectParameters effectParams = BuildEffect(volume);
+
+            KillEffect(effectParams);
+        }
+
         private TriggerEffectParameters BuildEffect(Volume volume)
         {
             string effectName = $"{volume.Shape}_{volume.Color}_{volume.Material}";
@@ -128,6 +144,14 @@ namespace UHighlight.Services
                     EffectManager.ClearEffectByGuid_AllPlayers(effectParameters.asset.GUID);
 
                 EffectManager.triggerEffect(effectParameters);
+            });
+        }
+
+        private void KillEffect(TriggerEffectParameters effectParameters)
+        {
+            _threadAdapter.RunOnMainThread(() =>
+            {
+                EffectManager.ClearEffectByGuid_AllPlayers(effectParameters.asset.GUID);
             });
         }
     }

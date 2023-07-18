@@ -17,6 +17,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandParent(typeof(HighlightCommand))]
     [Command("show")]
     [CommandAlias("s")]
+    [CommandSyntax("<category> <name>")]
     [CommandActor(typeof(UnturnedUser))]
     public class ShowCommand : UnturnedCommand
     {
@@ -31,7 +32,6 @@ namespace UHighlight.OpenMod.Commands
         protected override UniTask OnExecuteAsync()
         {
             UnturnedUser user = (UnturnedUser)Context.Actor;
-
 
             if (Context.Parameters.Count != 2)
                 throw new CommandWrongUsageException(Context);

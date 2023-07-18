@@ -15,6 +15,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandParent(typeof(HighlightCommand))]
     [Command("volumes")]
     [CommandAlias("vol")]
+    [CommandSyntax("<category>")]
     public class VolumesCommand : UnturnedCommand
     {
         private readonly IVolumeStore _volumeStore;

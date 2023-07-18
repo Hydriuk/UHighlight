@@ -78,14 +78,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CategoriesCommand.cs" />
     <Compile Include="Commands\CreateCommand.cs" />
+    <Compile Include="Commands\EditCommand.cs" />
     <Compile Include="Commands\HighlightCommand.cs" />
+    <Compile Include="Commands\ShowCommand.cs" />
+    <Compile Include="Commands\Test\StartCommand.cs" />
+    <Compile Include="Commands\Test\StopCommand.cs" />
+    <Compile Include="Commands\ValidateCommand.cs" />
+    <Compile Include="Commands\VolumesCommand.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\UnturnedModules\RocketModModules\RocketModModules.projitems" Label="Shared" />
   <Import Project="..\UHighlight\UHighlight.projitems" Label="Shared" />
   <Import Project="..\..\UnturnedModules\UnturnedModules\UnturnedModules.projitems" Label="Shared" />

@@ -50,7 +50,7 @@ namespace UHighlight.Services
 
             go.transform.position = volume.Center;
             go.transform.localScale = volume.Size;
-            go.transform.eulerAngles = volume.Rotation;
+            go.transform.rotation = Quaternion.FromToRotation(Vector3.forward, volume.Rotation);
             go.layer = LayerMasks.TRAP;
 
             BoxCollider boxCollider = go.AddComponent<BoxCollider>();

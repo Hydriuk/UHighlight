@@ -1,8 +1,8 @@
 ﻿#if OPENMOD
-using Hydriuk.UnturnedModules.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using OpenMod.API.Ioc;
 #endif
+using Hydriuk.UnturnedModules.Extensions;
 using SDG.Unturned;
 using System.Collections.Generic;
 using UHighlight.API;

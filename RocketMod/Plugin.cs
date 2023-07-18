@@ -7,9 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UHighlight.API;
+using UHighlight.DAL;
 using UHighlight.Services;
 
-namespace RocketMod
+namespace UHighlight.RocketMod
 {
     public class Plugin : RocketPlugin
     {
@@ -19,8 +20,11 @@ namespace RocketMod
         private IThreadAdapter _threadAdapter;
         private ICoroutineAdapter _coroutineAdapter;
 
-        public IEffectBuilder EffectBuilder;
+        public IEffectBuilder EffectBuilder { get; private set; }
+        public IVolumeStore VolumeStore { get; private set; }
         public IVolumeEditor VolumeEditor { get; private set; }
+        public IHighlightBuilder HighlightBuilder { get; private set; }
+        public IVolumeTester VolumeTester { get; private set; }
 
         public Plugin()
         {
@@ -34,7 +38,10 @@ namespace RocketMod
             _coroutineAdapter = TryAddComponent<CoroutineAdapter>();
 
             EffectBuilder = new EffectBuilder(_threadAdapter);
-            VolumeEditor = new VolumeEditor(_coroutineAdapter, EffectBuilder);
+            VolumeStore = new VolumeStore(_environmentAdapter);
+            VolumeEditor = new VolumeEditor(_coroutineAdapter, EffectBuilder, VolumeStore);
+            HighlightBuilder = new HighlightBuilder(VolumeStore);
+            VolumeTester = new VolumeTester(HighlightBuilder, EffectBuilder);
         }
 
         protected override void Unload()
