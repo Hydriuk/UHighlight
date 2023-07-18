@@ -16,7 +16,7 @@ using UHighlight.API;
 namespace UHighlight.Services
 {
 #if OPENMOD
-    [ServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
+    [PluginServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
     public class HighlightBuilder : IHighlightBuilder
     {

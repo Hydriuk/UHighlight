@@ -9,16 +9,13 @@ using System.Collections.Generic;
 using UHighlight.API;
 using UHighlight.Models;
 using System.Linq;
-using Microsoft.Extensions.Primitives;
-using OpenMod.API.Persistence;
-using OpenMod.API;
 using System.IO;
 using System.Reflection;
 
 namespace UHighlight.DAL
 {
 #if OPENMOD
-    [ServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
+    [PluginServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
     public class VolumeStore : IVolumeStore
     {
@@ -26,9 +23,9 @@ namespace UHighlight.DAL
         private readonly ILiteCollection<Volume> _volumes;
         private readonly ILiteCollection<BsonDocument> _categories;
 
-        public VolumeStore(IFrameworkAdapter frameworkAdapter)
+        public VolumeStore(IEnvironmentAdapter environmentAdapter)
         {
-            _database = new LiteDatabase(Path.Combine(frameworkAdapter.GetPluginsDirectory(), "UHighlight", "volumes.db"));
+            _database = new LiteDatabase(Path.Combine(environmentAdapter.Directory, "volumes.db"));
             _volumes = _database.GetCollection<Volume>();
             _categories = _database.GetCollection<BsonDocument>("categories");
 
