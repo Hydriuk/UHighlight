@@ -64,6 +64,11 @@ namespace UHighlight.RocketMod.Commands
                     VolumesCommand.Execute(uPlayer, subCommand);
                     break;
 
+
+                case "delete":
+                    DeleteCommand.Execute(uPlayer, subCommand);
+                    break;
+
                 case "test":
                     if(command[1] == "start")
                         StartCommand.Execute(uPlayer, subCommand.Skip(1).ToArray());

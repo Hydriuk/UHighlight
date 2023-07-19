@@ -49,7 +49,7 @@ namespace UHighlight.Services
         private void OnLevelLoaded(int level) => LateLoad();
         private void LateLoad()
         {
-            AssetOrigin assetOrigin = TempSteamworksWorkshop.FindOrAddOrigin(2838757020);
+            AssetOrigin assetOrigin = TempSteamworksWorkshop.FindOrAddOrigin(3006499456);
 
             foreach (Asset asset in assetOrigin.GetAssets())
             {

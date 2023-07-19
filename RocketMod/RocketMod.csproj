@@ -80,6 +80,7 @@
   <ItemGroup>
     <Compile Include="Commands\CategoriesCommand.cs" />
     <Compile Include="Commands\CreateCommand.cs" />
+    <Compile Include="Commands\DeleteCommand.cs" />
     <Compile Include="Commands\EditCommand.cs" />
     <Compile Include="Commands\HighlightCommand.cs" />
     <Compile Include="Commands\ShowCommand.cs" />

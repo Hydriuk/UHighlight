@@ -13,9 +13,11 @@ namespace UHighlight.API
 #endif
     public interface IVolumeStore : IDisposable
     {
+        bool Exists(string category, string name);
         void Upsert(Volume volume);
         IEnumerable<string> GetCategories();
         IEnumerable<Volume> GetVolumes(string category);
         Volume GetVolume(string category, string name);
+        void DeleteVolume(string category, string name);
     }
 }

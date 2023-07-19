@@ -71,6 +71,14 @@ namespace UHighlight.DAL
             );
         }
 
+        public void DeleteVolume(string category, string name)
+        {
+            _volumes.DeleteMany(volume =>
+                volume.Category == category &&
+                volume.Name == name
+            );
+        }
+
         public void Dispose()
         {
             _database.Dispose();
