@@ -69,6 +69,10 @@ namespace UHighlight.RocketMod.Commands
                     DeleteCommand.Execute(uPlayer, subCommand);
                     break;
 
+                case "cancel":
+                    CancelCommand.Execute(uPlayer, subCommand);
+                    break;
+
                 case "test":
                     if(command[1] == "start")
                         StartCommand.Execute(uPlayer, subCommand.Skip(1).ToArray());

@@ -56,6 +56,8 @@ namespace UHighlight.Services
             if (!_editedVolumes.TryGetValue(player, out IEditionStrategy edition))
                 return;
 
+            _effectBuilder.KillEffect(edition.Build(), player);
+
             edition.Cancel();
 
             _editedVolumes.Remove(player);
