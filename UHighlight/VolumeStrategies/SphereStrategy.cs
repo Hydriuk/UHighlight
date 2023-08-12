@@ -1,18 +1,18 @@
-﻿using Hydriuk.UnturnedModules.Adapters;
-using Hydriuk.UnturnedModules.PlayerKeys;
+﻿using SDG.Framework.IO.FormattedFiles.KeyValueTables.TypeReaders.CoreTypes;
 using SDG.Unturned;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Text;
 using UHighlight.API;
 using UHighlight.Models;
-using UHighlight.VolumeStrategies;
 using UnityEngine;
 
-namespace UHighlight.VolumeEditors
+namespace UHighlight.VolumeStrategies
 {
-    public class CubeStrategy : IEditionStrategy
+    public class SphereStrategy : IEditionStrategy
     {
-        private readonly Cube _cube;
+        private readonly Sphere _sphere;
 
         private readonly Player _player;
         private readonly string _material;
@@ -20,10 +20,13 @@ namespace UHighlight.VolumeEditors
 
         private readonly IEffectBuilder _effectBuilder;
 
-        public CubeStrategy(
-            IEffectBuilder effectBuilder, 
-            Player player, 
-            string material, 
+        private float _originalRadius = -1f;
+        private bool _keyPressed;
+
+        public SphereStrategy(
+            IEffectBuilder effectBuilder,
+            Player player,
+            string material,
             string color)
         {
             _effectBuilder = effectBuilder;
@@ -32,7 +35,7 @@ namespace UHighlight.VolumeEditors
             _material = material;
             _color = color;
 
-            _cube = new Cube();
+            _sphere = new Sphere();
 
             PlayerEquipment.OnPunch_Global += OnPunched;
 
@@ -71,14 +74,12 @@ namespace UHighlight.VolumeEditors
             switch (punch)
             {
                 case EPlayerPunch.LEFT:
-                    _cube.Corner1 = position;
+                    _sphere.Center = position;
                     break;
                 case EPlayerPunch.RIGHT:
-                    _cube.Corner2 = position;
+                    _sphere.Radius = (_sphere.Center - position).magnitude;
                     break;
             }
-
-            _cube.Rotation = _player.transform.rotation;
 
             Volume? volume = BuildVolume();
 
@@ -90,18 +91,17 @@ namespace UHighlight.VolumeEditors
 
         protected void OnPluginKeyTick(Player player, uint simulation, byte key, bool state)
         {
-            if (!state)
+            if (!state || player != _player)
                 return;
 
-            switch (key)
+            _sphere.Radius = key switch
             {
-                case 0:
-                    _cube.Rotation = _player.transform.rotation;
-                    break;
-
-                default:
-                    return;
-            }
+                0 => _sphere.Radius + 1f,
+                1 => _sphere.Radius - 1f,
+                2 => _sphere.Radius * 1.05f,
+                3 => _sphere.Radius * 0.95f,
+                _ => _sphere.Radius
+            };
 
             Volume? volume = BuildVolume();
 
@@ -115,7 +115,7 @@ namespace UHighlight.VolumeEditors
         {
             Volume? volume = BuildVolume();
 
-            if(volume == null) 
+            if (volume == null)
                 return null;
 
             Dispose();
@@ -128,51 +128,33 @@ namespace UHighlight.VolumeEditors
             Dispose();
         }
 
-        private Volume? BuildVolume() => _cube.BuildVolume(_material, _color);
 
-        private class Cube
+        private Volume? BuildVolume() => _sphere.BuildVolume(_material, _color);
+
+        private class Sphere
         {
-            public Vector3 Corner1 { get; set; }
-            public Vector3 Corner2 { get; set; }
-            public Quaternion Rotation { get; set; }
+            public Vector3 Center { get; set; }
+            public float Radius { get; set; }
 
             public Volume? BuildVolume(string material, string color)
             {
-                if (Corner1 == default || Corner2 == default || Rotation == default)
+                if (Center == default || Radius == default)
                     return null;
 
                 return new Volume()
                 {
-                    Center = GetCenter(),
-                    Shape = "Cube",
+                    Center = Center,
+                    Shape = "Sphere",
                     Material = material,
                     Color = color,
                     Size = GetSize(),
-                    Rotation = GetDirection()
+                    Rotation = Vector3.zero
                 };
-            }
-
-            private Vector3 GetCenter()
-            {
-                Vector3 shapeDiagonal = Corner2 - Corner1;
-                return Corner1 + shapeDiagonal / 2;
             }
 
             private Vector3 GetSize()
             {
-                Vector3 shapeDiagonal = Corner2 - Corner1;
-
-                return new Vector3
-                (
-                    Mathf.Abs(Vector3.Project(shapeDiagonal, Rotation * Vector3.right).magnitude),
-                    Mathf.Abs(shapeDiagonal.y),
-                    Mathf.Abs(Vector3.Project(shapeDiagonal, Rotation * Vector3.forward).magnitude)
-                );
-            }
-
-            private Vector3 GetDirection()
-            {
-                return Rotation * Vector3.forward;
+                return Vector3.one * Radius * 2;
             }
         }
     }

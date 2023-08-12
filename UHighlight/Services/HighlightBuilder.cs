@@ -53,8 +53,15 @@ namespace UHighlight.Services
             go.transform.rotation = Quaternion.FromToRotation(Vector3.forward, volume.Rotation);
             go.layer = LayerMasks.TRAP;
 
-            BoxCollider boxCollider = go.AddComponent<BoxCollider>();
-            boxCollider.isTrigger = true;
+            Collider collider = volume.Shape switch
+            {
+                "Cube" => go.AddComponent<BoxCollider>(),
+                "Sphere" => go.AddComponent<SphereCollider>(),
+                "Cylinder" => go.AddComponent<CapsuleCollider>(),
+                _ => throw new Exception()
+            };
+
+            collider.isTrigger = true;
 
             HighlightedZone zone = go.AddComponent<HighlightedZone>();
             zone.Init(volume.Category, volume.Name, volume);

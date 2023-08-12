@@ -32,5 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\BaseEditionStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\CubeStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\IEditionStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VolumeStrategies\SphereStrategy.cs" />
   </ItemGroup>
 </Project>

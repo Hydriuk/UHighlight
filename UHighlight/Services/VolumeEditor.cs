@@ -11,6 +11,7 @@ using UHighlight.API;
 using UHighlight.Models;
 using UHighlight.VolumeEditors;
 using UHighlight.VolumeStrategies;
+using UnityEngine;
 
 namespace UHighlight.Services
 {
@@ -44,7 +45,8 @@ namespace UHighlight.Services
         {
             IEditionStrategy strategy = shape switch
             {
-                EVolumeShape.Cube => new CubeStrategy(_coroutineAdapter, _effectBuilder, player, material, color),
+                EVolumeShape.Cube => new CubeStrategy(_effectBuilder, player, material, color),
+                EVolumeShape.Sphere => new SphereStrategy(_effectBuilder, player, material, color),
                 _ => throw new Exception()
             };
 
@@ -55,8 +57,6 @@ namespace UHighlight.Services
         {
             if (!_editedVolumes.TryGetValue(player, out IEditionStrategy edition))
                 return;
-
-            _effectBuilder.KillEffect(edition.Build(), player);
 
             edition.Cancel();
 
@@ -79,8 +79,6 @@ namespace UHighlight.Services
             _editedVolumes.Remove(player);
 
             _volumeStore.Upsert(volume);
-
-            _effectBuilder.KillEffect(volume, player);
         }
     }
 }
