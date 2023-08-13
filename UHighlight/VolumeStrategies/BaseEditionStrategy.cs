@@ -30,26 +30,6 @@ namespace UHighlight.VolumeStrategies
             _player.gameObject.AddComponent<PlayerKeysListener>();
         }
 
-        protected void Init()
-        {
-            _coroutineAdapter.RunOnFixedUpdate(_actionReference, () =>
-            {
-                try
-                {
-                    Volume? volume = UpdateVolume(_keys);
-
-                    if (volume != null)
-                        DisplayVolume(volume);
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine(ex.Message);
-                    Console.Error.WriteLine(ex.StackTrace);
-                    Dispose();
-                }
-            });
-        }
-
         public virtual void Dispose()
         {
             _coroutineAdapter.CancelFixedUpdate(_actionReference);
@@ -66,10 +46,10 @@ namespace UHighlight.VolumeStrategies
             if (player != _player)
                 return;
 
-            if (state)
-                _keys.Add(key);
-            else
-                _keys.Remove(key);
+            Volume? volume = UpdateVolume(_keys);
+
+            if (volume != null)
+                DisplayVolume(volume);
         }
 
         protected void DisplayVolume(Volume volume)

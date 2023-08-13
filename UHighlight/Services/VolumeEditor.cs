@@ -47,7 +47,8 @@ namespace UHighlight.Services
             {
                 EVolumeShape.Cube => new CubeStrategy(_effectBuilder, player, material, color),
                 EVolumeShape.Sphere => new SphereStrategy(_effectBuilder, player, material, color),
-                _ => throw new Exception()
+                EVolumeShape.Cylinder => new CylinderStrategy(_effectBuilder, player, material, color),
+                _ => throw new Exception("Unknown strategy")
             };
 
             _editedVolumes.Add(player, strategy);

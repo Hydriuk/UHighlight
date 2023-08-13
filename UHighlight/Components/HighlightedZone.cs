@@ -43,7 +43,7 @@ namespace UHighlight.Components
             //ZombieEntered = null;
             //ZombieExited = null;
 
-            Destroy(this);
+            Destroy(this.gameObject);
         }
 
         private void OnTriggerEnter(Collider other)

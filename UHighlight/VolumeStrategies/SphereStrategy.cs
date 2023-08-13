@@ -20,9 +20,6 @@ namespace UHighlight.VolumeStrategies
 
         private readonly IEffectBuilder _effectBuilder;
 
-        private float _originalRadius = -1f;
-        private bool _keyPressed;
-
         public SphereStrategy(
             IEffectBuilder effectBuilder,
             Player player,
@@ -99,7 +96,7 @@ namespace UHighlight.VolumeStrategies
                 0 => _sphere.Radius + 1f,
                 1 => _sphere.Radius - 1f,
                 2 => _sphere.Radius * 1.05f,
-                3 => _sphere.Radius * 0.95f,
+                3 => _sphere.Radius / 0.95f,
                 _ => _sphere.Radius
             };
 
