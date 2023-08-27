@@ -15,13 +15,13 @@ namespace UHighlight.RocketMod.Commands
     {
         public AllowedCaller AllowedCaller => AllowedCaller.Player;
 
-        public string Name => "highlight";
+        public string Name => "uhighlight";
 
         public string Help => "Help";
 
         public string Syntax => "";
 
-        public List<string> Aliases => new List<string>() { "hl" };
+        public List<string> Aliases => new List<string>() { "uhl" };
 
         public List<string> Permissions => new List<string>() { "uhighlight.admin" };
 

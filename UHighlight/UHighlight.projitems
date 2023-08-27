@@ -10,9 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DAL\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Commands\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)API\IEffectBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeEditor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeStore.cs" />

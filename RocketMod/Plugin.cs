@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.DAL;
+using UHighlight.RocketMod.Adapters;
 using UHighlight.Services;
 
 namespace UHighlight.RocketMod
@@ -25,6 +26,7 @@ namespace UHighlight.RocketMod
         public IVolumeEditor VolumeEditor { get; private set; }
         public IHighlightBuilder HighlightBuilder { get; private set; }
         public IVolumeTester VolumeTester { get; private set; }
+        public IHighlightAdapter HighlightAdapter { get; private set; }
 
         public Plugin()
         {
@@ -42,6 +44,7 @@ namespace UHighlight.RocketMod
             VolumeEditor = new VolumeEditor(_coroutineAdapter, EffectBuilder, VolumeStore);
             HighlightBuilder = new HighlightBuilder(VolumeStore);
             VolumeTester = new VolumeTester(HighlightBuilder, EffectBuilder);
+            HighlightAdapter = new HighlightAdapter();
         }
 
         protected override void Unload()
