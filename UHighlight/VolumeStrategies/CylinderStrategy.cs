@@ -1,8 +1,5 @@
 ﻿using SDG.Unturned;
 using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.Xml;
-using System.Text;
 using UHighlight.API;
 using UHighlight.Models;
 using UnityEngine;
@@ -10,7 +7,7 @@ using UnityEngine.SocialPlatforms;
 
 namespace UHighlight.VolumeStrategies
 {
-    public class CylinderStrategy : IEditionStrategy
+    internal class CylinderStrategy : IEditionStrategy
     {
         private Cylinder _cylinder;
 

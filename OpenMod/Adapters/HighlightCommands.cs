@@ -1,37 +1,33 @@
-﻿using Cysharp.Threading.Tasks;
-using Hydriuk.UnturnedModules.Extensions;
+﻿using Hydriuk.UnturnedModules.Extensions;
+using OpenMod.API;
 using OpenMod.API.Commands;
+using OpenMod.API.Eventing;
+using OpenMod.API.Ioc;
 using OpenMod.API.Users;
-using OpenMod.Core.Console;
 using OpenMod.Core.Users;
-using OpenMod.Unturned.Users;
 using SDG.Unturned;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UHighlight.API;
-using UnityEngine;
 
 namespace UHighlight.OpenMod.Adapters
 {
-    public class HighlightAdapter : IHighlightAdapter
+    [ServiceImplementation]
+    public class HighlightCommands : IHighlightCommands
     {
         private readonly ICommandExecutor _commandExecutor;
-        private readonly ICommandActor _consoleActor;
-        private readonly IUserProvider _userProvider;
+        private readonly IUserManager _userManager;
 
-        public HighlightAdapter(ICommandExecutor commandExecutor, IConsoleActorAccessor consoleActorAccessor, IUserProvider userProvider) 
+        public HighlightCommands(IOpenModComponent openmodComponent, ICommandExecutor commandExecutor, IUserManager userManager, IEventBus eventBus)
         {
             _commandExecutor = commandExecutor;
-            _consoleActor = consoleActorAccessor.Actor;
-            _userProvider = userProvider;
+            _userManager = userManager;
         }
 
-        public Task ExecuteCreate(Player player, string shape, string material, string color) => Execute(player, new[] 
-        { 
-            "create", shape, material, color 
+        public Task ExecuteCreate(Player player, string shape, string material, string color) => Execute(player, new[]
+        {
+            "create", shape, material, color
         });
 
         public Task ExecuteCancel(Player player) => Execute(player, new[]
@@ -65,11 +61,12 @@ namespace UHighlight.OpenMod.Adapters
         });
 
         private async Task Execute(Player player, params string[] args) => await Execute(await GetUser(player), args.Prepend("uhighlight").ToArray());
+
         private Task Execute(ICommandActor actor, params string[] args) => _commandExecutor.ExecuteAsync(actor, args, "/");
 
         private async Task<IUser> GetUser(Player player)
         {
-            IUser? user = await _userProvider.FindUserAsync(KnownActorTypes.Player, player.GetSteamID().ToString(), UserSearchMode.FindById);
+            IUser? user = await _userManager.FindUserAsync(KnownActorTypes.Player, player.GetSteamID().ToString(), UserSearchMode.FindById);
 
             if (user == null)
                 throw new Exception($"User {player.GetSteamID()} not found");

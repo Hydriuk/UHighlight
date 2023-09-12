@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace UHighlight.VolumeStrategies
 {
-    public class SphereStrategy : IEditionStrategy
+    internal class SphereStrategy : IEditionStrategy
     {
         private readonly Sphere _sphere;
 

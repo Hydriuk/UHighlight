@@ -18,7 +18,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandAlias("c")]
     [CommandSyntax("<shape> <material> <color>")]
     [CommandActor(typeof(UnturnedUser))]
-    public class CreateCommand : UnturnedCommand
+    internal class CreateCommand : UnturnedCommand
     {
         private readonly IVolumeEditor _volumeEditor;
         private readonly IEffectBuilder _effectBuilder;

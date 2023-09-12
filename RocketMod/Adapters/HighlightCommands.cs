@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Adapters
 {
-    public class HighlightAdapter : IHighlightAdapter
+    public class HighlightCommands : IHighlightCommands
     {
         public Task ExecuteCancel(Player player)
         {

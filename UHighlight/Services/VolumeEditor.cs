@@ -18,7 +18,7 @@ namespace UHighlight.Services
 #if OPENMOD
     [PluginServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
-    public class VolumeEditor : IVolumeEditor
+    internal class VolumeEditor : IVolumeEditor
     {
         private readonly Dictionary<Player, IEditionStrategy> _editedVolumes = new Dictionary<Player, IEditionStrategy>();
 

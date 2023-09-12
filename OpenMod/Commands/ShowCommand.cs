@@ -19,7 +19,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandAlias("s")]
     [CommandSyntax("<category> <name>")]
     [CommandActor(typeof(UnturnedUser))]
-    public class ShowCommand : UnturnedCommand
+    internal class ShowCommand : UnturnedCommand
     {
         private readonly IVolumeStore _volumeStore;
         private readonly IEffectBuilder _effectBuilder;

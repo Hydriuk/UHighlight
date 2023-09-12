@@ -18,7 +18,7 @@ namespace UHighlight.Services
 #if OPENMOD
     [PluginServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
-    public class HighlightBuilder : IHighlightBuilder
+    internal class HighlightBuilder : IHighlightBuilder
     {
         private readonly IVolumeStore _volumeStore;
 

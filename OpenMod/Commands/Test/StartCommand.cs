@@ -14,7 +14,7 @@ namespace UHighlight.OpenMod.Commands.Test
     [CommandParent(typeof(TestCommand))]
     [Command("start")]
     [CommandSyntax("<category> <name>")]
-    public class StartCommand : UnturnedCommand
+    internal class StartCommand : UnturnedCommand
     {
         private readonly IVolumeTester _volumeTester;
 

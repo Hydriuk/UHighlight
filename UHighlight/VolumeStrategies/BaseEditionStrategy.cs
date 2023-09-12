@@ -8,7 +8,7 @@ using UHighlight.Models;
 
 namespace UHighlight.VolumeStrategies
 {
-    public abstract class BaseEditionStrategy : IEditionStrategy
+    internal abstract class BaseEditionStrategy : IEditionStrategy
     {
         private readonly Guid _actionReference;
         private readonly List<EPlayerKey> _keys = new List<EPlayerKey>();

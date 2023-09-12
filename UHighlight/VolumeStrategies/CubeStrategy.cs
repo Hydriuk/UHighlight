@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace UHighlight.VolumeEditors
 {
-    public class CubeStrategy : IEditionStrategy
+    internal class CubeStrategy : IEditionStrategy
     {
         private readonly Cube _cube;
 

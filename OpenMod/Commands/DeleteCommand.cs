@@ -16,7 +16,7 @@ namespace UHighlight.OpenMod.Commands
     [Command("delete")]
     [CommandSyntax("<category> <name>")]
     [CommandActor(typeof(UnturnedUser))]
-    public class DeleteCommand : UnturnedCommand
+    internal class DeleteCommand : UnturnedCommand
     {
         private readonly IVolumeStore _volumeStore;
 

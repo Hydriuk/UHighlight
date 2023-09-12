@@ -16,7 +16,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandAlias("v")]
     [CommandSyntax("<category> <name>")]
     [CommandActor(typeof(UnturnedUser))]
-    public class ValidateCommand : UnturnedCommand
+    internal class ValidateCommand : UnturnedCommand
     {
         private readonly IVolumeEditor _volumeEditor;
 

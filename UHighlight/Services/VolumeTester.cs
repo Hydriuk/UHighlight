@@ -14,7 +14,7 @@ namespace UHighlight.Services
 #if OPENMOD
     [PluginServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
-    public class VolumeTester : IVolumeTester
+    internal class VolumeTester : IVolumeTester
     {
         private readonly Dictionary<Player, HighlightedZone> _testedZones = new Dictionary<Player, HighlightedZone>();
 

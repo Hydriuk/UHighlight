@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace UHighlight.OpenMod.Commands
 {
-    [Command("uhightlight")]
+    [Command("uhighlight")]
     [CommandAlias("uhl")]
     public class HighlightCommand : UnturnedCommand
     {

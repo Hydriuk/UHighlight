@@ -15,7 +15,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandParent(typeof(HighlightCommand))]
     [Command("categories")]
     [CommandAlias("cat")]
-    public class CategoriesCommand : UnturnedCommand
+    internal class CategoriesCommand : UnturnedCommand
     {
         private readonly IVolumeStore _volumeStore;
 

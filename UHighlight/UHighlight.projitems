@@ -10,12 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DAL\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Commands\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)API\IEffectBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightCommands.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightSpawner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeEditor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeTester.cs" />
@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Volume.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\EffectBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\HighlightSpawner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\VolumeEditor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DAL\VolumeStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\HighlightBuilder.cs" />

@@ -14,12 +14,11 @@ namespace UHighlight.OpenMod
 {
     public class Plugin : OpenModUnturnedPlugin
     {
-        private readonly IServiceProvider _serviceProvider;
+        public IServiceProvider ServiceProvider { get; private set; }
 
-        public Plugin(
-            IServiceProvider serviceProvider) : base(serviceProvider)
+        public Plugin(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
         }
 
         protected override async UniTask OnLoadAsync()

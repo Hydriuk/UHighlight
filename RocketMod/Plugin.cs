@@ -20,13 +20,16 @@ namespace UHighlight.RocketMod
         private IEnvironmentAdapter _environmentAdapter;
         private IThreadAdapter _threadAdapter;
         private ICoroutineAdapter _coroutineAdapter;
+        private IServiceAdapter _serviceAdapter;
 
-        public IEffectBuilder EffectBuilder { get; private set; }
-        public IVolumeStore VolumeStore { get; private set; }
-        public IVolumeEditor VolumeEditor { get; private set; }
-        public IHighlightBuilder HighlightBuilder { get; private set; }
-        public IVolumeTester VolumeTester { get; private set; }
-        public IHighlightAdapter HighlightAdapter { get; private set; }
+        internal IEffectBuilder EffectBuilder { get; private set; }
+        internal IVolumeStore VolumeStore { get; private set; }
+        internal IVolumeEditor VolumeEditor { get; private set; }
+        internal IHighlightBuilder HighlightBuilder { get; private set; }
+        internal IVolumeTester VolumeTester { get; private set; }
+
+        public IHighlightCommands HighlightCommands { get; private set; }
+        public IHighlightSpawner HighlightSpawner { get; private set; }
 
         public Plugin()
         {
@@ -38,19 +41,23 @@ namespace UHighlight.RocketMod
             _environmentAdapter = new EnvironmentAdapter(this);
             _threadAdapter = new ThreadAdapter();
             _coroutineAdapter = TryAddComponent<CoroutineAdapter>();
+            _serviceAdapter = new ServiceAdapter(this);
 
             EffectBuilder = new EffectBuilder(_threadAdapter);
             VolumeStore = new VolumeStore(_environmentAdapter);
             VolumeEditor = new VolumeEditor(_coroutineAdapter, EffectBuilder, VolumeStore);
             HighlightBuilder = new HighlightBuilder(VolumeStore);
             VolumeTester = new VolumeTester(HighlightBuilder, EffectBuilder);
-            HighlightAdapter = new HighlightAdapter();
+            HighlightCommands = new HighlightCommands();
+            HighlightSpawner = new HighlightSpawner(_serviceAdapter);
         }
 
         protected override void Unload()
         {
             EffectBuilder.Dispose();
             VolumeEditor.Dispose();
+            VolumeStore.Dispose();
+            VolumeTester.Dispose();
 
             _coroutineAdapter.Dispose();
         }

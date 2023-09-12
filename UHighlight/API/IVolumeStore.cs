@@ -11,7 +11,7 @@ namespace UHighlight.API
 #if OPENMOD
     [Service]
 #endif
-    public interface IVolumeStore : IDisposable
+    internal interface IVolumeStore : IDisposable
     {
         bool Exists(string category, string name);
         void Upsert(Volume volume);

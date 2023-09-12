@@ -11,7 +11,7 @@ namespace UHighlight.API
 #if OPENMOD
     [Service]
 #endif
-    internal interface IHighlightBuilder
+    public interface IHighlightSpawner
     {
         IEnumerable<HighlightedZone> BuildZones(string category);
         HighlightedZone BuildZone(string category, string name);

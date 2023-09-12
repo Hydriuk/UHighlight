@@ -15,7 +15,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandParent(typeof(HighlightCommand))]
     [Command("cancel")]
     [CommandActor(typeof(UnturnedUser))]
-    public class CancelCommand : UnturnedCommand
+    internal class CancelCommand : UnturnedCommand
     {
         private readonly IVolumeEditor _volumeEditor;
 

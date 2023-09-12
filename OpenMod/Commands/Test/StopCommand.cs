@@ -13,7 +13,7 @@ namespace UHighlight.OpenMod.Commands.Test
 {
     [CommandParent(typeof(TestCommand))]
     [Command("stop")]
-    public class StopCommand : UnturnedCommand
+    internal class StopCommand : UnturnedCommand
     {
         private readonly IVolumeTester _volumeTester;
 
