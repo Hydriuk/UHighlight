@@ -21,7 +21,7 @@ namespace UHighlight.RocketMod.Commands.Test
                 return;
             }
 
-            Plugin.Instance.VolumeTester.StartTest(uPlayer.Player, command[0], command[1]);
+            UHighlightPlugin.Instance.VolumeTester.StartTest(uPlayer.Player, command[0], command[1]);
         }
     }
 }

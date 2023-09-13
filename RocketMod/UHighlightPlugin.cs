@@ -13,14 +13,14 @@ using UHighlight.Services;
 
 namespace UHighlight.RocketMod
 {
-    public class Plugin : RocketPlugin
+    public class UHighlightPlugin : RocketPlugin, IAdaptablePlugin
     {
-        public static Plugin Instance { get; private set; }
+        public static UHighlightPlugin Instance { get; private set; }
 
         private IEnvironmentAdapter _environmentAdapter;
         private IThreadAdapter _threadAdapter;
         private ICoroutineAdapter _coroutineAdapter;
-        private IServiceAdapter _serviceAdapter;
+        private IServiceAdapter<UHighlightPlugin> _serviceAdapter;
 
         internal IEffectBuilder EffectBuilder { get; private set; }
         internal IVolumeStore VolumeStore { get; private set; }
@@ -31,7 +31,7 @@ namespace UHighlight.RocketMod
         public IHighlightCommands HighlightCommands { get; private set; }
         public IHighlightSpawner HighlightSpawner { get; private set; }
 
-        public Plugin()
+        public UHighlightPlugin()
         {
             Instance = this;
         }
@@ -41,7 +41,7 @@ namespace UHighlight.RocketMod
             _environmentAdapter = new EnvironmentAdapter(this);
             _threadAdapter = new ThreadAdapter();
             _coroutineAdapter = TryAddComponent<CoroutineAdapter>();
-            _serviceAdapter = new ServiceAdapter(this);
+            _serviceAdapter = new ServiceAdapter<UHighlightPlugin>(this);
 
             EffectBuilder = new EffectBuilder(_threadAdapter);
             VolumeStore = new VolumeStore(_environmentAdapter);

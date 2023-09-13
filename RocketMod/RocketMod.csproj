@@ -18,6 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'OpenMod|AnyCPU'">
     <OutputPath>bin\OpenMod\</OutputPath>
     <Optimize>true</Optimize>
+    <DefineConstants>ROCKETMOD</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'RocketMod|AnyCPU'">
     <OutputPath>bin\RocketMod\</OutputPath>
@@ -77,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\HighlightCommands.cs" />
-    <Compile Include="Adapters\ServiceAdapter.cs" />
     <Compile Include="Commands\CancelCommand.cs" />
     <Compile Include="Commands\CategoriesCommand.cs" />
     <Compile Include="Commands\CreateCommand.cs" />
@@ -89,7 +89,7 @@
     <Compile Include="Commands\Test\StopCommand.cs" />
     <Compile Include="Commands\ValidateCommand.cs" />
     <Compile Include="Commands\VolumesCommand.cs" />
-    <Compile Include="Plugin.cs" />
+    <Compile Include="UHighlightPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

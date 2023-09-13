@@ -14,7 +14,7 @@ namespace UHighlight.RocketMod.Commands
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
-            IEnumerable<string> categories = Plugin.Instance.VolumeStore.GetCategories();
+            IEnumerable<string> categories = UHighlightPlugin.Instance.VolumeStore.GetCategories();
 
             StringBuilder sb = new StringBuilder($"Volumes categories : ");
 

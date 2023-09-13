@@ -13,7 +13,7 @@ namespace UHighlight.RocketMod.Commands
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
-            Plugin.Instance.VolumeEditor.StopEditing(uPlayer.Player);
+            UHighlightPlugin.Instance.VolumeEditor.StopEditing(uPlayer.Player);
 
             ChatManager.serverSendMessage("Volume editing canceled", Color.green, toPlayer: uPlayer.SteamPlayer());
         }

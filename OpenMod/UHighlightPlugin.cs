@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Hydriuk.UnturnedModules.Adapters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
@@ -12,11 +13,11 @@ using UHighlight.API;
 
 namespace UHighlight.OpenMod
 {
-    public class Plugin : OpenModUnturnedPlugin
+    public class UHighlightPlugin : OpenModUnturnedPlugin, IAdaptablePlugin
     {
         public IServiceProvider ServiceProvider { get; private set; }
 
-        public Plugin(IServiceProvider serviceProvider) : base(serviceProvider)
+        public UHighlightPlugin(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             ServiceProvider = serviceProvider;
         }

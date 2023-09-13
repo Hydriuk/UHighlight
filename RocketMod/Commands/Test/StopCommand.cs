@@ -6,7 +6,7 @@ namespace UHighlight.RocketMod.Commands.Test
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
-            Plugin.Instance.VolumeTester.StopTest(uPlayer.Player);
+            UHighlightPlugin.Instance.VolumeTester.StopTest(uPlayer.Player);
         }
     }
 }

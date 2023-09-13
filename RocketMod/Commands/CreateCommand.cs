@@ -22,13 +22,13 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            if (!Plugin.Instance.EffectBuilder.Exists(command[0], command[1], command[2]))
+            if (!UHighlightPlugin.Instance.EffectBuilder.Exists(command[0], command[1], command[2]))
             {
                 ChatManager.serverSendMessage($"Shape <b>{command[0]}</b> with material <b>{command[1]}</b> and color <b>{command[2]}</b> is not known", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);
                 return;
             }
 
-            Plugin.Instance.VolumeEditor.StartEditing(uPlayer.Player, shape, command[1], command[2]);
+            UHighlightPlugin.Instance.VolumeEditor.StartEditing(uPlayer.Player, shape, command[1], command[2]);
         }
     }
 }

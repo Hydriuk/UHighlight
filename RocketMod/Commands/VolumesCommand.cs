@@ -21,7 +21,7 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            IEnumerable<Volume> volumes = Plugin.Instance.VolumeStore.GetVolumes(command[0]);
+            IEnumerable<Volume> volumes = UHighlightPlugin.Instance.VolumeStore.GetVolumes(command[0]);
 
             StringBuilder sb = new StringBuilder($"{command[0]}'s volumes : ");
 

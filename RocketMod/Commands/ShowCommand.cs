@@ -21,7 +21,7 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            Volume volume = Plugin.Instance.VolumeStore.GetVolume(command[0], command[1]);
+            Volume volume = UHighlightPlugin.Instance.VolumeStore.GetVolume(command[0], command[1]);
 
             if (volume == null)
             {
@@ -29,7 +29,7 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            Plugin.Instance.EffectBuilder.DisplayEffect(volume, uPlayer.Player, true);
+            UHighlightPlugin.Instance.EffectBuilder.DisplayEffect(volume, uPlayer.Player, true);
         }
     }
 }

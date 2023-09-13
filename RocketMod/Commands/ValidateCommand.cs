@@ -14,7 +14,7 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            Plugin.Instance.VolumeEditor.Validate(uPlayer.Player, command[0], command[1]);
+            UHighlightPlugin.Instance.VolumeEditor.Validate(uPlayer.Player, command[0], command[1]);
         }
     }
 }

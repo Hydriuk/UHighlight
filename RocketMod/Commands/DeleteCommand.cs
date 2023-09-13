@@ -20,13 +20,13 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            if (!Plugin.Instance.VolumeStore.Exists(command[0], command[1]))
+            if (!UHighlightPlugin.Instance.VolumeStore.Exists(command[0], command[1]))
             {
                 ChatManager.serverSendMessage($"Volume {command[0]} {command[1]} does not exist", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
             }
 
-            Plugin.Instance.VolumeStore.DeleteVolume(command[0], command[1]);
+            UHighlightPlugin.Instance.VolumeStore.DeleteVolume(command[0], command[1]);
         }
     }
 }
