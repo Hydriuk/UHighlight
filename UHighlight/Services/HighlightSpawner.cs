@@ -24,7 +24,7 @@ namespace UHighlight.Services
 
         public HighlightSpawner(IServiceAdapter serviceAdapter)
         {
-            _highlightBuilder = serviceAdapter.GetService<IHighlightBuilder>();
+            _highlightBuilder = serviceAdapter.GetServiceAsync<IHighlightBuilder>().Result;
         }
 
         public IEnumerable<HighlightedZone> BuildZones(string group) => _highlightBuilder.BuildZones(group);
