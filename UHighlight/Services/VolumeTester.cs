@@ -64,7 +64,7 @@ namespace UHighlight.Services
                 toPlayer: player.GetSteamPlayer()
             );
 
-            zone.PlayerExited+= (sender, args) => ChatManager.serverSendMessage(
+            zone.PlayerExited += (sender, args) => ChatManager.serverSendMessage(
                 $"Player {args.Player.GetSteamPlayer().playerID.playerName} exited zone {args.Category}/{args.Name}",
                 Color.gray,
                 toPlayer: player.GetSteamPlayer()

@@ -3,7 +3,6 @@ using System;
 using UHighlight.API;
 using UHighlight.Models;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 namespace UHighlight.VolumeStrategies
 {
@@ -70,6 +69,7 @@ namespace UHighlight.VolumeStrategies
                 case EPlayerPunch.LEFT:
                     _cylinder.Center = position;
                     break;
+
                 case EPlayerPunch.RIGHT:
                     var t = _cylinder.Center - position;
                     _cylinder.Size = new Vector3(t.magnitude, t.magnitude, t.magnitude);
@@ -139,7 +139,6 @@ namespace UHighlight.VolumeStrategies
             Dispose();
         }
 
-
         private Volume? BuildVolume() => _cylinder.BuildVolume(_material, _color);
 
         private class Cylinder
@@ -153,7 +152,7 @@ namespace UHighlight.VolumeStrategies
                 if (Center == default || Size == default)
                     return null;
 
-                Console.WriteLine(  $"{Rotation.eulerAngles.x} {Rotation.eulerAngles.y} {Rotation.eulerAngles.z}");
+                Console.WriteLine($"{Rotation.eulerAngles.x} {Rotation.eulerAngles.y} {Rotation.eulerAngles.z}");
 
                 return new Volume()
                 {

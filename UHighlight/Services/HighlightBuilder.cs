@@ -5,13 +5,10 @@ using OpenMod.API.Ioc;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Linq;
+using UHighlight.API;
 using UHighlight.Components;
 using UHighlight.Models;
-using UnityEngine.UIElements;
 using UnityEngine;
-using UHighlight.API;
 
 namespace UHighlight.Services
 {
@@ -22,7 +19,7 @@ namespace UHighlight.Services
     {
         private readonly IVolumeStore _volumeStore;
 
-        public HighlightBuilder(IVolumeStore volumeStore) 
+        public HighlightBuilder(IVolumeStore volumeStore)
         {
             _volumeStore = volumeStore;
         }

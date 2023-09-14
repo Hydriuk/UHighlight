@@ -3,8 +3,6 @@ using OpenMod.API.Ioc;
 #endif
 using SDG.Unturned;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using UHighlight.Models;
 
 namespace UHighlight.API

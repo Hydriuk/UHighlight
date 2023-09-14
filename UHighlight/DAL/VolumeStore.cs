@@ -6,11 +6,10 @@ using Hydriuk.UnturnedModules.Adapters;
 using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UHighlight.API;
 using UHighlight.Models;
-using System.Linq;
-using System.IO;
-using System.Reflection;
 
 namespace UHighlight.DAL
 {
@@ -34,8 +33,8 @@ namespace UHighlight.DAL
 
         public bool Exists(string category, string name)
         {
-            return _volumes.Exists(volume => 
-                volume.Category == category && 
+            return _volumes.Exists(volume =>
+                volume.Category == category &&
                 volume.Name == name
             );
         }
@@ -45,7 +44,7 @@ namespace UHighlight.DAL
             if (Exists(volume.Category, volume.Name))
                 throw new Exception("Confict");
 
-            if(!_categories.Exists(category => category["Name"] == volume.Category))
+            if (!_categories.Exists(category => category["Name"] == volume.Category))
                 _categories.Insert(new BsonDocument() { ["Name"] = volume.Category });
 
             _volumes.Upsert(volume);
@@ -65,8 +64,8 @@ namespace UHighlight.DAL
 
         public Volume GetVolume(string category, string name)
         {
-            return _volumes.FindOne(volume => 
-                volume.Category == category && 
+            return _volumes.FindOne(volume =>
+                volume.Category == category &&
                 volume.Name == name
             );
         }

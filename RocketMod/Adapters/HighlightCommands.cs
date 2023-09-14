@@ -1,15 +1,9 @@
 ﻿using Rocket.Core;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
 using System.Threading.Tasks;
 using UHighlight.API;
-using UHighlight.RocketMod.Commands;
-using UnityEngine;
 
 namespace UHighlight.RocketMod.Adapters
 {
@@ -27,10 +21,10 @@ namespace UHighlight.RocketMod.Adapters
 
         public Task ExecuteCreate(Player player, string shape, string material, string color)
         {
-            Execute(player, new[] 
-            { 
+            Execute(player, new[]
+            {
                 "create",
-                shape, material, color 
+                shape, material, color
             });
 
             return Task.CompletedTask;
@@ -38,10 +32,10 @@ namespace UHighlight.RocketMod.Adapters
 
         public Task ExecuteDelete(Player player, string group, string zone)
         {
-            Execute(player, new[] 
-            { 
+            Execute(player, new[]
+            {
                 "delete",
-                group, zone 
+                group, zone
             });
 
             return Task.CompletedTask;
@@ -59,10 +53,10 @@ namespace UHighlight.RocketMod.Adapters
 
         public Task ExecuteShow(Player player, string group, string zone)
         {
-            Execute(player, new[] 
-            { 
+            Execute(player, new[]
+            {
                 "show",
-                group, zone 
+                group, zone
             });
 
             return Task.CompletedTask;
@@ -70,10 +64,10 @@ namespace UHighlight.RocketMod.Adapters
 
         public Task ExecuteValidate(Player player, string group, string zone)
         {
-            Execute(player, new[] 
-            { 
+            Execute(player, new[]
+            {
                 "validate",
-                group, zone 
+                group, zone
             });
 
             return Task.CompletedTask;
@@ -81,16 +75,17 @@ namespace UHighlight.RocketMod.Adapters
 
         public Task ExecuteVolumes(Player player, string group)
         {
-            Execute(player, new[] 
-            { 
+            Execute(player, new[]
+            {
                 "volumes",
-                group 
+                group
             });
 
             return Task.CompletedTask;
         }
 
         private void Execute(Player player, params string[] args) => Execute(UnturnedPlayer.FromPlayer(player), args.Prepend("uhighlight").ToArray());
+
         private void Execute(UnturnedPlayer uPlayer, params string[] args) => R.Commands.Execute(uPlayer, string.Join(" ", args));
     }
 }

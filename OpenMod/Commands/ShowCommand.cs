@@ -4,12 +4,7 @@ using OpenMod.Core.Commands;
 using OpenMod.Unturned.Commands;
 using OpenMod.Unturned.Users;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UHighlight.API;
-using UHighlight.DAL;
 using UHighlight.Models;
 
 namespace UHighlight.OpenMod.Commands
@@ -23,6 +18,7 @@ namespace UHighlight.OpenMod.Commands
     {
         private readonly IVolumeStore _volumeStore;
         private readonly IEffectBuilder _effectBuilder;
+
         public ShowCommand(IServiceProvider serviceProvider, IVolumeStore volumeStore, IEffectBuilder effectBuilder) : base(serviceProvider)
         {
             _volumeStore = volumeStore;

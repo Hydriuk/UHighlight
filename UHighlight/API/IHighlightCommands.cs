@@ -11,8 +11,6 @@ namespace UHighlight.API
 #endif
     public interface IHighlightCommands
     {
-
-
         Task ExecuteCreate(Player player, string shape, string material, string color);
         Task ExecuteCancel(Player player);
         Task ExecuteValidate(Player player, string group, string zone);

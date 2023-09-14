@@ -1,9 +1,4 @@
-﻿using SDG.Framework.IO.FormattedFiles.KeyValueTables.TypeReaders.CoreTypes;
-using SDG.Unturned;
-using System;
-using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
+﻿using SDG.Unturned;
 using UHighlight.API;
 using UHighlight.Models;
 using UnityEngine;
@@ -73,6 +68,7 @@ namespace UHighlight.VolumeStrategies
                 case EPlayerPunch.LEFT:
                     _sphere.Center = position;
                     break;
+
                 case EPlayerPunch.RIGHT:
                     _sphere.Radius = (_sphere.Center - position).magnitude;
                     break;
@@ -124,7 +120,6 @@ namespace UHighlight.VolumeStrategies
         {
             Dispose();
         }
-
 
         private Volume? BuildVolume() => _sphere.BuildVolume(_material, _color);
 

@@ -18,7 +18,7 @@ namespace UHighlight.VolumeStrategies
         private readonly ICoroutineAdapter _coroutineAdapter;
         private readonly IEffectBuilder _effectBuilder;
 
-        public BaseEditionStrategy(ICoroutineAdapter coroutineAdapter, IEffectBuilder effectBuilder, Player player) 
+        public BaseEditionStrategy(ICoroutineAdapter coroutineAdapter, IEffectBuilder effectBuilder, Player player)
         {
             _coroutineAdapter = coroutineAdapter;
             _effectBuilder = effectBuilder;

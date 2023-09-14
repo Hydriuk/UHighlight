@@ -1,11 +1,6 @@
 ﻿using Hydriuk.RocketModModules.Adapters;
 using Hydriuk.UnturnedModules.Adapters;
 using Rocket.Core.Plugins;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.DAL;
 using UHighlight.RocketMod.Adapters;
@@ -20,7 +15,7 @@ namespace UHighlight.RocketMod
         private IEnvironmentAdapter _environmentAdapter;
         private IThreadAdapter _threadAdapter;
         private ICoroutineAdapter _coroutineAdapter;
-        private IServiceAdapter<UHighlightPlugin> _serviceAdapter;
+        private IServiceAdapter _serviceAdapter;
 
         internal IEffectBuilder EffectBuilder { get; private set; }
         internal IVolumeStore VolumeStore { get; private set; }
@@ -41,7 +36,7 @@ namespace UHighlight.RocketMod
             _environmentAdapter = new EnvironmentAdapter(this);
             _threadAdapter = new ThreadAdapter();
             _coroutineAdapter = TryAddComponent<CoroutineAdapter>();
-            _serviceAdapter = new ServiceAdapter<UHighlightPlugin>(this);
+            _serviceAdapter = new ServiceAdapter(this);
 
             EffectBuilder = new EffectBuilder(_threadAdapter);
             VolumeStore = new VolumeStore(_environmentAdapter);

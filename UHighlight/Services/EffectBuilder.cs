@@ -8,13 +8,8 @@ using SDG.Provider;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using UHighlight.API;
 using UHighlight.Models;
-using UnityEngine;
 
 namespace UHighlight.Services
 {
@@ -31,7 +26,7 @@ namespace UHighlight.Services
 
         private readonly IThreadAdapter _threadAdapter;
 
-        public EffectBuilder(IThreadAdapter threadAdapter) 
+        public EffectBuilder(IThreadAdapter threadAdapter)
         {
             _threadAdapter = threadAdapter;
 
@@ -78,7 +73,7 @@ namespace UHighlight.Services
             shape = ToWordCase(shape);
             color = ToWordCase(color);
             material = ToWordCase(material);
-            
+
             return _effectGUIDProvider.ContainsKey($"{shape}_{material}_{color}");
         }
 

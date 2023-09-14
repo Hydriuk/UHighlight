@@ -2,10 +2,6 @@
 using OpenMod.Core.Commands;
 using OpenMod.Unturned.Commands;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UHighlight.OpenMod.Commands
 {

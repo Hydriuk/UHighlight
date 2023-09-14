@@ -1,11 +1,8 @@
 ﻿using Rocket.API;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UHighlight.RocketMod.Commands.Test;
 using UnityEngine;
 
@@ -27,9 +24,9 @@ namespace UHighlight.RocketMod.Commands
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            UnturnedPlayer uPlayer = (UnturnedPlayer)caller; 
+            UnturnedPlayer uPlayer = (UnturnedPlayer)caller;
 
-            if(command.Length == 0)
+            if (command.Length == 0)
             {
                 ChatManager.serverSendMessage("Not enough params", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
@@ -64,7 +61,6 @@ namespace UHighlight.RocketMod.Commands
                     VolumesCommand.Execute(uPlayer, subCommand);
                     break;
 
-
                 case "delete":
                     DeleteCommand.Execute(uPlayer, subCommand);
                     break;
@@ -74,7 +70,7 @@ namespace UHighlight.RocketMod.Commands
                     break;
 
                 case "test":
-                    if(command[1] == "start")
+                    if (command[1] == "start")
                         StartCommand.Execute(uPlayer, subCommand.Skip(1).ToArray());
                     else if (command[1] == "stop")
                         StopCommand.Execute(uPlayer, subCommand.Skip(1).ToArray());

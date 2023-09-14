@@ -1,5 +1,4 @@
 ﻿using Hydriuk.UnturnedModules.Adapters;
-using Hydriuk.UnturnedModules.PlayerKeys;
 #if OPENMOD
 using Microsoft.Extensions.DependencyInjection;
 using OpenMod.API.Ioc;
@@ -11,7 +10,6 @@ using UHighlight.API;
 using UHighlight.Models;
 using UHighlight.VolumeEditors;
 using UHighlight.VolumeStrategies;
-using UnityEngine;
 
 namespace UHighlight.Services
 {
@@ -26,7 +24,7 @@ namespace UHighlight.Services
         private readonly IEffectBuilder _effectBuilder;
         private readonly IVolumeStore _volumeStore;
 
-        public VolumeEditor(ICoroutineAdapter coroutineAdapter, IEffectBuilder effectBuilder, IVolumeStore volumeStore) 
+        public VolumeEditor(ICoroutineAdapter coroutineAdapter, IEffectBuilder effectBuilder, IVolumeStore volumeStore)
         {
             _coroutineAdapter = coroutineAdapter;
             _effectBuilder = effectBuilder;

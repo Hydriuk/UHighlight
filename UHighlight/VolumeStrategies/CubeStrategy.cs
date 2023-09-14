@@ -1,8 +1,4 @@
-﻿using Hydriuk.UnturnedModules.Adapters;
-using Hydriuk.UnturnedModules.PlayerKeys;
-using SDG.Unturned;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SDG.Unturned;
 using UHighlight.API;
 using UHighlight.Models;
 using UHighlight.VolumeStrategies;
@@ -21,9 +17,9 @@ namespace UHighlight.VolumeEditors
         private readonly IEffectBuilder _effectBuilder;
 
         public CubeStrategy(
-            IEffectBuilder effectBuilder, 
-            Player player, 
-            string material, 
+            IEffectBuilder effectBuilder,
+            Player player,
+            string material,
             string color)
         {
             _effectBuilder = effectBuilder;
@@ -73,6 +69,7 @@ namespace UHighlight.VolumeEditors
                 case EPlayerPunch.LEFT:
                     _cube.Corner1 = position;
                     break;
+
                 case EPlayerPunch.RIGHT:
                     _cube.Corner2 = position;
                     break;
@@ -113,7 +110,7 @@ namespace UHighlight.VolumeEditors
         {
             Volume? volume = BuildVolume();
 
-            if(volume == null) 
+            if (volume == null)
                 return null;
 
             Dispose();
