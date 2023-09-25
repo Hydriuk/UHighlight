@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    public class HighlightCommand : IRocketCommand
+    internal class HighlightCommand : IRocketCommand
     {
         public AllowedCaller AllowedCaller => AllowedCaller.Player;
 

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    public static class CategoriesCommand
+    internal static class CategoriesCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {

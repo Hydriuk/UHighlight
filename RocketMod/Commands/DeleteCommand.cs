@@ -6,7 +6,7 @@ namespace UHighlight.RocketMod.Commands
 {
     public static class DeleteCommand
     {
-        public static void Execute(UnturnedPlayer uPlayer, string[] command)
+        internal static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
             if (command.Length != 2)
             {

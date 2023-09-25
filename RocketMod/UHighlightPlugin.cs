@@ -23,8 +23,9 @@ namespace UHighlight.RocketMod
         internal IHighlightBuilder HighlightBuilder { get; private set; }
         internal IVolumeTester VolumeTester { get; private set; }
 
-        public IHighlightCommands HighlightCommands { get; private set; }
-        public IHighlightSpawner HighlightSpawner { get; private set; }
+        // Public APIs instances are not public to prevent access before they are instanciated. They should be retreived using IServiceAdapter
+        internal IHighlightCommands HighlightCommands { get; private set; }
+        internal IHighlightSpawner HighlightSpawner { get; private set; }
 
         public UHighlightPlugin()
         {
@@ -55,6 +56,7 @@ namespace UHighlight.RocketMod
             VolumeTester.Dispose();
 
             _coroutineAdapter.Dispose();
+            _serviceAdapter.Dispose();
         }
     }
 }

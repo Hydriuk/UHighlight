@@ -3,6 +3,7 @@
 using OpenMod.API.Ioc;
 #endif
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
 #if OPENMOD
@@ -18,11 +19,11 @@ namespace UHighlight.Services
 #endif
     internal class HighlightSpawner : IHighlightSpawner
     {
-        private readonly IHighlightBuilder _highlightBuilder;
+        private IHighlightBuilder _highlightBuilder;
 
         public HighlightSpawner(IServiceAdapter serviceAdapter)
         {
-            _highlightBuilder = serviceAdapter.GetServiceAsync<IHighlightBuilder>().Result;
+            Task.Run(async () => _highlightBuilder = await serviceAdapter.GetServiceAsync<IHighlightBuilder>());
         }
 
         public IEnumerable<HighlightedZone> BuildZones(string group) => _highlightBuilder.BuildZones(group);

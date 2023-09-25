@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    public static class ShowCommand
+    internal static class ShowCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {

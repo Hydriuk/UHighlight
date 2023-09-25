@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    public static class VolumesCommand
+    internal static class VolumesCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {

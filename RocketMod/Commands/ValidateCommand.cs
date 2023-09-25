@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    public static class ValidateCommand
+    internal static class ValidateCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {

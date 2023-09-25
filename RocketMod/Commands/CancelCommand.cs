@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    public static class CancelCommand
+    internal static class CancelCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
