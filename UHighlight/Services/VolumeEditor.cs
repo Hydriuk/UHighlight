@@ -39,6 +39,11 @@ namespace UHighlight.Services
             }
         }
 
+        public bool IsEditing(Player player)
+        {
+            return _editedVolumes.ContainsKey(player);
+        }
+
         public void StartEditing(Player player, EVolumeShape shape, string material, string color)
         {
             IEditionStrategy strategy = shape switch
@@ -78,6 +83,14 @@ namespace UHighlight.Services
             _editedVolumes.Remove(player);
 
             _volumeStore.Upsert(volume);
+        }
+
+        public void SetSize(Player player, float size)
+        {
+            if (!_editedVolumes.TryGetValue(player, out IEditionStrategy edition))
+                return;
+
+            edition.SetSize(size);
         }
     }
 }

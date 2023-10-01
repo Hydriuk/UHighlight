@@ -60,5 +60,6 @@ namespace UHighlight.VolumeStrategies
         protected abstract Volume? UpdateVolume(IEnumerable<EPlayerKey> keys);
         public abstract Volume? Build();
         public abstract void Cancel();
+        public abstract void SetSize(float size);
     }
 }

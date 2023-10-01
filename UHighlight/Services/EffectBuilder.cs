@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using UHighlight.API;
 using UHighlight.Models;
+using UnityEngine;
 
 namespace UHighlight.Services
 {
@@ -84,9 +85,14 @@ namespace UHighlight.Services
             ShowEffect(effectParams, unique);
         }
 
-        public void DisplayEffect(Volume volume, Player player, bool unique = false)
+        public void DisplayEffect(Volume volume, Player player, bool unique = false, float customSize = -1)
         {
             TriggerEffectParameters effectParams = BuildEffect(volume);
+
+            if(customSize != -1)
+            {
+                effectParams.scale = Vector3.one * customSize;
+            }
 
             effectParams.SetRelevantPlayer(player.GetTransportConnection());
 

@@ -2,6 +2,7 @@
 using OpenMod.API.Ioc;
 #endif
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UHighlight.Components;
 
 namespace UHighlight.API
@@ -11,7 +12,7 @@ namespace UHighlight.API
 #endif
     public interface IHighlightSpawner
     {
-        IEnumerable<HighlightedZone> BuildZones(string category);
-        HighlightedZone BuildZone(string category, string name);
+        Task<IEnumerable<HighlightedZone>> BuildZones(string category, float customSize = -1);
+        Task<HighlightedZone> BuildZone(string category, string name, float customSize = -1);
     }
 }

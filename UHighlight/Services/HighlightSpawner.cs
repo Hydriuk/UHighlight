@@ -1,4 +1,5 @@
 ﻿using Hydriuk.UnturnedModules.Adapters;
+using System;
 #if OPENMOD
 using OpenMod.API.Ioc;
 #endif
@@ -19,14 +20,44 @@ namespace UHighlight.Services
 #endif
     internal class HighlightSpawner : IHighlightSpawner
     {
-        private IHighlightBuilder _highlightBuilder;
+        private TaskCompletionSource<bool> _serviceLoaded;
+
+        private IHighlightBuilder? _highlightBuilder;
 
         public HighlightSpawner(IServiceAdapter serviceAdapter)
         {
-            Task.Run(async () => _highlightBuilder = await serviceAdapter.GetServiceAsync<IHighlightBuilder>());
+            _serviceLoaded = new TaskCompletionSource<bool>();
+
+            Task.Run(async () => {
+                _highlightBuilder = await serviceAdapter.GetServiceAsync<IHighlightBuilder>();
+                _serviceLoaded.SetResult(true);
+            });
         }
 
-        public IEnumerable<HighlightedZone> BuildZones(string group) => _highlightBuilder.BuildZones(group);
-        public HighlightedZone BuildZone(string group, string name) => _highlightBuilder.BuildZone(group, name);
+        public async Task<IEnumerable<HighlightedZone>> BuildZones(string group, float customSize = -1)
+        {
+            if(!_serviceLoaded.Task.IsCompleted) 
+            { 
+                await _serviceLoaded.Task;
+            }
+
+            if (_highlightBuilder == null)
+                throw new Exception("[UHighlight] - The Highlight builder service could not be loaded");
+
+            return _highlightBuilder.BuildZones(group, customSize);
+        }
+
+        public async Task<HighlightedZone> BuildZone(string group, string name, float customSize = -1)
+        {
+            if (!_serviceLoaded.Task.IsCompleted)
+            {
+                await _serviceLoaded.Task;
+            }
+
+            if (_highlightBuilder == null)
+                throw new Exception("[UHighlight] - The Highlight builder service could not be loaded");
+
+            return _highlightBuilder.BuildZone(group, name, customSize);
+        }
     }
 }

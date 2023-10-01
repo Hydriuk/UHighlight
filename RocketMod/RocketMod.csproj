@@ -85,6 +85,7 @@
     <Compile Include="Commands\EditCommand.cs" />
     <Compile Include="Commands\HighlightCommand.cs" />
     <Compile Include="Commands\ShowCommand.cs" />
+    <Compile Include="Commands\SizeCommand.cs" />
     <Compile Include="Commands\Test\StartCommand.cs" />
     <Compile Include="Commands\Test\StopCommand.cs" />
     <Compile Include="Commands\ValidateCommand.cs" />

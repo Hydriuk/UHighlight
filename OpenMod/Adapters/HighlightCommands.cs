@@ -45,9 +45,9 @@ namespace UHighlight.OpenMod.Adapters
             "delete", group, zone
         });
 
-        public Task ExecuteShow(Player player, string group, string zone) => Execute(player, new[]
+        public Task ExecuteShow(Player player, string group, string zone, float customSize = -1) => Execute(player, new[]
         {
-            "show", group, zone
+            "show", group, zone, customSize.ToString()
         });
 
         public Task ExecuteGroups(Player player) => Execute(player, new[]

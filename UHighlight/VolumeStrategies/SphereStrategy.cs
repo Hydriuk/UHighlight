@@ -116,6 +116,18 @@ namespace UHighlight.VolumeStrategies
             return volume;
         }
 
+        public void SetSize(float size)
+        {
+            _sphere.Radius = size;
+
+            Volume? volume = BuildVolume();
+
+            if (volume == null)
+                return;
+
+            _effectBuilder.DisplayEffect(volume, _player, true);
+        }
+
         public void Cancel()
         {
             Dispose();

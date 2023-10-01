@@ -7,5 +7,6 @@ namespace UHighlight.VolumeStrategies
     {
         Volume? Build();
         void Cancel();
+        void SetSize(float size);
     }
 }

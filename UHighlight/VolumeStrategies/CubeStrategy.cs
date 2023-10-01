@@ -118,6 +118,11 @@ namespace UHighlight.VolumeEditors
             return volume;
         }
 
+        public void SetSize(float size)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void Cancel()
         {
             Dispose();

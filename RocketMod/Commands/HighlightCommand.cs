@@ -51,6 +51,11 @@ namespace UHighlight.RocketMod.Commands
                     ShowCommand.Execute(uPlayer, subCommand);
                     break;
 
+                case "size":
+                case "setsize":
+                    SizeCommand.Execute(uPlayer, subCommand);
+                    break;
+
                 case "validate":
                 case "v":
                     ValidateCommand.Execute(uPlayer, subCommand);

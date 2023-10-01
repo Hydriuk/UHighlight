@@ -28,6 +28,9 @@ namespace UHighlight.OpenMod.Commands
         {
             UnturnedUser user = (UnturnedUser)Context.Actor;
 
+            if (_volumeEditor.IsEditing(user.Player.Player))
+                throw new CommandWrongUsageException("You are already editing a zone");
+
             if (Context.Parameters.Count != 3)
                 throw new CommandWrongUsageException(Context);
 

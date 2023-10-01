@@ -134,6 +134,11 @@ namespace UHighlight.VolumeStrategies
             return volume;
         }
 
+        public void SetSize(float size)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Cancel()
         {
             Dispose();

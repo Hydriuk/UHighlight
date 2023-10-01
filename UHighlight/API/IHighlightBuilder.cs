@@ -11,7 +11,7 @@ namespace UHighlight.API
 #endif
     internal interface IHighlightBuilder
     {
-        IEnumerable<HighlightedZone> BuildZones(string category);
-        HighlightedZone BuildZone(string category, string name);
+        IEnumerable<HighlightedZone> BuildZones(string category, float customSize = -1);
+        HighlightedZone BuildZone(string category, string name, float customSize = -1);
     }
 }

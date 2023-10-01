@@ -51,12 +51,12 @@ namespace UHighlight.RocketMod.Adapters
             return Task.CompletedTask;
         }
 
-        public Task ExecuteShow(Player player, string group, string zone)
+        public Task ExecuteShow(Player player, string group, string zone, float customSize = -1)
         {
             Execute(player, new[]
             {
                 "show",
-                group, zone
+                group, zone, customSize.ToString()
             });
 
             return Task.CompletedTask;

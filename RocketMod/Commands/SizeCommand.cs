@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    internal static class ValidateCommand
+    internal class SizeCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
-            if (command.Length != 2)
+            if (command.Length != 1)
             {
-                ChatManager.serverSendMessage("Wrong syntax : /uhl validate <category> <name>", Color.red, toPlayer: uPlayer.SteamPlayer());
+                ChatManager.serverSendMessage("Wrong syntax : /uhl size <size>", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
             }
 
@@ -20,7 +20,13 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            UHighlightPlugin.Instance.VolumeEditor.Validate(uPlayer.Player, command[0], command[1]);
+            if (!float.TryParse(command[0], out float size))
+            {
+                ChatManager.serverSendMessage("Wrong syntax : /uhl size <size>", Color.red, toPlayer: uPlayer.SteamPlayer());
+                return;
+            }
+
+            UHighlightPlugin.Instance.VolumeEditor.SetSize(uPlayer.Player, size);
         }
     }
 }

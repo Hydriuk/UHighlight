@@ -24,29 +24,29 @@ namespace UHighlight.Services
             _volumeStore = volumeStore;
         }
 
-        public IEnumerable<HighlightedZone> BuildZones(string category)
+        public IEnumerable<HighlightedZone> BuildZones(string category, float customSize = -1)
         {
             IEnumerable<Volume> volumes = _volumeStore.GetVolumes(category);
 
             foreach (Volume volume in volumes)
             {
-                yield return BuildZone(volume);
+                yield return BuildZone(volume, customSize);
             }
         }
 
-        public HighlightedZone BuildZone(string category, string name)
+        public HighlightedZone BuildZone(string category, string name, float customSize = -1)
         {
             Volume volume = _volumeStore.GetVolume(category, name);
 
-            return BuildZone(volume);
+            return BuildZone(volume, customSize);
         }
 
-        private HighlightedZone BuildZone(Volume volume)
+        private HighlightedZone BuildZone(Volume volume, float customSize)
         {
             GameObject go = new GameObject();
 
             go.transform.position = volume.Center;
-            go.transform.localScale = volume.Size;
+            go.transform.localScale = customSize == -1 ? volume.Size : Vector3.one * customSize;
             go.transform.rotation = Quaternion.FromToRotation(Vector3.forward, volume.Rotation);
             go.layer = LayerMasks.TRAP;
 

@@ -9,9 +9,9 @@ namespace UHighlight.RocketMod.Commands
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
-            if (command.Length != 2)
+            if (command.Length < 2)
             {
-                ChatManager.serverSendMessage("Wrong syntax : /hl show <category> <name>", Color.red, toPlayer: uPlayer.SteamPlayer());
+                ChatManager.serverSendMessage("Wrong syntax : /uhl show <category> <name>", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
             }
 
@@ -23,7 +23,12 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            UHighlightPlugin.Instance.EffectBuilder.DisplayEffect(volume, uPlayer.Player, true);
+            if (float.TryParse(command[2], out float customSize))
+            {
+                volume.Size = Vector3.one * customSize;
+            }
+
+            UHighlightPlugin.Instance.EffectBuilder.DisplayEffect(volume, uPlayer.Player, true, customSize);
         }
     }
 }

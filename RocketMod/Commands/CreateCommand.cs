@@ -16,6 +16,12 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
+            if (UHighlightPlugin.Instance.VolumeEditor.IsEditing(uPlayer.Player))
+            {
+                ChatManager.serverSendMessage("You are already editing a zone", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);
+                return;
+            }
+
             if (!Enum.TryParse(command[0], out EVolumeShape shape))
             {
                 ChatManager.serverSendMessage($"<b>{shape}</b> was not recognized. Available shapes : {EVolumeShape.Cube}, {EVolumeShape.Cylinder}, {EVolumeShape.Sphere}", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);

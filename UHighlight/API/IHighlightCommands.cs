@@ -15,7 +15,7 @@ namespace UHighlight.API
         Task ExecuteCancel(Player player);
         Task ExecuteValidate(Player player, string group, string zone);
         Task ExecuteDelete(Player player, string group, string zone);
-        Task ExecuteShow(Player player, string group, string zone);
+        Task ExecuteShow(Player player, string group, string zone, float customSize = -1);
         Task ExecuteGroups(Player player);
         Task ExecuteVolumes(Player player, string group);
     }
