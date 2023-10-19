@@ -1,6 +1,6 @@
 ﻿using SDG.Unturned;
 using System;
-using UHighlight.EventArgs;
+using System.Collections.Generic;
 using UHighlight.Models;
 using UnityEngine;
 
@@ -8,17 +8,24 @@ namespace UHighlight.Components
 {
     public class HighlightedZone : MonoBehaviour, IDisposable
     {
-        private string _category = string.Empty;
-        private string _name = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        public event EventHandler<PlayerArgs>? PlayerEntered;
-        public event EventHandler<PlayerArgs>? PlayerExited;
+        public List<Player> Players { get; } = new List<Player>();
+        public event EventHandler<Player>? PlayerEntered;
+        public event EventHandler<Player>? PlayerExited;
 
-        public event EventHandler<VehicleArgs>? VehicleEntered;
-        public event EventHandler<VehicleArgs>? VehicleExited;
+        public List<InteractableVehicle> Vehicles { get; } = new List<InteractableVehicle>();
+        public event EventHandler<InteractableVehicle>? VehicleEntered;
+        public event EventHandler<InteractableVehicle>? VehicleExited;
 
-        //public event EventHandler<ZombieArgs>? ZombieEntered;
-        //public event EventHandler<ZombieArgs>? ZombieExited;
+        public List<Zombie> Zombies { get; } = new List<Zombie>();
+        public event EventHandler<Zombie>? ZombieEntered;
+        public event EventHandler<Zombie>? ZombieExited;
+
+        public List<Animal> Animals { get; } = new List<Animal>();
+        public event EventHandler<Animal>? AnimalEntered;
+        public event EventHandler<Animal>? AnimalExited;
 
         public Volume Volume { get; private set; }
 
@@ -29,8 +36,8 @@ namespace UHighlight.Components
 
         internal void Init(string category, string name, Volume volume)
         {
-            _category = category;
-            _name = name;
+            Category = category;
+            Name = name;
             Volume = volume;
         }
 
@@ -40,10 +47,12 @@ namespace UHighlight.Components
             PlayerExited = null;
             VehicleEntered = null;
             VehicleExited = null;
-            //ZombieEntered = null;
-            //ZombieExited = null;
+            ZombieEntered = null;
+            ZombieExited = null;
+            AnimalEntered = null;
+            AnimalExited = null;
 
-            Destroy(this.gameObject);
+            Destroy(this);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -52,20 +61,33 @@ namespace UHighlight.Components
             {
                 Player player = other.GetComponent<Player>();
 
-                PlayerEntered?.Invoke(this, new PlayerArgs(_category, _name, player));
+                Players.Add(player);
+
+                PlayerEntered?.Invoke(this, player);
             }
             else if (other.transform.tag == "Vehicle")
             {
                 InteractableVehicle vehicle = other.GetComponent<InteractableVehicle>();
 
-                VehicleEntered?.Invoke(this, new VehicleArgs(_category, _name, vehicle));
-            }
-            //else if (other.transform.tag == "Zombie")
-            //{
-            //    Zombie zombie = other.GetComponent<Zombie>();
+                Vehicles.Add(vehicle);
 
-            //    ZombieEntered?.Invoke(this, new ZombieArgs(_category, _name, zombie));
-            //}
+                VehicleEntered?.Invoke(this, vehicle);
+            }
+            else if (other.transform.tag == "Agent")
+            {
+                if(other.TryGetComponent(out Zombie zombie))
+                {
+                    Zombies.Add(zombie);
+
+                    ZombieEntered?.Invoke(this, zombie);
+                }
+                else if (other.TryGetComponent(out Animal animal))
+                {
+                    Animals.Add(animal);
+
+                    AnimalEntered?.Invoke(this, animal);
+                }
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -74,20 +96,33 @@ namespace UHighlight.Components
             {
                 Player player = other.GetComponent<Player>();
 
-                PlayerExited?.Invoke(this, new PlayerArgs(_category, _name, player));
+                Players.Remove(player);
+
+                PlayerExited?.Invoke(this, player);
             }
             else if (other.transform.tag == "Vehicle")
             {
                 InteractableVehicle vehicle = other.GetComponent<InteractableVehicle>();
 
-                VehicleExited?.Invoke(this, new VehicleArgs(_category, _name, vehicle));
-            }
-            //else if (other.transform.tag == "Zombie")
-            //{
-            //    Zombie zombie = other.GetComponent<Zombie>();
+                Vehicles.Remove(vehicle);
 
-            //    ZombieExited?.Invoke(this, new ZombieArgs(_category, _name, zombie));
-            //}
+                VehicleExited?.Invoke(this, vehicle);
+            }
+            else if (other.transform.tag == "Agent")
+            {
+                if (other.TryGetComponent(out Zombie zombie))
+                {
+                    Zombies.Remove(zombie);
+
+                    ZombieExited?.Invoke(this, zombie);
+                }
+                else if (other.TryGetComponent(out Animal animal))
+                {
+                    Animals.Remove(animal);
+
+                    AnimalExited?.Invoke(this, animal);
+                }
+            }
         }
     }
 }

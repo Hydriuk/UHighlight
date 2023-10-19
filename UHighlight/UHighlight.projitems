@@ -20,10 +20,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IVolumeTester.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\HighlightedZone.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\PlayerArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\VehicleArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ZombieArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EventArgs\ZoneArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Volume.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\EffectBuilder.cs" />

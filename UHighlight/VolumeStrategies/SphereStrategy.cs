@@ -92,7 +92,7 @@ namespace UHighlight.VolumeStrategies
                 0 => _sphere.Radius + 1f,
                 1 => _sphere.Radius - 1f,
                 2 => _sphere.Radius * 1.05f,
-                3 => _sphere.Radius / 0.95f,
+                3 => _sphere.Radius / 1.05f,
                 _ => _sphere.Radius
             };
 
@@ -152,7 +152,7 @@ namespace UHighlight.VolumeStrategies
                     Material = material,
                     Color = color,
                     Size = GetSize(),
-                    Rotation = Vector3.zero
+                    Rotation = Vector3.up
                 };
             }
 
