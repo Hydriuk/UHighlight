@@ -52,9 +52,9 @@ namespace UHighlight.Services
 
             Collider collider = volume.Shape switch
             {
-                "Cube" => go.AddComponent<BoxCollider>(),
-                "Sphere" => go.AddComponent<SphereCollider>(),
-                "Cylinder" => go.AddComponent<CapsuleCollider>(),
+                EVolumeShape.Cube => go.AddComponent<BoxCollider>(),
+                EVolumeShape.Sphere => go.AddComponent<SphereCollider>(),
+                //"Cylinder" => go.AddComponent<CapsuleCollider>(),
                 _ => throw new Exception()
             };
 

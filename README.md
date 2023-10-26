@@ -232,4 +232,5 @@ public class MyPlugin : RocketPlugin
 - Rework events parameters
 - Allow zone duplication
 - Allow asset zone creation (creating a zone on a house for example, so that all houses have the same zone. Configurable to choose which houses on the map needs a zone)
+- Add a way to show the zones to the player...
 - Suggestions ?

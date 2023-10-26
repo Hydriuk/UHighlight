@@ -63,55 +63,34 @@ namespace UHighlight.Services
 
         private void InitZone(Player player, HighlightedZone zone)
         {
-            zone.PlayerEntered += (sender, player) => ChatManager.serverSendMessage(
-                $"Player {player.GetSteamPlayer().playerID.playerName} entered zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
+            zone.PlayerEntered += (sender, player) => SendMessage(player, (HighlightedZone)sender, $"Player {player.GetSteamPlayer().playerID.playerName} entered");
+            zone.PlayerExited += (sender, player) => SendMessage(player, (HighlightedZone)sender, $"Player {player.GetSteamPlayer().playerID.playerName} exited");
 
-            zone.PlayerExited += (sender, player) => ChatManager.serverSendMessage(
-                $"Player {player.GetSteamPlayer().playerID.playerName} exited zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
+            zone.VehicleEntered += (sender, vehicle) => SendMessage(player, (HighlightedZone)sender, $"Vehicle {vehicle.asset.FriendlyName} entered");
+            zone.VehicleExited += (sender, vehicle) => SendMessage(player, (HighlightedZone)sender, $"Vehicle {vehicle.asset.FriendlyName} exited");
 
-            zone.VehicleEntered += (sender, vehicle) => ChatManager.serverSendMessage(
-                $"Vehicle {vehicle.asset.FriendlyName} entered zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
+            zone.ZombieEntered += (sender, zombie) => SendMessage(player, (HighlightedZone)sender, $"Zombie {zombie.GetInstanceID()} entered");
+            zone.ZombieExited += (sender, zombie) => SendMessage(player, (HighlightedZone)sender, $"Zombie {zombie.GetInstanceID()} exited");
 
-            zone.VehicleExited += (sender, vehicle) => ChatManager.serverSendMessage(
-                $"Vehicle {vehicle.asset.FriendlyName} exited zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
+            zone.AnimalEntered += (sender, animal) => SendMessage(player, (HighlightedZone)sender, $"Animal {animal.asset.FriendlyName} entered");
+            zone.AnimalExited += (sender, animal) => SendMessage(player, (HighlightedZone)sender, $"Animal {animal.asset.FriendlyName} exited");
 
-            zone.ZombieEntered += (sender, zombie) => ChatManager.serverSendMessage(
-                $"Zombie {zombie.GetInstanceID()} entered zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
+            zone.BarricadeEntered += (sender, barricade) => SendMessage(player, (HighlightedZone)sender, $"Barricade {barricade.asset.FriendlyName} entered");
+            zone.BarricadeExited += (sender, barricade) => SendMessage(player, (HighlightedZone)sender, $"Barricade {barricade.asset.FriendlyName} exited");
 
-            zone.ZombieExited += (sender, zombie) => ChatManager.serverSendMessage(
-                $"Zombie {zombie.GetInstanceID()} exited zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
-
-            zone.AnimalEntered += (sender, animal) => ChatManager.serverSendMessage(
-                $"Animal {animal.asset.FriendlyName} entered zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
-
-            zone.AnimalExited += (sender, animal) => ChatManager.serverSendMessage(
-                $"Animal {animal.asset.FriendlyName} exited zone {((HighlightedZone)sender).Category}/{((HighlightedZone)sender).Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
+            zone.StructureEntered += (sender, structure) => SendMessage(player, (HighlightedZone)sender, $"Structure {structure.asset.FriendlyName} entered");
+            zone.StructureExited += (sender, structure) => SendMessage(player, (HighlightedZone)sender, $"Structure {structure.asset.FriendlyName} exited");
 
             _effectBuilder.DisplayEffect(zone.Volume);
+        }
+
+        private void SendMessage(Player player, HighlightedZone zone, string text)
+        {
+            ChatManager.serverSendMessage(
+                $"{text} zone {zone.Category}/{zone.Name}",
+                Color.gray,
+                toPlayer: player.GetSteamPlayer()
+            );
         }
     }
 }

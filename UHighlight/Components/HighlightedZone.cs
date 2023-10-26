@@ -1,7 +1,9 @@
 ﻿using SDG.Unturned;
 using System;
 using System.Collections.Generic;
+using UHighlight.Extensions;
 using UHighlight.Models;
+using UHighlight.Patches;
 using UnityEngine;
 
 namespace UHighlight.Components
@@ -27,11 +29,22 @@ namespace UHighlight.Components
         public event EventHandler<Animal>? AnimalEntered;
         public event EventHandler<Animal>? AnimalExited;
 
+        public List<BarricadeDrop> Barricades { get; } = new List<BarricadeDrop>();
+        public event EventHandler<BarricadeDrop>? BarricadeEntered;
+        public event EventHandler<BarricadeDrop>? BarricadeExited;
+
+        public List<StructureDrop> Structures { get; } = new List<StructureDrop>();
+        public event EventHandler<StructureDrop>? StructureEntered;
+        public event EventHandler<StructureDrop>? StructureExited;
+
         public Volume Volume { get; private set; }
 
-        public HighlightedZone()
+        internal Collider Collider;
+
+        internal HighlightedZone()
         {
             Volume = new Volume();
+            Collider = new Collider();
         }
 
         internal void Init(string category, string name, Volume volume)
@@ -39,10 +52,35 @@ namespace UHighlight.Components
             Category = category;
             Name = name;
             Volume = volume;
+
+            if (!TryGetComponent<Collider>(out Collider))
+                throw new Exception("You must set a collider on the HighlightedZone before calling Init()");
+
+            Barricades.AddRange(this.GetBarricades());
+            Structures.AddRange(this.GetStructures());
+
+            BarricadeManager.onBarricadeSpawned += OnBarricadeSpawned;
+            StructureManager.onStructureSpawned += OnStructureSpawned;
+
+            BarricadeDestroyedPatch.BarricadeDestroyed += OnBarricadeDestroyed;
+            StructureDestroyedPatch.StructureDestroyed += OnStructureDestroyed;
+        }
+
+        private void Start()
+        {
+            // Call first time entered events on start to let some time for the plugins to subscribe the events
+            Barricades.ForEach(barricade => BarricadeEntered?.Invoke(this, barricade));
+            Structures.ForEach(structure => StructureEntered?.Invoke(this, structure));
         }
 
         public void Dispose()
         {
+            BarricadeManager.onBarricadeSpawned -= OnBarricadeSpawned;
+            StructureManager.onStructureSpawned -= OnStructureSpawned;
+
+            BarricadeDestroyedPatch.BarricadeDestroyed -= OnBarricadeDestroyed;
+            StructureDestroyedPatch.StructureDestroyed -= OnStructureDestroyed;
+
             PlayerEntered = null;
             PlayerExited = null;
             VehicleEntered = null;
@@ -57,7 +95,7 @@ namespace UHighlight.Components
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.transform.tag == "Player")
+            if (other.transform.CompareTag("Player"))
             {
                 Player player = other.GetComponent<Player>();
 
@@ -65,7 +103,7 @@ namespace UHighlight.Components
 
                 PlayerEntered?.Invoke(this, player);
             }
-            else if (other.transform.tag == "Vehicle")
+            else if (other.transform.CompareTag("Vehicle"))
             {
                 InteractableVehicle vehicle = other.GetComponent<InteractableVehicle>();
 
@@ -73,9 +111,9 @@ namespace UHighlight.Components
 
                 VehicleEntered?.Invoke(this, vehicle);
             }
-            else if (other.transform.tag == "Agent")
+            else if (other.transform.CompareTag("Agent"))
             {
-                if(other.TryGetComponent(out Zombie zombie))
+                if (other.TryGetComponent(out Zombie zombie))
                 {
                     Zombies.Add(zombie);
 
@@ -122,6 +160,44 @@ namespace UHighlight.Components
 
                     AnimalExited?.Invoke(this, animal);
                 }
+            }
+        }
+
+        private void OnBarricadeSpawned(BarricadeRegion region, BarricadeDrop drop) => OnBarricadeSpawned(drop);
+        private void OnBarricadeSpawned(BarricadeDrop drop)
+        {
+            if (this.Collides(drop))
+            {
+                Barricades.Add(drop);
+                BarricadeEntered?.Invoke(this, drop);
+            }
+        }
+
+        private void OnStructureSpawned(StructureRegion region, StructureDrop drop) => OnStructureSpawned(drop);
+        private void OnStructureSpawned(StructureDrop drop)
+        {
+            if (this.Collides(drop))
+            {
+                Structures.Add(drop);
+                StructureEntered?.Invoke(this, drop);
+            }
+        }
+
+        private void OnBarricadeDestroyed(BarricadeDrop drop)
+        {
+            if (Barricades.Contains(drop))
+            {
+                Barricades.Remove(drop);
+                BarricadeExited?.Invoke(this, drop);
+            }
+        }
+
+        private void OnStructureDestroyed(StructureDrop drop)
+        {
+            if (Structures.Contains(drop))
+            {
+                Structures.Remove(drop);
+                StructureExited?.Invoke(this, drop);
             }
         }
     }

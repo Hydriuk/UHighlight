@@ -21,7 +21,7 @@ namespace UHighlight.Models
         public Vector3 Rotation { get; set; }
         public float[] rotation { get => Rotation.Serialize(); set => Rotation = value.Deserialize(); }
 
-        public string Shape { get; set; } = string.Empty;
+        public EVolumeShape Shape { get; set; }
         public string Color { get; set; } = string.Empty;
         public string Material { get; set; } = string.Empty;
     }

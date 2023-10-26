@@ -14,9 +14,9 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            if (UHighlightPlugin.Instance.VolumeEditor.IsEditing(uPlayer.Player))
+            if (!UHighlightPlugin.Instance.VolumeEditor.IsEditing(uPlayer.Player))
             {
-                ChatManager.serverSendMessage("You are already editing a zone", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);
+                ChatManager.serverSendMessage("You are not editing a zone", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);
                 return;
             }
 

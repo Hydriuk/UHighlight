@@ -162,7 +162,7 @@ namespace UHighlight.VolumeStrategies
                 return new Volume()
                 {
                     Center = Center,
-                    Shape = "Cylinder",
+                    Shape = EVolumeShape.Cylinder,
                     Material = material,
                     Color = color,
                     Size = Size,

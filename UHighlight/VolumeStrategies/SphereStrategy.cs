@@ -148,11 +148,11 @@ namespace UHighlight.VolumeStrategies
                 return new Volume()
                 {
                     Center = Center,
-                    Shape = "Sphere",
+                    Shape = EVolumeShape.Sphere,
                     Material = material,
                     Color = color,
                     Size = GetSize(),
-                    Rotation = Vector3.up
+                    Rotation = Vector3.forward
                 };
             }
 

@@ -144,7 +144,7 @@ namespace UHighlight.VolumeEditors
                 return new Volume()
                 {
                     Center = GetCenter(),
-                    Shape = "Cube",
+                    Shape = EVolumeShape.Cube,
                     Material = material,
                     Color = color,
                     Size = GetSize(),

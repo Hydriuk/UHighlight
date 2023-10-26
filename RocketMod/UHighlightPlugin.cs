@@ -1,4 +1,5 @@
-﻿using Hydriuk.RocketModModules.Adapters;
+﻿using HarmonyLib;
+using Hydriuk.RocketModModules.Adapters;
 using Hydriuk.UnturnedModules.Adapters;
 using Rocket.Core.Plugins;
 using UHighlight.API;
@@ -16,6 +17,7 @@ namespace UHighlight.RocketMod
         private IThreadAdapter _threadAdapter;
         private ICoroutineAdapter _coroutineAdapter;
         private IServiceAdapter _serviceAdapter;
+        private Harmony _harmony;
 
         internal IEffectBuilder EffectBuilder { get; private set; }
         internal IVolumeStore VolumeStore { get; private set; }
@@ -46,10 +48,14 @@ namespace UHighlight.RocketMod
             VolumeTester = new VolumeTester(HighlightBuilder, EffectBuilder);
             HighlightCommands = new HighlightCommands();
             HighlightSpawner = new HighlightSpawner(_serviceAdapter);
+
+            _harmony = new Harmony("Hydriuk.UHighlight");
         }
 
         protected override void Unload()
         {
+            _harmony.UnpatchAll("Hydriuk.UHighlight");
+
             EffectBuilder.Dispose();
             VolumeEditor.Dispose();
             VolumeStore.Dispose();
