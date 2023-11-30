@@ -3,6 +3,7 @@ using SDG.Unturned;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UHighlight.Components;
 using UHighlight.Models;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace UHighlight.Extensions
 {
     public static class HighlightedZoneExtensions
     {
+        private readonly static FieldInfo _doorColliderGetter = typeof(InteractableDoor).GetField("placeholderCollider", BindingFlags.NonPublic | BindingFlags.Instance);
+
         #region Utilities
         private static Collider[] CastCube(this Volume volume, int mask)
         {
@@ -35,19 +38,44 @@ namespace UHighlight.Extensions
         #region IsInside
         public static bool Collides(this HighlightedZone zone, BarricadeDrop drop)
         {
-            return zone.Collides(drop.model.GetComponent<Collider>());
+            if (!drop.model.TryGetComponent(out MeshCollider collider))
+            {
+                if (drop.interactable is InteractableDoor door)
+                {
+                    return zone.ConvexCollides((BoxCollider)_doorColliderGetter.GetValue(door));
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return collider.convex ? 
+                zone.ConvexCollides(collider) :
+                zone.ConcaveCollides(collider);
         }
 
         public static bool Collides(this HighlightedZone zone, StructureDrop drop)
         {
-            return zone.Collides(drop.model.GetComponent<Collider>());
+            MeshCollider collider = drop.model.GetComponent<MeshCollider>();
+
+            return collider.convex ?
+                zone.ConvexCollides(collider) : 
+                zone.ConcaveCollides(collider);
         }
 
-        private static bool Collides(this HighlightedZone zone, Collider dropCollider)
+        private static bool ConvexCollides(this HighlightedZone zone, Collider dropCollider)
         {
             Vector3 closestPoint = dropCollider.ClosestPoint(zone.Volume.Center);
 
             return zone.Collider.ClosestPoint(closestPoint) == closestPoint;
+        }
+
+        private static bool ConcaveCollides(this HighlightedZone zone, Collider dropCollider)
+        {
+            Vector3 point = dropCollider.transform.position;
+
+            return zone.Collider.ClosestPoint(point) == point;
         }
         #endregion
 

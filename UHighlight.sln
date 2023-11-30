@@ -17,16 +17,13 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OpenModModules", "..\Unturn
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		OpenMod|Any CPU = OpenMod|Any CPU
-		RocketMod|Any CPU = RocketMod|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7B13AFA8-8A69-4954-98EF-C0ABC5856FFA}.OpenMod|Any CPU.ActiveCfg = OpenMod|Any CPU
-		{7B13AFA8-8A69-4954-98EF-C0ABC5856FFA}.RocketMod|Any CPU.ActiveCfg = RocketMod|Any CPU
-		{7B13AFA8-8A69-4954-98EF-C0ABC5856FFA}.RocketMod|Any CPU.Build.0 = RocketMod|Any CPU
-		{58673F5F-77B2-4ADF-A5F3-BBF90C798619}.OpenMod|Any CPU.ActiveCfg = OpenMod|Any CPU
-		{58673F5F-77B2-4ADF-A5F3-BBF90C798619}.OpenMod|Any CPU.Build.0 = OpenMod|Any CPU
-		{58673F5F-77B2-4ADF-A5F3-BBF90C798619}.RocketMod|Any CPU.ActiveCfg = RocketMod|Any CPU
+		{7B13AFA8-8A69-4954-98EF-C0ABC5856FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B13AFA8-8A69-4954-98EF-C0ABC5856FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58673F5F-77B2-4ADF-A5F3-BBF90C798619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58673F5F-77B2-4ADF-A5F3-BBF90C798619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

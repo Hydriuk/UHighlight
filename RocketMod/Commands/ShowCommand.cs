@@ -23,12 +23,16 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            if (float.TryParse(command[2], out float customSize))
+            if (command.Length > 2 && float.TryParse(command[2], out float customSize))
             {
                 volume.Size = Vector3.one * customSize;
-            }
 
-            UHighlightPlugin.Instance.EffectBuilder.DisplayEffect(volume, uPlayer.Player, true, customSize);
+                UHighlightPlugin.Instance.EffectBuilder.DisplayEffect(volume, uPlayer.Player, true, customSize);
+            }
+            else
+            {
+                UHighlightPlugin.Instance.EffectBuilder.DisplayEffect(volume, uPlayer.Player, true);
+            }
         }
     }
 }
