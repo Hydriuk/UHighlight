@@ -12,8 +12,6 @@ namespace UHighlight.Extensions
 {
     public static class HighlightedZoneExtensions
     {
-        private readonly static FieldInfo _doorColliderGetter = typeof(InteractableDoor).GetField("placeholderCollider", BindingFlags.NonPublic | BindingFlags.Instance);
-
         #region Utilities
         private static Collider[] CastCube(this Volume volume, int mask)
         {
@@ -38,44 +36,17 @@ namespace UHighlight.Extensions
         #region IsInside
         public static bool Collides(this HighlightedZone zone, BarricadeDrop drop)
         {
-            if (!drop.model.TryGetComponent(out MeshCollider collider))
-            {
-                if (drop.interactable is InteractableDoor door)
-                {
-                    return zone.ConvexCollides((BoxCollider)_doorColliderGetter.GetValue(door));
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            return collider.convex ? 
-                zone.ConvexCollides(collider) :
-                zone.ConcaveCollides(collider);
+            return zone.Collides(drop.model.position);
         }
 
         public static bool Collides(this HighlightedZone zone, StructureDrop drop)
         {
-            MeshCollider collider = drop.model.GetComponent<MeshCollider>();
-
-            return collider.convex ?
-                zone.ConvexCollides(collider) : 
-                zone.ConcaveCollides(collider);
+            return zone.Collides(drop.model.position);
         }
 
-        private static bool ConvexCollides(this HighlightedZone zone, Collider dropCollider)
+        private static bool Collides(this HighlightedZone zone, Vector3 center)
         {
-            Vector3 closestPoint = dropCollider.ClosestPoint(zone.Volume.Center);
-
-            return zone.Collider.ClosestPoint(closestPoint) == closestPoint;
-        }
-
-        private static bool ConcaveCollides(this HighlightedZone zone, Collider dropCollider)
-        {
-            Vector3 point = dropCollider.transform.position;
-
-            return zone.Collider.ClosestPoint(point) == point;
+            return zone.Collider.ClosestPoint(center) == center;
         }
         #endregion
 
@@ -94,14 +65,18 @@ namespace UHighlight.Extensions
         {
             return zone.Volume
                 .CastCube(RayMasks.BARRICADE)
-                .Select(collider => collider.transform.ToBarricade());
+                .Select(collider => collider?.transform?.ToBarricade())
+                .Where(collider => collider != null)
+                .Cast<BarricadeDrop>();
         }
 
         private static IEnumerable<BarricadeDrop> GetBarricadesInSphere(this HighlightedZone zone)
         {
             return zone.Volume
                 .CastSphere(RayMasks.BARRICADE)
-                .Select(collider => collider.transform.ToBarricade());
+                .Select(collider => collider.transform.ToBarricade())
+                .Where(collider => collider != null)
+                .Cast<BarricadeDrop>();
         }
         #endregion
 
@@ -120,14 +95,18 @@ namespace UHighlight.Extensions
         {
             return zone.Volume
                 .CastCube(RayMasks.STRUCTURE)
-                .Select(collider => collider.transform.ToStructure());
+                .Select(collider => collider.transform.ToStructure())
+                .Where(collider => collider != null)
+                .Cast<StructureDrop>();
         }
 
         private static IEnumerable<StructureDrop> GetStructuresInSphere(this HighlightedZone zone)
         {
             return zone.Volume
                 .CastSphere(RayMasks.STRUCTURE)
-                .Select(collider => collider.transform.ToStructure());
+                .Select(collider => collider.transform.ToStructure())
+                .Where(collider => collider != null)
+                .Cast<StructureDrop>();
         }
         #endregion
     }
