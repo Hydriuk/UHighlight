@@ -50,6 +50,7 @@ namespace UHighlight.RocketMod
             HighlightSpawner = new HighlightSpawner(_serviceAdapter);
 
             _harmony = new Harmony("Hydriuk.UHighlight");
+            _harmony.PatchAll();
         }
 
         protected override void Unload()
