@@ -27,7 +27,7 @@ namespace UHighlight.Extensions
         {
             return Physics.OverlapSphere(
                 volume.Center,
-                volume.Size.x,
+                volume.Size.x / 2,
                 mask
             );
         }
@@ -44,7 +44,7 @@ namespace UHighlight.Extensions
             return zone.Collides(drop.model.position);
         }
 
-        private static bool Collides(this HighlightedZone zone, Vector3 center)
+        public static bool Collides(this HighlightedZone zone, Vector3 center)
         {
             return zone.Collider.ClosestPoint(center) == center;
         }

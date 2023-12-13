@@ -1,5 +1,4 @@
-﻿using Hydriuk.UnturnedModules.Adapters;
-#if OPENMOD
+﻿#if OPENMOD
 using Microsoft.Extensions.DependencyInjection;
 using OpenMod.API.Ioc;
 #endif
@@ -20,13 +19,13 @@ namespace UHighlight.Services
     {
         private readonly Dictionary<Player, IEditionStrategy> _editedVolumes = new Dictionary<Player, IEditionStrategy>();
 
-        private readonly ICoroutineAdapter _coroutineAdapter;
+        private readonly IChatAdapter _chatAdapter;
         private readonly IEffectBuilder _effectBuilder;
         private readonly IVolumeStore _volumeStore;
 
-        public VolumeEditor(ICoroutineAdapter coroutineAdapter, IEffectBuilder effectBuilder, IVolumeStore volumeStore)
+        public VolumeEditor(IChatAdapter chatAdapter, IEffectBuilder effectBuilder, IVolumeStore volumeStore)
         {
-            _coroutineAdapter = coroutineAdapter;
+            _chatAdapter = chatAdapter;
             _effectBuilder = effectBuilder;
             _volumeStore = volumeStore;
         }
@@ -55,6 +54,8 @@ namespace UHighlight.Services
             };
 
             _editedVolumes.Add(player, strategy);
+
+            _chatAdapter.Send(player, $"Started editing a {material} {color} {shape}");
         }
 
         public void StopEditing(Player player)
@@ -65,6 +66,8 @@ namespace UHighlight.Services
             edition.Cancel();
 
             _editedVolumes.Remove(player);
+
+            _chatAdapter.Send(player, $"Editing stopped");
         }
 
         public void Validate(Player player, string category, string name)
@@ -83,6 +86,8 @@ namespace UHighlight.Services
             _editedVolumes.Remove(player);
 
             _volumeStore.Upsert(volume);
+
+            _chatAdapter.Send(player, $"Volume {category} {name} created");
         }
 
         public void SetSize(Player player, float size)
@@ -91,6 +96,8 @@ namespace UHighlight.Services
                 return;
 
             edition.SetSize(size);
+
+            _chatAdapter.Send(player, $"Size set to {size}");
         }
     }
 }

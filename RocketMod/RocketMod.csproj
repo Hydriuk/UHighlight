@@ -86,6 +86,7 @@
     <Compile Include="Commands\Test\StopCommand.cs" />
     <Compile Include="Commands\ValidateCommand.cs" />
     <Compile Include="Commands\VolumesCommand.cs" />
+    <Compile Include="ConfigurationAdapter.cs" />
     <Compile Include="UHighlightPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

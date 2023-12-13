@@ -16,7 +16,7 @@ namespace UHighlight.Services
 #endif
     internal class VolumeTester : IVolumeTester
     {
-        private readonly Dictionary<Player, HighlightedZone> _testedZones = new Dictionary<Player, HighlightedZone>();
+        private readonly Dictionary<Player, List<HighlightedZone>> _testedZones = new Dictionary<Player, List<HighlightedZone>>();
 
         private readonly IHighlightBuilder _highlightBuilder;
         private readonly IEffectBuilder _effectBuilder;
@@ -33,30 +33,41 @@ namespace UHighlight.Services
         {
             Provider.onEnemyDisconnected -= OnPlayerDisconnected;
 
-            foreach (var zone in _testedZones.Values)
+            foreach (var zones in _testedZones.Values)
             {
-                zone.Dispose();
+                foreach (var zone in zones)
+                {
+                    zone.Dispose();
+                }
             }
         }
 
         public void StartTest(Player player, string category, string name)
         {
-            StopTest(player);
-
             HighlightedZone zone = _highlightBuilder.BuildZone(category, name);
 
             InitZone(player, zone);
 
-            _testedZones.Add(player, zone);
+            if(!_testedZones.TryGetValue(player, out var zones))
+            {
+                zones = new List<HighlightedZone>();
+
+                _testedZones.Add(player, zones);
+            }
+
+            zones.Add(zone);
         }
 
         private void OnPlayerDisconnected(SteamPlayer sPlayer) => StopTest(sPlayer.player);
         public void StopTest(Player player)
         {
-            if (!_testedZones.TryGetValue(player, out var zone))
+            if (!_testedZones.TryGetValue(player, out var zones))
                 return;
 
-            zone.Dispose();
+            foreach (var zone in zones)
+            {
+                zone.Dispose();
+            }
 
             _testedZones.Remove(player);
         }
