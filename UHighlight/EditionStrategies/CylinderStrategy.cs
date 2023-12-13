@@ -1,14 +1,14 @@
 ﻿using SDG.Unturned;
+using System;
 using UHighlight.API;
 using UHighlight.Models;
-using UHighlight.VolumeStrategies;
 using UnityEngine;
 
-namespace UHighlight.VolumeEditors
+namespace UHighlight.EditionStrategies
 {
-    internal class CubeStrategy : IEditionStrategy
+    internal class CylinderStrategy : IEditionStrategy
     {
-        private readonly Cube _cube;
+        private Cylinder _cylinder;
 
         private readonly Player _player;
         private readonly string _material;
@@ -16,7 +16,7 @@ namespace UHighlight.VolumeEditors
 
         private readonly IEffectBuilder _effectBuilder;
 
-        public CubeStrategy(
+        public CylinderStrategy(
             IEffectBuilder effectBuilder,
             Player player,
             string material,
@@ -28,7 +28,7 @@ namespace UHighlight.VolumeEditors
             _material = material;
             _color = color;
 
-            _cube = new Cube();
+            _cylinder = new Cylinder();
 
             PlayerEquipment.OnPunch_Global += OnPunched;
 
@@ -67,11 +67,12 @@ namespace UHighlight.VolumeEditors
             switch (punch)
             {
                 case EPlayerPunch.LEFT:
-                    _cube.Corner1 = position;
+                    _cylinder.Center = position;
                     break;
 
                 case EPlayerPunch.RIGHT:
-                    _cube.Corner2 = position;
+                    var t = _cylinder.Center - position;
+                    _cylinder.Size = new Vector3(t.magnitude, t.magnitude, t.magnitude);
                     break;
             }
 
@@ -91,7 +92,22 @@ namespace UHighlight.VolumeEditors
             switch (key)
             {
                 case 0:
-                    _cube.Rotation = _player.transform.rotation;
+                    _cylinder.Rotation = Quaternion.Euler((_cylinder.Rotation.eulerAngles.x + 2) % 90, _cylinder.Rotation.eulerAngles.y, _cylinder.Rotation.eulerAngles.z);
+                    break;
+
+                case 1:
+                    _cylinder.Rotation = Quaternion.Euler(_cylinder.Rotation.eulerAngles.x, (_cylinder.Rotation.eulerAngles.y + 2) % 360, _cylinder.Rotation.eulerAngles.z);
+                    break;
+
+                case 2:
+                    break;
+
+                case 3:
+                    _cylinder.Size *= 1.05f;
+                    break;
+
+                case 4:
+                    _cylinder.Size /= 1.05f;
                     break;
 
                 default:
@@ -120,7 +136,7 @@ namespace UHighlight.VolumeEditors
 
         public void SetSize(float size)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void Cancel()
@@ -128,46 +144,30 @@ namespace UHighlight.VolumeEditors
             Dispose();
         }
 
-        private Volume? BuildVolume() => _cube.BuildVolume(_material, _color);
+        private Volume? BuildVolume() => _cylinder.BuildVolume(_material, _color);
 
-        private class Cube
+        private class Cylinder
         {
-            public Vector3 Corner1 { get; set; }
-            public Vector3 Corner2 { get; set; }
-            public Quaternion Rotation { get; set; }
+            public Vector3 Center { get; set; }
+            public Vector3 Size { get; set; } = Vector3.one;
+            public Quaternion Rotation { get; set; } = Quaternion.Euler(0, 0, 0);
 
             public Volume? BuildVolume(string material, string color)
             {
-                if (Corner1 == default || Corner2 == default || Rotation == default)
+                if (Center == default || Size == default)
                     return null;
+
+                Console.WriteLine($"{Rotation.eulerAngles.x} {Rotation.eulerAngles.y} {Rotation.eulerAngles.z}");
 
                 return new Volume()
                 {
-                    Center = GetCenter(),
-                    Shape = EVolumeShape.Cube,
+                    Center = Center,
+                    Shape = EVolumeShape.Cylinder,
                     Material = material,
                     Color = color,
-                    Size = GetSize(),
+                    Size = Size,
                     Rotation = GetDirection()
                 };
-            }
-
-            private Vector3 GetCenter()
-            {
-                Vector3 shapeDiagonal = Corner2 - Corner1;
-                return Corner1 + shapeDiagonal / 2;
-            }
-
-            private Vector3 GetSize()
-            {
-                Vector3 shapeDiagonal = Corner2 - Corner1;
-
-                return new Vector3
-                (
-                    Mathf.Abs(Vector3.Project(shapeDiagonal, Rotation * Vector3.right).magnitude),
-                    Mathf.Abs(shapeDiagonal.y),
-                    Mathf.Abs(Vector3.Project(shapeDiagonal, Rotation * Vector3.forward).magnitude)
-                );
             }
 
             private Vector3 GetDirection()

@@ -3,11 +3,11 @@ using UHighlight.API;
 using UHighlight.Models;
 using UnityEngine;
 
-namespace UHighlight.VolumeStrategies
+namespace UHighlight.EditionStrategies
 {
-    internal class SphereStrategy : IEditionStrategy
+    internal class CubeStrategy : IEditionStrategy
     {
-        private readonly Sphere _sphere;
+        private readonly Cube _cube;
 
         private readonly Player _player;
         private readonly string _material;
@@ -15,7 +15,7 @@ namespace UHighlight.VolumeStrategies
 
         private readonly IEffectBuilder _effectBuilder;
 
-        public SphereStrategy(
+        public CubeStrategy(
             IEffectBuilder effectBuilder,
             Player player,
             string material,
@@ -27,7 +27,7 @@ namespace UHighlight.VolumeStrategies
             _material = material;
             _color = color;
 
-            _sphere = new Sphere();
+            _cube = new Cube();
 
             PlayerEquipment.OnPunch_Global += OnPunched;
 
@@ -66,11 +66,11 @@ namespace UHighlight.VolumeStrategies
             switch (punch)
             {
                 case EPlayerPunch.LEFT:
-                    _sphere.Center = position;
+                    _cube.Corner1 = position;
                     break;
 
                 case EPlayerPunch.RIGHT:
-                    _sphere.Radius = (_sphere.Center - position).magnitude;
+                    _cube.Corner2 = position;
                     break;
             }
 
@@ -84,17 +84,18 @@ namespace UHighlight.VolumeStrategies
 
         protected void OnPluginKeyTick(Player player, uint simulation, byte key, bool state)
         {
-            if (!state || player != _player)
+            if (!state)
                 return;
 
-            _sphere.Radius = key switch
+            switch (key)
             {
-                0 => _sphere.Radius + 1f,
-                1 => _sphere.Radius - 1f,
-                2 => _sphere.Radius * 1.05f,
-                3 => _sphere.Radius / 1.05f,
-                _ => _sphere.Radius
-            };
+                case 0:
+                    _cube.Rotation = _player.transform.rotation;
+                    break;
+
+                default:
+                    return;
+            }
 
             Volume? volume = BuildVolume();
 
@@ -118,14 +119,7 @@ namespace UHighlight.VolumeStrategies
 
         public void SetSize(float size)
         {
-            _sphere.Radius = size;
-
-            Volume? volume = BuildVolume();
-
-            if (volume == null)
-                return;
-
-            _effectBuilder.DisplayEffect(volume, _player, true);
+            throw new System.NotImplementedException();
         }
 
         public void Cancel()
@@ -133,32 +127,51 @@ namespace UHighlight.VolumeStrategies
             Dispose();
         }
 
-        private Volume? BuildVolume() => _sphere.BuildVolume(_material, _color);
+        private Volume? BuildVolume() => _cube.BuildVolume(_material, _color);
 
-        private class Sphere
+        private class Cube
         {
-            public Vector3 Center { get; set; }
-            public float Radius { get; set; }
+            public Vector3 Corner1 { get; set; }
+            public Vector3 Corner2 { get; set; }
+            public Quaternion Rotation { get; set; }
 
             public Volume? BuildVolume(string material, string color)
             {
-                if (Center == default || Radius == default)
+                if (Corner1 == default || Corner2 == default || Rotation == default)
                     return null;
 
                 return new Volume()
                 {
-                    Center = Center,
-                    Shape = EVolumeShape.Sphere,
+                    Center = GetCenter(),
+                    Shape = EVolumeShape.Cube,
                     Material = material,
                     Color = color,
                     Size = GetSize(),
-                    Rotation = Vector3.forward
+                    Rotation = GetDirection()
                 };
+            }
+
+            private Vector3 GetCenter()
+            {
+                Vector3 shapeDiagonal = Corner2 - Corner1;
+                return Corner1 + shapeDiagonal / 2;
             }
 
             private Vector3 GetSize()
             {
-                return Vector3.one * Radius * 2;
+                Vector3 shapeDiagonal = Corner2 - Corner1;
+
+                return new Vector3
+                (
+                    Mathf.Abs(Vector3.Project(shapeDiagonal, Rotation * Vector3.right).magnitude),
+                    Mathf.Abs(shapeDiagonal.y),
+                    Mathf.Abs(Vector3.Project(shapeDiagonal, Rotation * Vector3.forward).magnitude)
+                );
+            }
+
+            private Vector3 GetDirection()
+            {
+                return Rotation * Vector3.forward;
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using UHighlight.Models;
 
-namespace UHighlight.VolumeStrategies
+namespace UHighlight.EditionStrategies
 {
     public interface IEditionStrategy : IDisposable
     {

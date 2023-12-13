@@ -1,14 +1,13 @@
 ﻿using SDG.Unturned;
-using System;
 using UHighlight.API;
 using UHighlight.Models;
 using UnityEngine;
 
-namespace UHighlight.VolumeStrategies
+namespace UHighlight.EditionStrategies
 {
-    internal class CylinderStrategy : IEditionStrategy
+    internal class SphereStrategy : IEditionStrategy
     {
-        private Cylinder _cylinder;
+        private readonly Sphere _sphere;
 
         private readonly Player _player;
         private readonly string _material;
@@ -16,7 +15,7 @@ namespace UHighlight.VolumeStrategies
 
         private readonly IEffectBuilder _effectBuilder;
 
-        public CylinderStrategy(
+        public SphereStrategy(
             IEffectBuilder effectBuilder,
             Player player,
             string material,
@@ -28,7 +27,7 @@ namespace UHighlight.VolumeStrategies
             _material = material;
             _color = color;
 
-            _cylinder = new Cylinder();
+            _sphere = new Sphere();
 
             PlayerEquipment.OnPunch_Global += OnPunched;
 
@@ -67,12 +66,11 @@ namespace UHighlight.VolumeStrategies
             switch (punch)
             {
                 case EPlayerPunch.LEFT:
-                    _cylinder.Center = position;
+                    _sphere.Center = position;
                     break;
 
                 case EPlayerPunch.RIGHT:
-                    var t = _cylinder.Center - position;
-                    _cylinder.Size = new Vector3(t.magnitude, t.magnitude, t.magnitude);
+                    _sphere.Radius = (_sphere.Center - position).magnitude;
                     break;
             }
 
@@ -86,33 +84,17 @@ namespace UHighlight.VolumeStrategies
 
         protected void OnPluginKeyTick(Player player, uint simulation, byte key, bool state)
         {
-            if (!state)
+            if (!state || player != _player)
                 return;
 
-            switch (key)
+            _sphere.Radius = key switch
             {
-                case 0:
-                    _cylinder.Rotation = Quaternion.Euler((_cylinder.Rotation.eulerAngles.x + 2) % 90, _cylinder.Rotation.eulerAngles.y, _cylinder.Rotation.eulerAngles.z);
-                    break;
-
-                case 1:
-                    _cylinder.Rotation = Quaternion.Euler(_cylinder.Rotation.eulerAngles.x, (_cylinder.Rotation.eulerAngles.y + 2) % 360, _cylinder.Rotation.eulerAngles.z);
-                    break;
-
-                case 2:
-                    break;
-
-                case 3:
-                    _cylinder.Size *= 1.05f;
-                    break;
-
-                case 4:
-                    _cylinder.Size /= 1.05f;
-                    break;
-
-                default:
-                    return;
-            }
+                0 => _sphere.Radius + 1f,
+                1 => _sphere.Radius - 1f,
+                2 => _sphere.Radius * 1.05f,
+                3 => _sphere.Radius / 1.05f,
+                _ => _sphere.Radius
+            };
 
             Volume? volume = BuildVolume();
 
@@ -136,7 +118,14 @@ namespace UHighlight.VolumeStrategies
 
         public void SetSize(float size)
         {
-            throw new NotImplementedException();
+            _sphere.Radius = size;
+
+            Volume? volume = BuildVolume();
+
+            if (volume == null)
+                return;
+
+            _effectBuilder.DisplayEffect(volume, _player, true);
         }
 
         public void Cancel()
@@ -144,35 +133,32 @@ namespace UHighlight.VolumeStrategies
             Dispose();
         }
 
-        private Volume? BuildVolume() => _cylinder.BuildVolume(_material, _color);
+        private Volume? BuildVolume() => _sphere.BuildVolume(_material, _color);
 
-        private class Cylinder
+        private class Sphere
         {
             public Vector3 Center { get; set; }
-            public Vector3 Size { get; set; } = Vector3.one;
-            public Quaternion Rotation { get; set; } = Quaternion.Euler(0, 0, 0);
+            public float Radius { get; set; }
 
             public Volume? BuildVolume(string material, string color)
             {
-                if (Center == default || Size == default)
+                if (Center == default || Radius == default)
                     return null;
-
-                Console.WriteLine($"{Rotation.eulerAngles.x} {Rotation.eulerAngles.y} {Rotation.eulerAngles.z}");
 
                 return new Volume()
                 {
                     Center = Center,
-                    Shape = EVolumeShape.Cylinder,
+                    Shape = EVolumeShape.Sphere,
                     Material = material,
                     Color = color,
-                    Size = Size,
-                    Rotation = GetDirection()
+                    Size = GetSize(),
+                    Rotation = Vector3.forward
                 };
             }
 
-            private Vector3 GetDirection()
+            private Vector3 GetSize()
             {
-                return Rotation * Vector3.forward;
+                return Vector3.one * Radius * 2;
             }
         }
     }
