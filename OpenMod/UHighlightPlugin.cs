@@ -1,7 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
+using Hydriuk.OpenModModules;
 using Hydriuk.UnturnedModules.Adapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OpenMod.API.Ioc;
 using OpenMod.API.Plugins;
 using OpenMod.Unturned.Plugins;
 using System;
@@ -15,30 +17,17 @@ namespace UHighlight.OpenMod
     {
         public IServiceProvider ServiceProvider { get; private set; }
 
-        private readonly ILogger<UHighlightPlugin> _logger;
-
-        public UHighlightPlugin(IServiceProvider serviceProvider, ILogger<UHighlightPlugin> logger) : base(serviceProvider)
+        public UHighlightPlugin(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             ServiceProvider = serviceProvider;
-            _logger = logger;
         }
+    }
 
-        protected override UniTask OnLoadAsync()
+    public class ServiceConfigurator : IServiceConfigurator
+    {
+        public void ConfigureServices(IOpenModServiceConfigurationContext openModStartupContext, IServiceCollection serviceCollection)
         {
-            _logger.LogInformation("Loading UHighlight by Hydriuk loaded");
-
-            ServiceProvider.GetRequiredService<IVolumeStore>();
-
-            _logger.LogInformation("UHighlight successfully loaded");
-
-            return UniTask.CompletedTask;
-        }
-
-        protected override UniTask OnUnloadAsync()
-        {
-            _logger.LogInformation("UHighlight Unloaded");
-
-            return UniTask.CompletedTask;
+            ServiceRegistrator.ConfigureServices<UHighlightPlugin, Configuration>(openModStartupContext, serviceCollection);
         }
     }
 }

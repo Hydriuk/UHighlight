@@ -9,12 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RocketMod", "RocketMod\Rock
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenMod", "OpenMod\OpenMod.csproj", "{58673F5F-77B2-4ADF-A5F3-BBF90C798619}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnturnedModules", "..\UnturnedModules\UnturnedModules\UnturnedModules.shproj", "{10FCE93F-481C-40AB-9E43-AC01A7749E6C}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "RocketModModules", "..\UnturnedModules\RocketModModules\RocketModModules.shproj", "{39C1AB64-E2E2-40F4-B406-24961D1370F1}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OpenModModules", "..\UnturnedModules\OpenModModules\OpenModModules.shproj", "{89A7FDFF-AA17-42AD-8AFB-E67BE1E18A66}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|Any CPU = Release|Any CPU
@@ -32,15 +26,10 @@ Global
 		SolutionGuid = {795D79F7-50A9-46D4-9FF5-F9224570416D}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\UnturnedModules\UnturnedModules\UnturnedModules.projitems*{10fce93f-481c-40ab-9e43-ac01a7749e6c}*SharedItemsImports = 13
-		..\UnturnedModules\RocketModModules\RocketModModules.projitems*{39c1ab64-e2e2-40f4-b406-24961d1370f1}*SharedItemsImports = 13
 		UHighlight\UHighlight.projitems*{58673f5f-77b2-4adf-a5f3-bbf90c798619}*SharedItemsImports = 5
-		..\UnturnedModules\OpenModModules\OpenModModules.projitems*{58673f5f-77b2-4adf-a5f3-bbf90c798619}*SharedItemsImports = 5
-		..\UnturnedModules\UnturnedModules\UnturnedModules.projitems*{58673f5f-77b2-4adf-a5f3-bbf90c798619}*SharedItemsImports = 5
 		UHighlight\UHighlight.projitems*{7b13afa8-8a69-4954-98ef-c0abc5856ffa}*SharedItemsImports = 4
 		..\UnturnedModules\RocketModModules\RocketModModules.projitems*{7b13afa8-8a69-4954-98ef-c0abc5856ffa}*SharedItemsImports = 4
 		..\UnturnedModules\UnturnedModules\UnturnedModules.projitems*{7b13afa8-8a69-4954-98ef-c0abc5856ffa}*SharedItemsImports = 4
-		..\UnturnedModules\OpenModModules\OpenModModules.projitems*{89a7fdff-aa17-42ad-8afb-e67be1e18a66}*SharedItemsImports = 13
 		UHighlight\UHighlight.projitems*{f20f2b51-e686-4fa2-9bbb-dfb512b7d56e}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

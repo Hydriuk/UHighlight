@@ -17,24 +17,39 @@ namespace UHighlight.Services
     {
         private readonly string _iconUrl;
 
-        public ChatAdapter(IConfigurationAdapter<Configuration> config, IThreadAdapter threadAdapter)
+        private readonly IThreadAdapter _threadAdapter;
+
+        public ChatAdapter(IConfigurationAdapter<Configuration> configurationAdapter, IThreadAdapter threadAdapter)
         {
-            _iconUrl = config.Configuration.IconURL;
+            _threadAdapter = threadAdapter;
+
+            Configuration configuration = configurationAdapter.Configuration;
+
+            _iconUrl = configuration.IconURL;
         }
 
         public void Send(Player player, string message)
         {
-            ChatManager.serverSendMessage(message, Color.green, toPlayer: player.GetSteamPlayer(), iconURL: _iconUrl);
+            _threadAdapter.RunOnMainThread(() =>
+            {
+                ChatManager.serverSendMessage(message, Color.green, toPlayer: player.GetSteamPlayer(), iconURL: _iconUrl);
+            });
         }
 
         public void Send(string message)
         {
-            ChatManager.serverSendMessage(message, Color.green, iconURL: _iconUrl);
+            _threadAdapter.RunOnMainThread(() =>
+            {
+                ChatManager.serverSendMessage(message, Color.green, iconURL: _iconUrl);
+            });
         }
 
         public void SendError(Player player, string message)
         {
-            ChatManager.serverSendMessage(message, Color.red, toPlayer: player.GetSteamPlayer(), iconURL: _iconUrl);
+            _threadAdapter.RunOnMainThread(() =>
+            {
+                ChatManager.serverSendMessage(message, Color.red, toPlayer: player.GetSteamPlayer(), iconURL: _iconUrl);
+            });
         }
     }
 }

@@ -29,7 +29,7 @@ namespace UHighlight.Services
             _serviceLoaded = new TaskCompletionSource<bool>();
 
             Task.Run(async () => {
-                _highlightBuilder = await serviceAdapter.GetServiceAsync<IHighlightBuilder>();
+                _highlightBuilder = await serviceAdapter.GetServiceAsync<UHighlightPlugin, IHighlightBuilder>();
                 _serviceLoaded.SetResult(true);
             });
         }

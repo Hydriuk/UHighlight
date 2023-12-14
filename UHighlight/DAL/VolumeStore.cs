@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using UHighlight.API;
 using UHighlight.Models;
+using UHighlight.OpenMod;
 
 namespace UHighlight.DAL
 {
@@ -22,7 +23,7 @@ namespace UHighlight.DAL
         private readonly ILiteCollection<Volume> _volumes;
         private readonly ILiteCollection<BsonDocument> _categories;
 
-        public VolumeStore(IEnvironmentAdapter environmentAdapter)
+        public VolumeStore(IEnvironmentAdapter<UHighlightPlugin> environmentAdapter)
         {
             _database = new LiteDatabase(Path.Combine(environmentAdapter.Directory, "volumes.db"));
             _volumes = _database.GetCollection<Volume>();

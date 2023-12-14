@@ -93,8 +93,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="..\..\UnturnedModules\RocketModModules\RocketModModules.projitems" Label="Shared" />
   <Import Project="..\UHighlight\UHighlight.projitems" Label="Shared" />
-  <Import Project="..\..\UnturnedModules\UnturnedModules\UnturnedModules.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

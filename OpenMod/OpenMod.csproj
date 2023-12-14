@@ -41,16 +41,18 @@
     <EmbeddedResource Include="translations.yaml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Hydriuk.OpenModModules">
+      <HintPath>Libraries\Hydriuk.OpenModModules.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
   <Target Name="ChangeAliasesOfNugetRefs" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
     <ItemGroup>
     </ItemGroup>
   </Target>
 
-  <Import Project="..\..\UnturnedModules\OpenModModules\OpenModModules.projitems" Label="Shared" />
-
   <Import Project="..\UHighlight\UHighlight.projitems" Label="Shared" />
-
-  <Import Project="..\..\UnturnedModules\UnturnedModules\UnturnedModules.projitems" Label="Shared" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy bin\Release\net481\UHighlight.OpenMod.dll bin" />

@@ -6,9 +6,8 @@ using SDG.Unturned;
 using System;
 using System.Collections.Generic;
 using UHighlight.API;
+using UHighlight.EditionStrategies;
 using UHighlight.Models;
-using UHighlight.VolumeEditors;
-using UHighlight.VolumeStrategies;
 
 namespace UHighlight.Services
 {
