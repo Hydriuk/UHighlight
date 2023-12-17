@@ -12,9 +12,9 @@
     <WarningsAsErrors>nullable</WarningsAsErrors>
     <NoWarn>$(NoWarn);NU1701;NU1702;CS0436</NoWarn>
     <LangVersion>latest</LangVersion>
-    <Version>0.5.3</Version>
-    <InformationalVersion>0.5.3</InformationalVersion>
-    <PackageVersion>0.5.3</PackageVersion>
+    <Version>0.6.0</Version>
+    <InformationalVersion>0.6.0</InformationalVersion>
+    <PackageVersion>0.6.0</PackageVersion>
     <AssemblyName>UHighlight.OpenMod</AssemblyName>
     <Configurations>Release</Configurations>
   </PropertyGroup>
@@ -55,7 +55,7 @@
   <Import Project="..\UHighlight\UHighlight.projitems" Label="Shared" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy bin\Release\net481\UHighlight.OpenMod.dll bin" />
+    <Exec Command="copy bin\Release\net481\UHighlight.OpenMod.dll bin&#xD;&#xA;copy bin\Release\net481\Hydriuk.OpenModModules.dll bin" />
   </Target>
 
 </Project>

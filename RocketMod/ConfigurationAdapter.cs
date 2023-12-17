@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace UHighlight.RocketMod
 {
-    internal class ConfigurationAdapter : Configuration, IConfigurationAdapter<Configuration>, IRocketPluginConfiguration
+    public class ConfigurationAdapter : Configuration, IConfigurationAdapter<Configuration>, IRocketPluginConfiguration
     {
         [XmlIgnore]
         public Configuration Configuration { get => this; }

@@ -10,7 +10,7 @@ namespace UHighlight.API
 #if OPENMOD
     [Service]
 #endif
-    internal interface IVolumeEditor : IDisposable
+    public interface IVolumeEditor : IDisposable
     {
         bool IsEditing(Player player);
         void StartEditing(Player player, EVolumeShape shape, string material, string color);

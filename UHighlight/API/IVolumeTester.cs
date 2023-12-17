@@ -9,7 +9,7 @@ namespace UHighlight.API
 #if OPENMOD
     [Service]
 #endif
-    internal interface IVolumeTester : IDisposable
+    public interface IVolumeTester : IDisposable
     {
         void StartTest(Player player, string category, string name);
         void StopTest(Player player);

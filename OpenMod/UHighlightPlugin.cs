@@ -13,7 +13,7 @@ using UHighlight.API;
 
 namespace UHighlight.OpenMod
 {
-    public class UHighlightPlugin : OpenModUnturnedPlugin, IAdaptablePlugin
+    public class UHighlightPlugin : OpenModUnturnedPlugin
     {
         public IServiceProvider ServiceProvider { get; private set; }
 

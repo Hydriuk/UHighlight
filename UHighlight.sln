@@ -28,8 +28,6 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		UHighlight\UHighlight.projitems*{58673f5f-77b2-4adf-a5f3-bbf90c798619}*SharedItemsImports = 5
 		UHighlight\UHighlight.projitems*{7b13afa8-8a69-4954-98ef-c0abc5856ffa}*SharedItemsImports = 4
-		..\UnturnedModules\RocketModModules\RocketModModules.projitems*{7b13afa8-8a69-4954-98ef-c0abc5856ffa}*SharedItemsImports = 4
-		..\UnturnedModules\UnturnedModules\UnturnedModules.projitems*{7b13afa8-8a69-4954-98ef-c0abc5856ffa}*SharedItemsImports = 4
 		UHighlight\UHighlight.projitems*{f20f2b51-e686-4fa2-9bbb-dfb512b7d56e}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

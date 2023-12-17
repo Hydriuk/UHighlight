@@ -1,6 +1,9 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
+using Hydriuk.RocketModModules;
 using Hydriuk.RocketModModules.Adapters;
 using Hydriuk.UnturnedModules.Adapters;
+using Rocket.Core;
 using Rocket.Core.Plugins;
 using UHighlight.API;
 using UHighlight.DAL;
@@ -9,25 +12,29 @@ using UHighlight.Services;
 
 namespace UHighlight.RocketMod
 {
-    public class UHighlightPlugin : RocketPlugin, IAdaptablePlugin
+    public class UHighlightPlugin : RocketPlugin<ConfigurationAdapter>
     {
         public static UHighlightPlugin Instance { get; private set; }
 
-        private IEnvironmentAdapter _environmentAdapter;
-        private IThreadAdapter _threadAdapter;
-        private ICoroutineAdapter _coroutineAdapter;
-        private IServiceAdapter _serviceAdapter;
         private Harmony _harmony;
 
-        internal IEffectBuilder EffectBuilder { get; private set; }
-        internal IVolumeStore VolumeStore { get; private set; }
-        internal IVolumeEditor VolumeEditor { get; private set; }
-        internal IHighlightBuilder HighlightBuilder { get; private set; }
-        internal IVolumeTester VolumeTester { get; private set; }
+        private ServiceRegistrator _serviceRegistrator;
+
+        [PluginService] private EnvironmentAdapter _environmentAdapter;
+        [PluginService] private ConfigurationAdapter<Configuration> _configurationAdapter;
+        [PluginService] private ThreadAdapter _threadAdapter;
+        [PluginService] private ServiceAdapter _serviceAdapter;
+
+        [PluginService] internal ChatAdapter ChatAdapter { get; private set; }
+        [PluginService] internal EffectBuilder EffectBuilder { get; private set; }
+        [PluginService] internal VolumeStore VolumeStore { get; private set; }
+        [PluginService] internal VolumeEditor VolumeEditor { get; private set; }
+        [PluginService] internal HighlightBuilder HighlightBuilder { get; private set; }
+        [PluginService] internal VolumeTester VolumeTester { get; private set; }
 
         // Public APIs instances are not public to prevent access before they are instanciated. They should be retreived using IServiceAdapter
-        internal IHighlightCommands HighlightCommands { get; private set; }
-        internal IHighlightSpawner HighlightSpawner { get; private set; }
+        [PluginService] internal HighlightCommands HighlightCommands { get; private set; }
+        [PluginService] internal HighlightSpawner HighlightSpawner { get; private set; }
 
         public UHighlightPlugin()
         {
@@ -36,18 +43,7 @@ namespace UHighlight.RocketMod
 
         protected override void Load()
         {
-            _environmentAdapter = new EnvironmentAdapter(this);
-            _threadAdapter = new ThreadAdapter();
-            _coroutineAdapter = TryAddComponent<CoroutineAdapter>();
-            _serviceAdapter = new ServiceAdapter(this);
-
-            EffectBuilder = new EffectBuilder(_threadAdapter);
-            VolumeStore = new VolumeStore(_environmentAdapter);
-            VolumeEditor = new VolumeEditor(_coroutineAdapter, EffectBuilder, VolumeStore);
-            HighlightBuilder = new HighlightBuilder(VolumeStore);
-            VolumeTester = new VolumeTester(HighlightBuilder, EffectBuilder);
-            HighlightCommands = new HighlightCommands();
-            HighlightSpawner = new HighlightSpawner(_serviceAdapter);
+            _serviceRegistrator = new ServiceRegistrator(this);
 
             _harmony = new Harmony("Hydriuk.UHighlight");
             _harmony.PatchAll();
@@ -55,15 +51,9 @@ namespace UHighlight.RocketMod
 
         protected override void Unload()
         {
-            _harmony.UnpatchAll("Hydriuk.UHighlight");
+            _serviceRegistrator.Dispose();
 
-            EffectBuilder.Dispose();
-            VolumeEditor.Dispose();
-            VolumeStore.Dispose();
-            VolumeTester.Dispose();
-
-            _coroutineAdapter.Dispose();
-            _serviceAdapter.Dispose();
+            _harmony?.UnpatchAll("Hydriuk.UHighlight");
         }
     }
 }

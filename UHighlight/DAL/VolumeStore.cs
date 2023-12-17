@@ -10,20 +10,19 @@ using System.IO;
 using System.Linq;
 using UHighlight.API;
 using UHighlight.Models;
-using UHighlight.OpenMod;
 
 namespace UHighlight.DAL
 {
 #if OPENMOD
     [PluginServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
-    public class VolumeStore : IVolumeStore
+    internal class VolumeStore : IVolumeStore
     {
         private readonly LiteDatabase _database;
         private readonly ILiteCollection<Volume> _volumes;
         private readonly ILiteCollection<BsonDocument> _categories;
 
-        public VolumeStore(IEnvironmentAdapter<UHighlightPlugin> environmentAdapter)
+        public VolumeStore(IEnvironmentAdapter environmentAdapter)
         {
             _database = new LiteDatabase(Path.Combine(environmentAdapter.Directory, "volumes.db"));
             _volumes = _database.GetCollection<Volume>();

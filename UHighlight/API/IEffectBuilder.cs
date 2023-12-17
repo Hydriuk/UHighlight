@@ -10,7 +10,7 @@ namespace UHighlight.API
 #if OPENMOD
     [Service]
 #endif
-    internal interface IEffectBuilder : IDisposable
+    public interface IEffectBuilder : IDisposable
     {
         bool Exists(string shape, string color, string material);
         void DisplayEffect(Volume volume, bool unique = false);

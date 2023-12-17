@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UHighlight
 {
-    internal class Configuration
+    public class Configuration
     {
         public string IconURL { get; set; } = string.Empty;
     }

@@ -9,7 +9,7 @@ namespace UHighlight.API
 #if OPENMOD
     [Service]
 #endif
-    internal interface IHighlightBuilder
+    public interface IHighlightBuilder
     {
         IEnumerable<HighlightedZone> BuildZones(string category, float customSize = -1);
         HighlightedZone BuildZone(string category, string name, float customSize = -1);

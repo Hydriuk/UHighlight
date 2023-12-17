@@ -12,7 +12,7 @@ namespace UHighlight.API
 #endif
     public interface IHighlightSpawner
     {
-        Task<IEnumerable<HighlightedZone>> BuildZones(string category, float customSize = -1);
-        Task<HighlightedZone> BuildZone(string category, string name, float customSize = -1);
+        IEnumerable<HighlightedZone> BuildZones(string category, float customSize = -1);
+        HighlightedZone BuildZone(string category, string name, float customSize = -1);
     }
 }
