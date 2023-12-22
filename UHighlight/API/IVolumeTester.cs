@@ -11,7 +11,7 @@ namespace UHighlight.API
 #endif
     public interface IVolumeTester : IDisposable
     {
-        void StartTest(Player player, string category, string name);
+        void StartTest(Player player, string group, string name);
         void StopTest(Player player);
     }
 }

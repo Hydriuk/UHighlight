@@ -6,7 +6,7 @@ namespace UHighlight.Models
 {
     public class Volume
     {
-        public string Category { get; set; } = string.Empty;
+        public string Group { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
 
         [BsonIgnore]

@@ -20,60 +20,60 @@ namespace UHighlight.DAL
     {
         private readonly LiteDatabase _database;
         private readonly ILiteCollection<Volume> _volumes;
-        private readonly ILiteCollection<BsonDocument> _categories;
+        private readonly ILiteCollection<BsonDocument> _groups;
 
         public VolumeStore(IEnvironmentAdapter environmentAdapter)
         {
             _database = new LiteDatabase(Path.Combine(environmentAdapter.Directory, "volumes.db"));
             _volumes = _database.GetCollection<Volume>();
-            _categories = _database.GetCollection<BsonDocument>("categories");
+            _groups = _database.GetCollection<BsonDocument>("groups");
 
-            _volumes.EnsureIndex(volume => volume.Category);
+            _volumes.EnsureIndex(volume => volume.Group);
         }
 
-        public bool Exists(string category, string name)
+        public bool Exists(string group, string name)
         {
             return _volumes.Exists(volume =>
-                volume.Category == category &&
+                volume.Group == group &&
                 volume.Name == name
             );
         }
 
         public void Upsert(Volume volume)
         {
-            if (Exists(volume.Category, volume.Name))
+            if (Exists(volume.Group, volume.Name))
                 throw new Exception("Confict");
 
-            if (!_categories.Exists(category => category["Name"] == volume.Category))
-                _categories.Insert(new BsonDocument() { ["Name"] = volume.Category });
+            if (!_groups.Exists(group => group["Name"] == volume.Group))
+                _groups.Insert(new BsonDocument() { ["Name"] = volume.Group });
 
             _volumes.Upsert(volume);
         }
 
-        public IEnumerable<string> GetCategories()
+        public IEnumerable<string> GetGroups()
         {
-            return _categories
+            return _groups
                 .FindAll()
-                .Select(category => category["Name"].AsString);
+                .Select(group => group["Name"].AsString);
         }
 
-        public IEnumerable<Volume> GetVolumes(string category)
+        public IEnumerable<Volume> GetVolumes(string group)
         {
-            return _volumes.Find(volume => volume.Category == category);
+            return _volumes.Find(volume => volume.Group == group);
         }
 
-        public Volume GetVolume(string category, string name)
+        public Volume GetVolume(string group, string name)
         {
             return _volumes.FindOne(volume =>
-                volume.Category == category &&
+                volume.Group == group &&
                 volume.Name == name
             );
         }
 
-        public void DeleteVolume(string category, string name)
+        public void DeleteVolume(string group, string name)
         {
             _volumes.DeleteMany(volume =>
-                volume.Category == category &&
+                volume.Group == group &&
                 volume.Name == name
             );
         }

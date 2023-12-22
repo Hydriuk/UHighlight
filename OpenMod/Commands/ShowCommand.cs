@@ -13,7 +13,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandParent(typeof(HighlightCommand))]
     [Command("show")]
     [CommandAlias("s")]
-    [CommandSyntax("<category> <name>")]
+    [CommandSyntax("<group> <name>")]
     [CommandActor(typeof(UnturnedUser))]
     internal class ShowCommand : UnturnedCommand
     {
@@ -36,7 +36,7 @@ namespace UHighlight.OpenMod.Commands
             Volume volume = _volumeStore.GetVolume(Context.Parameters[0], Context.Parameters[1]);
 
             if (volume == null)
-                throw new UserFriendlyException($"Volume {Context.Parameters[1]} was not found in category {Context.Parameters[0]}");
+                throw new UserFriendlyException($"Volume {Context.Parameters[1]} was not found in group {Context.Parameters[0]}");
 
             if(Context.Parameters.TryGet(2, out float customSize))
             {

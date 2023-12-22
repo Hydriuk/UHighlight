@@ -69,7 +69,7 @@ namespace UHighlight.Services
             _chatAdapter.Send(player, $"Editing stopped");
         }
 
-        public void Validate(Player player, string category, string name)
+        public void Validate(Player player, string group, string name)
         {
             if (!_editedVolumes.TryGetValue(player, out IEditionStrategy edition))
                 return;
@@ -79,14 +79,14 @@ namespace UHighlight.Services
             if (volume == null)
                 throw new NullReferenceException("The volume is missing a datum to be generated");
 
-            volume.Category = category;
+            volume.Group = group;
             volume.Name = name;
 
             _editedVolumes.Remove(player);
 
             _volumeStore.Upsert(volume);
 
-            _chatAdapter.Send(player, $"Volume {category} {name} created");
+            _chatAdapter.Send(player, $"Volume {group} {name} created");
         }
 
         public void SetSize(Player player, float size)

@@ -47,9 +47,9 @@ namespace UHighlight.Components
             Collider = new Collider();
         }
 
-        internal void Init(string category, string name, Volume volume)
+        internal void Init(string group, string name, Volume volume)
         {
-            Category = category;
+            Group = group;
             Name = name;
             Volume = volume;
 

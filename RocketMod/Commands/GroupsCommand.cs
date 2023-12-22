@@ -6,17 +6,17 @@ using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
 {
-    internal static class CategoriesCommand
+    internal static class GroupsCommand
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
-            IEnumerable<string> categories = UHighlightPlugin.Instance.VolumeStore.GetCategories();
+            IEnumerable<string> groups = UHighlightPlugin.Instance.VolumeStore.GetGroups();
 
-            StringBuilder sb = new StringBuilder($"Volumes categories : ");
+            StringBuilder sb = new StringBuilder($"Volumes groups : ");
 
-            foreach (string category in categories)
+            foreach (string group in groups)
             {
-                sb.Append(category);
+                sb.Append(group);
                 sb.Append(", ");
             }
 

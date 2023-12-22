@@ -10,7 +10,7 @@ namespace UHighlight.OpenMod.Commands
     [CommandParent(typeof(HighlightCommand))]
     [Command("validate")]
     [CommandAlias("v")]
-    [CommandSyntax("<category> <name>")]
+    [CommandSyntax("<group> <name>")]
     [CommandActor(typeof(UnturnedUser))]
     internal class ValidateCommand : UnturnedCommand
     {

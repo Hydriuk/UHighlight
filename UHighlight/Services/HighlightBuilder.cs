@@ -24,9 +24,9 @@ namespace UHighlight.Services
             _volumeStore = volumeStore;
         }
 
-        public IEnumerable<HighlightedZone> BuildZones(string category, float customSize = -1)
+        public IEnumerable<HighlightedZone> BuildZones(string group, float customSize = -1)
         {
-            IEnumerable<Volume> volumes = _volumeStore.GetVolumes(category);
+            IEnumerable<Volume> volumes = _volumeStore.GetVolumes(group);
 
             foreach (Volume volume in volumes)
             {
@@ -34,9 +34,9 @@ namespace UHighlight.Services
             }
         }
 
-        public HighlightedZone BuildZone(string category, string name, float customSize = -1)
+        public HighlightedZone BuildZone(string group, string name, float customSize = -1)
         {
-            Volume volume = _volumeStore.GetVolume(category, name);
+            Volume volume = _volumeStore.GetVolume(group, name);
 
             return BuildZone(volume, customSize);
         }
@@ -61,7 +61,7 @@ namespace UHighlight.Services
             collider.isTrigger = true;
 
             HighlightedZone zone = go.AddComponent<HighlightedZone>();
-            zone.Init(volume.Category, volume.Name, volume);
+            zone.Init(volume.Group, volume.Name, volume);
 
             return zone;
         }

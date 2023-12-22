@@ -52,7 +52,7 @@ namespace UHighlight.OpenMod.Adapters
 
         public Task ExecuteGroups(Player player) => Execute(player, new[]
         {
-            "categories"
+            "groups"
         });
 
         public Task ExecuteVolumes(Player player, string group) => Execute(player, new[]

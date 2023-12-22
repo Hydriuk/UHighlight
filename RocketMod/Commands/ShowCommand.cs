@@ -11,7 +11,7 @@ namespace UHighlight.RocketMod.Commands
         {
             if (command.Length < 2)
             {
-                ChatManager.serverSendMessage("Wrong syntax : /uhl show <category> <name>", Color.red, toPlayer: uPlayer.SteamPlayer());
+                ChatManager.serverSendMessage("Wrong syntax : /uhl show <group> <name>", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
             }
 
@@ -19,7 +19,7 @@ namespace UHighlight.RocketMod.Commands
 
             if (volume == null)
             {
-                ChatManager.serverSendMessage($"Volume {command[1]} was not found in category {command[0]}", Color.red, toPlayer: uPlayer.SteamPlayer());
+                ChatManager.serverSendMessage($"Volume {command[1]} was not found in group {command[0]}", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
             }
 

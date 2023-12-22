@@ -13,7 +13,7 @@ namespace UHighlight.RocketMod.Commands
         {
             if (command.Length != 1)
             {
-                ChatManager.serverSendMessage("Wrong syntax : /uhl volumes <category>", Color.red, toPlayer: uPlayer.SteamPlayer());
+                ChatManager.serverSendMessage("Wrong syntax : /uhl volumes <group>", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
             }
 

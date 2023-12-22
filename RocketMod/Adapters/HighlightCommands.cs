@@ -45,7 +45,7 @@ namespace UHighlight.RocketMod.Adapters
         {
             Execute(player, new[]
             {
-                "categories"
+                "groups"
             });
 
             return Task.CompletedTask;

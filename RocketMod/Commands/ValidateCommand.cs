@@ -10,7 +10,7 @@ namespace UHighlight.RocketMod.Commands
         {
             if (command.Length != 2)
             {
-                ChatManager.serverSendMessage("Wrong syntax : /uhl validate <category> <name>", Color.red, toPlayer: uPlayer.SteamPlayer());
+                ChatManager.serverSendMessage("Wrong syntax : /uhl validate <group> <name>", Color.red, toPlayer: uPlayer.SteamPlayer());
                 return;
             }
 

@@ -41,9 +41,9 @@ namespace UHighlight.RocketMod.Commands
                     CreateCommand.Execute(uPlayer, subCommand);
                     break;
 
-                case "categories":
-                case "cat":
-                    CategoriesCommand.Execute(uPlayer, subCommand);
+                case "listgroups":
+                case "lg":
+                    GroupsCommand.Execute(uPlayer, subCommand);
                     break;
 
                 case "show":
@@ -61,8 +61,8 @@ namespace UHighlight.RocketMod.Commands
                     ValidateCommand.Execute(uPlayer, subCommand);
                     break;
 
-                case "volumes":
-                case "vol":
+                case "listvolumes":
+                case "lv":
                     VolumesCommand.Execute(uPlayer, subCommand);
                     break;
 

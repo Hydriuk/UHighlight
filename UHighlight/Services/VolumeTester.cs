@@ -42,9 +42,9 @@ namespace UHighlight.Services
             }
         }
 
-        public void StartTest(Player player, string category, string name)
+        public void StartTest(Player player, string group, string name)
         {
-            HighlightedZone zone = _highlightBuilder.BuildZone(category, name);
+            HighlightedZone zone = _highlightBuilder.BuildZone(group, name);
 
             InitZone(player, zone);
 

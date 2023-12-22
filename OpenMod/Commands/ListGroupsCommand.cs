@@ -6,19 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UHighlight.API;
-using UHighlight.Models;
 
 namespace UHighlight.OpenMod.Commands
 {
     [CommandParent(typeof(HighlightCommand))]
-    [Command("volumes")]
-    [CommandAlias("vol")]
-    [CommandSyntax("<category>")]
-    internal class VolumesCommand : UnturnedCommand
+    [Command("listgroups")]
+    [CommandAlias("lg")]
+    internal class ListGroupsCommand : UnturnedCommand
     {
         private readonly IVolumeStore _volumeStore;
 
-        public VolumesCommand(IServiceProvider serviceProvider, IVolumeStore volumeStore) : base(serviceProvider)
+        public ListGroupsCommand(IServiceProvider serviceProvider, IVolumeStore volumeStore) : base(serviceProvider)
         {
             _volumeStore = volumeStore;
         }
@@ -27,16 +25,13 @@ namespace UHighlight.OpenMod.Commands
         {
             UnturnedUser user = (UnturnedUser)Context.Actor;
 
-            if (Context.Parameters.Count != 1)
-                throw new CommandWrongUsageException(Context);
+            IEnumerable<string> groups = _volumeStore.GetGroups();
 
-            IEnumerable<Volume> volumes = _volumeStore.GetVolumes(Context.Parameters[0]);
+            StringBuilder sb = new StringBuilder($"Volumes groups : ");
 
-            StringBuilder sb = new StringBuilder($"{Context.Parameters[0]}'s volumes : ");
-
-            foreach (Volume volume in volumes)
+            foreach (string group in groups)
             {
-                sb.Append(volume.Name);
+                sb.Append(group);
                 sb.Append(", ");
             }
 
