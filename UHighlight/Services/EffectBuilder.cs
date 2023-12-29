@@ -26,10 +26,12 @@ namespace UHighlight.Services
         private readonly HashSet<string> _materials = new HashSet<string>();
 
         private readonly IThreadAdapter _threadAdapter;
+        private readonly IVolumeStore _volumeStore;
 
-        public EffectBuilder(IThreadAdapter threadAdapter)
+        public EffectBuilder(IThreadAdapter threadAdapter, IVolumeStore volumeStore)
         {
             _threadAdapter = threadAdapter;
+            _volumeStore = volumeStore;
 
             if (Level.isLoaded)
                 LateLoad();
@@ -78,6 +80,22 @@ namespace UHighlight.Services
             return _effectGUIDProvider.ContainsKey($"{shape}_{material}_{color}");
         }
 
+        public void DisplayGroupEffects(string group, bool unique = false)
+        {
+            foreach (var volume in _volumeStore.GetVolumes(group))
+            {
+                DisplayEffect(volume, unique);
+            };
+        }
+
+        public void DisplayGroupEffects(string group, Player player, bool unique = false)
+        {
+            foreach (var volume in _volumeStore.GetVolumes(group))
+            {
+                DisplayEffect(volume, player, unique);
+            };
+        }
+
         public void DisplayEffect(Volume volume, bool unique = false)
         {
             TriggerEffectParameters effectParams = BuildEffect(volume);
@@ -99,20 +117,36 @@ namespace UHighlight.Services
             ShowEffect(effectParams, unique);
         }
 
+        public void KillAllEffects(Player player)
+        {
+            foreach (Guid guid in _effectGUIDProvider.Values)
+            {
+                KillEffect(guid, player);
+            }
+        }
+
+        public void KillAllEffects()
+        {
+            foreach (Guid guid in _effectGUIDProvider.Values)
+            {
+                KillEffect(guid);
+            }
+        }
+
         public void KillEffect(Volume volume, Player player)
         {
             TriggerEffectParameters effectParams = BuildEffect(volume);
 
             effectParams.SetRelevantPlayer(player.GetTransportConnection());
 
-            KillEffect(effectParams);
+            KillEffect(effectParams.asset.GUID, player);
         }
 
         public void KillEffect(Volume volume)
         {
             TriggerEffectParameters effectParams = BuildEffect(volume);
 
-            KillEffect(effectParams);
+            KillEffect(effectParams.asset.GUID);
         }
 
         private TriggerEffectParameters BuildEffect(Volume volume)
@@ -148,11 +182,19 @@ namespace UHighlight.Services
             });
         }
 
-        private void KillEffect(TriggerEffectParameters effectParameters)
+        private void KillEffect(Guid guid)
         {
             _threadAdapter.RunOnMainThread(() =>
             {
-                EffectManager.ClearEffectByGuid_AllPlayers(effectParameters.asset.GUID);
+                EffectManager.ClearEffectByGuid_AllPlayers(guid);
+            });
+        }
+
+        private void KillEffect(Guid guid, Player player)
+        {
+            _threadAdapter.RunOnMainThread(() =>
+            {
+                EffectManager.ClearEffectByGuid(guid, player.GetTransportConnection());
             });
         }
     }

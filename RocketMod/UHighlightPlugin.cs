@@ -31,6 +31,7 @@ namespace UHighlight.RocketMod
         [PluginService] internal VolumeEditor VolumeEditor { get; private set; }
         [PluginService] internal HighlightBuilder HighlightBuilder { get; private set; }
         [PluginService] internal VolumeTester VolumeTester { get; private set; }
+        [PluginService] internal AdminUIManager AdminUIManager { get; private set; }
 
         // Public APIs instances are not public to prevent access before they are instanciated. They should be retreived using IServiceAdapter
         [PluginService] internal HighlightCommands HighlightCommands { get; private set; }

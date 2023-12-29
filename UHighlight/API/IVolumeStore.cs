@@ -14,9 +14,11 @@ namespace UHighlight.API
     {
         bool Exists(string group, string name);
         void Upsert(Volume volume);
+        void CreateGroup(string group);
         IEnumerable<string> GetGroups();
         IEnumerable<Volume> GetVolumes(string group);
         Volume GetVolume(string group, string name);
         void DeleteVolume(string group, string name);
+        void DeleteGroup(string group);
     }
 }

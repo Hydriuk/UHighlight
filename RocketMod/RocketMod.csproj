@@ -87,6 +87,7 @@
     <Compile Include="Commands\SizeCommand.cs" />
     <Compile Include="Commands\Test\StartCommand.cs" />
     <Compile Include="Commands\Test\StopCommand.cs" />
+    <Compile Include="Commands\UICommand.cs" />
     <Compile Include="Commands\ValidateCommand.cs" />
     <Compile Include="Commands\VolumesCommand.cs" />
     <Compile Include="ConfigurationAdapter.cs" />

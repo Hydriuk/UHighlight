@@ -12,6 +12,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)DAL\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)API\IAdminUIManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IChatAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IEffectBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightCommands.cs" />
@@ -27,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Volume.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Patches\BarricadeDestroyedPatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Patches\StructureDestroyedPatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\AdminUIManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ChatAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\EffectBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\HighlightSpawner.cs" />

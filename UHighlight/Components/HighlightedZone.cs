@@ -49,7 +49,7 @@ namespace UHighlight.Components
 
         internal void Init(string group, string name, Volume volume)
         {
-            Group = group;
+            Category = group;
             Name = name;
             Volume = volume;
 

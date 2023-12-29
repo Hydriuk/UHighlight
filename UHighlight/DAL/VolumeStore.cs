@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using UHighlight.API;
 using UHighlight.Models;
 
@@ -50,6 +51,12 @@ namespace UHighlight.DAL
             _volumes.Upsert(volume);
         }
 
+        public void CreateGroup(string group)
+        {
+            if (!_groups.Exists(g => g["Name"] == group))
+                _groups.Insert(new BsonDocument() { ["Name"] = group });
+        }
+
         public IEnumerable<string> GetGroups()
         {
             return _groups
@@ -76,6 +83,12 @@ namespace UHighlight.DAL
                 volume.Group == group &&
                 volume.Name == name
             );
+        }
+
+        public void DeleteGroup(string group)
+        {
+            _volumes.DeleteMany(volume => volume.Group == group);
+            _groups.DeleteMany(g => g["Name"] == group);
         }
 
         public void Dispose()
