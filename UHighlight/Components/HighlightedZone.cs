@@ -10,30 +10,30 @@ namespace UHighlight.Components
 {
     public class HighlightedZone : MonoBehaviour, IDisposable
     {
-        public string Category { get; set; } = string.Empty;
+        public string Group { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
 
-        public List<Player> Players { get; } = new List<Player>();
+        public HashSet<Player> Players { get; } = new HashSet<Player>();
         public event EventHandler<Player>? PlayerEntered;
         public event EventHandler<Player>? PlayerExited;
 
-        public List<InteractableVehicle> Vehicles { get; } = new List<InteractableVehicle>();
+        public HashSet<InteractableVehicle> Vehicles { get; } = new HashSet<InteractableVehicle>();
         public event EventHandler<InteractableVehicle>? VehicleEntered;
         public event EventHandler<InteractableVehicle>? VehicleExited;
 
-        public List<Zombie> Zombies { get; } = new List<Zombie>();
+        public HashSet<Zombie> Zombies { get; } = new HashSet<Zombie>();
         public event EventHandler<Zombie>? ZombieEntered;
         public event EventHandler<Zombie>? ZombieExited;
 
-        public List<Animal> Animals { get; } = new List<Animal>();
+        public HashSet<Animal> Animals { get; } = new HashSet<Animal>();
         public event EventHandler<Animal>? AnimalEntered;
         public event EventHandler<Animal>? AnimalExited;
 
-        public List<BarricadeDrop> Barricades { get; } = new List<BarricadeDrop>();
+        public HashSet<BarricadeDrop> Barricades { get; } = new HashSet<BarricadeDrop>();
         public event EventHandler<BarricadeDrop>? BarricadeEntered;
         public event EventHandler<BarricadeDrop>? BarricadeExited;
 
-        public List<StructureDrop> Structures { get; } = new List<StructureDrop>();
+        public HashSet<StructureDrop> Structures { get; } = new HashSet<StructureDrop>();
         public event EventHandler<StructureDrop>? StructureEntered;
         public event EventHandler<StructureDrop>? StructureExited;
 
@@ -49,15 +49,17 @@ namespace UHighlight.Components
 
         internal void Init(string group, string name, Volume volume)
         {
-            Category = group;
+            Group = group;
             Name = name;
             Volume = volume;
 
             if (!TryGetComponent<Collider>(out Collider))
                 throw new Exception("You must set a collider on the HighlightedZone before calling Init()");
 
-            Barricades.AddRange(this.GetBarricades());
-            Structures.AddRange(this.GetStructures());
+            foreach (var barricade in this.GetBarricades())
+                Barricades.Add(barricade);
+            foreach (var structure in this.GetStructures())
+                Structures.Add(structure);
 
             BarricadeManager.onBarricadeSpawned += OnBarricadeSpawned;
             StructureManager.onStructureSpawned += OnStructureSpawned;
@@ -69,8 +71,10 @@ namespace UHighlight.Components
         private void Start()
         {
             // Call first time entered events on start to let some time for the plugins to subscribe the events
-            Barricades.ForEach(barricade => BarricadeEntered?.Invoke(this, barricade));
-            Structures.ForEach(structure => StructureEntered?.Invoke(this, structure));
+            foreach (var barricade in Barricades)
+                BarricadeEntered?.Invoke(this, barricade);
+            foreach (var structure in Structures)
+                StructureEntered?.Invoke(this, structure);
         }
 
         public void Dispose()

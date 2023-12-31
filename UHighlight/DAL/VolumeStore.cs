@@ -20,23 +20,21 @@ namespace UHighlight.DAL
     internal class VolumeStore : IVolumeStore
     {
         private readonly LiteDatabase _database;
-        private readonly ILiteCollection<Volume> _volumes;
-        private readonly ILiteCollection<BsonDocument> _groups;
+        private readonly ILiteCollection<ZoneGroup> _groups;
 
         public VolumeStore(IEnvironmentAdapter environmentAdapter)
         {
-            _database = new LiteDatabase(Path.Combine(environmentAdapter.Directory, "volumes.db"));
-            _volumes = _database.GetCollection<Volume>();
-            _groups = _database.GetCollection<BsonDocument>("groups");
+            _database = new LiteDatabase(Path.Combine(environmentAdapter.Directory, "zones.db"));
+            _groups = _database.GetCollection<ZoneGroup>();
 
-            _volumes.EnsureIndex(volume => volume.Group);
+            _groups.EnsureIndex(group => group.Name);
         }
 
-        public bool Exists(string group, string name)
+        public bool Exists(string groupName, string zoneName)
         {
-            return _volumes.Exists(volume =>
-                volume.Group == group &&
-                volume.Name == name
+            return _groups.Exists(group =>
+                group.Name == groupName &&
+                group.Zones.Any(volume => volume.Name == zoneName)
             );
         }
 
@@ -45,50 +43,72 @@ namespace UHighlight.DAL
             if (Exists(volume.Group, volume.Name))
                 throw new Exception("Confict");
 
-            if (!_groups.Exists(group => group["Name"] == volume.Group))
-                _groups.Insert(new BsonDocument() { ["Name"] = volume.Group });
+            if (!_groups.Exists(group => group.Name == volume.Group))
+            {
+                _groups.Insert(new ZoneGroup() 
+                { 
+                    Name = volume.Group, 
+                    Zones = new List<Volume> { volume } 
+                });
+            }
+            else
+            {
+                ZoneGroup group = GetGroup(volume.Group);
+                group.Zones.Add(volume);
 
-            _volumes.Upsert(volume);
+                _groups.Update(group);
+            }
         }
 
-        public void CreateGroup(string group)
+        public void CreateGroup(string groupName)
         {
-            if (!_groups.Exists(g => g["Name"] == group))
-                _groups.Insert(new BsonDocument() { ["Name"] = group });
+            if (!_groups.Exists(group => group.Name == groupName))
+                _groups.Insert(new ZoneGroup() { Name = groupName });
         }
 
-        public IEnumerable<string> GetGroups()
+        public IEnumerable<string> GetGroupNames()
         {
             return _groups
                 .FindAll()
-                .Select(group => group["Name"].AsString);
+                .Select(group => group.Name);
         }
 
-        public IEnumerable<Volume> GetVolumes(string group)
+        public IEnumerable<ZoneGroup> GetGroups()
         {
-            return _volumes.Find(volume => volume.Group == group);
+            return _groups
+                .FindAll();
         }
 
-        public Volume GetVolume(string group, string name)
+        public ZoneGroup GetGroup(string groupName)
         {
-            return _volumes.FindOne(volume =>
-                volume.Group == group &&
-                volume.Name == name
-            );
+            return _groups.FindOne(group => group.Name == groupName);
         }
 
-        public void DeleteVolume(string group, string name)
+        public IEnumerable<Volume> GetVolumes(string groupName)
         {
-            _volumes.DeleteMany(volume =>
-                volume.Group == group &&
-                volume.Name == name
-            );
+            return GetGroup(groupName)
+                .Zones;
         }
 
-        public void DeleteGroup(string group)
+        public Volume GetVolume(string groupName, string zoneName)
         {
-            _volumes.DeleteMany(volume => volume.Group == group);
-            _groups.DeleteMany(g => g["Name"] == group);
+            return GetVolumes(groupName)
+                .FirstOrDefault(zone => zone.Name == zoneName);
+        }
+
+        public void DeleteVolume(string groupName, string zoneName)
+        {
+            ZoneGroup group = GetGroup(groupName);
+
+            Volume zone = group.Zones.Find(zone => zone.Name == zoneName);
+            group.Zones.Remove(zone);
+
+            _groups.Update(group);
+        }
+
+        public void DeleteGroup(string groupName)
+        {
+            _groups.DeleteMany(group => group.Name == groupName);
         }
 
         public void Dispose()

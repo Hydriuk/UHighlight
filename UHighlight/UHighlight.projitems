@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -13,6 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)API\IAdminUIManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\IZonePropertyController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IChatAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IEffectBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)API\IHighlightCommands.cs" />
@@ -26,11 +27,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\HighlightedZoneExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Volume.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ZoneGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ZoneProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Patches\BarricadeDestroyedPatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Patches\StructureDestroyedPatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\AdminUIManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ChatAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\EffectBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ZonePropertyController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\HighlightSpawner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\VolumeEditor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DAL\VolumeStore.cs" />

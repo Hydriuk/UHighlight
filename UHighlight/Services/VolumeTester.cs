@@ -98,7 +98,7 @@ namespace UHighlight.Services
         private void SendMessage(Player player, HighlightedZone zone, string text)
         {
             ChatManager.serverSendMessage(
-                $"{text} zone {zone.Category}/{zone.Name}",
+                $"{text} zone {zone.Group}/{zone.Name}",
                 Color.gray,
                 toPlayer: player.GetSteamPlayer()
             );

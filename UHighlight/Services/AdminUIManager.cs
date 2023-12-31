@@ -259,7 +259,7 @@ namespace UHighlight.Services
             if (!_playersData.TryGetValue(player, out PlayerData playerData))
                 return;
 
-            List<string> groups = _volumeStore.GetGroups().ToList();
+            List<string> groups = _volumeStore.GetGroupNames().ToList();
 
             int groupPageCount = (groups.Count - 1) / GROUPS_PAGE_SIZE + 1;
 

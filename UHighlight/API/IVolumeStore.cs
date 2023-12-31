@@ -12,13 +12,15 @@ namespace UHighlight.API
 #endif
     public interface IVolumeStore : IDisposable
     {
-        bool Exists(string group, string name);
+        bool Exists(string groupName, string zoneName);
         void Upsert(Volume volume);
-        void CreateGroup(string group);
-        IEnumerable<string> GetGroups();
-        IEnumerable<Volume> GetVolumes(string group);
-        Volume GetVolume(string group, string name);
-        void DeleteVolume(string group, string name);
-        void DeleteGroup(string group);
+        void CreateGroup(string groupName);
+        IEnumerable<string> GetGroupNames();
+        IEnumerable<ZoneGroup> GetGroups();
+        ZoneGroup GetGroup(string groupName);
+        IEnumerable<Volume> GetVolumes(string groupName);
+        Volume GetVolume(string groupName, string zoneName);
+        void DeleteVolume(string groupName, string zoneName);
+        void DeleteGroup(string groupName);
     }
 }

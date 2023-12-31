@@ -25,7 +25,7 @@ namespace UHighlight.OpenMod.Commands
         {
             UnturnedUser user = (UnturnedUser)Context.Actor;
 
-            IEnumerable<string> groups = _volumeStore.GetGroups();
+            IEnumerable<string> groups = _volumeStore.GetGroupNames();
 
             StringBuilder sb = new StringBuilder($"Volumes groups : ");
 
