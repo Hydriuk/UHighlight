@@ -15,6 +15,7 @@ namespace UHighlight.API
         bool Exists(string groupName, string zoneName);
         void Upsert(Volume volume);
         void CreateGroup(string groupName);
+        void UpdateGroup(ZoneGroup group);
         IEnumerable<string> GetGroupNames();
         IEnumerable<ZoneGroup> GetGroups();
         ZoneGroup GetGroup(string groupName);

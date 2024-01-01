@@ -21,6 +21,13 @@ namespace UHighlight.OpenMod
         {
             ServiceProvider = serviceProvider;
         }
+
+        protected override UniTask OnLoadAsync()
+        {
+            ServiceProvider.GetRequiredService<IZonePropertyController>();
+
+            return base.OnLoadAsync();
+        }
     }
 
     public class ServiceConfigurator : IServiceConfigurator

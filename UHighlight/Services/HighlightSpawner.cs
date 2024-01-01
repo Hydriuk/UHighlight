@@ -15,9 +15,9 @@ namespace UHighlight.Services
     {
         private readonly IHighlightBuilder _highlightBuilder;
 
-        public HighlightSpawner(IServiceAdapter serviceAdapter)
+        public HighlightSpawner(IHighlightBuilder highlightBuilder)
         {
-            _highlightBuilder = serviceAdapter.GetService<IHighlightBuilder>();
+            _highlightBuilder = highlightBuilder;
         }
 
         public IEnumerable<HighlightedZone> BuildZones(string group, float customSize = -1)

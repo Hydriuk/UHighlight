@@ -9,11 +9,14 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using UHighlight.API;
 using UHighlight.Components;
 using UHighlight.DAL;
 using UHighlight.Extensions;
+using UHighlight.Models;
 using UnityEngine;
+using static SDG.Unturned.WeatherAsset;
 using Random = UnityEngine.Random;
 
 namespace UHighlight.Services
@@ -24,52 +27,39 @@ namespace UHighlight.Services
     internal class ZonePropertyController : IZonePropertyController
     {
         private readonly List<HighlightedZone> _spawnedZones = new List<HighlightedZone>();
+        private readonly List<HighlightedZone> _positionnalZones = new List<HighlightedZone>();
 
-        private readonly Dictionary<string, Configuration.Effect> _deployStructureGroups = new Dictionary<string, Configuration.Effect>();
-        private readonly Dictionary<string, Configuration.Effect> _damageStructureGroups = new Dictionary<string, Configuration.Effect>();
-        private readonly Dictionary<string, Configuration.Effect> _damagePlayerGroups = new Dictionary<string, Configuration.Effect>();
-        private readonly Dictionary<string, Configuration.Effect> _damageZombieGroups = new Dictionary<string, Configuration.Effect>();
-        private readonly Dictionary<string, Configuration.Effect> _damageAnimalGroups = new Dictionary<string, Configuration.Effect>();
-        private readonly Dictionary<string, Configuration.Effect> _damageVehicleGroups = new Dictionary<string, Configuration.Effect>();
-        private readonly Dictionary<string, List<Configuration.Effect>> _permissionGroups = new Dictionary<string, List<Configuration.Effect>>();
-
-        private readonly Dictionary<string, List<Configuration.Effect>> _chatGroups = new Dictionary<string, List<Configuration.Effect>>();
-        private readonly Dictionary<string, List<Configuration.Effect>> _walkThroughGroups = new Dictionary<string, List<Configuration.Effect>>();
-        private readonly Dictionary<string, List<Configuration.Effect>> _executeCommandGroups = new Dictionary<string, List<Configuration.Effect>>();
+        private readonly Dictionary<string, ZoneGroup> _configuration;
 
         private readonly ICommandAdapter _commandAdapter;
-        private readonly IVolumeStore _volumeStore;
 
         public ZonePropertyController(IHighlightSpawner highlightSpawner, ICommandAdapter commandAdapter, IVolumeStore volumeStore)
         {
             _commandAdapter = commandAdapter;
-            _volumeStore = volumeStore;
 
-            volumeStore.GetGroups();
+            IEnumerable<ZoneGroup> groups = volumeStore.GetGroups();
+            
+            foreach (ZoneGroup group in groups)
+            {
+                IEnumerable<HighlightedZone> zones = highlightSpawner.BuildZones(group.Name);
+                _spawnedZones.AddRange(zones);
 
-            Console.WriteLine("IconURL");
-            //Console.WriteLine(configuration.Configuration.IconUrl);
+                if (group.PositionnalProperties.Count > 0)
+                {
+                    _positionnalZones.AddRange(zones);
+                }
 
-            // Build configurations
-            //_deployStructureGroups = CreateConfiguration(configuration.Configuration, Configuration.EEventEffect.PlaceStructure);
-            //_damageStructureGroups = CreateConfiguration(configuration.Configuration, Configuration.EEventEffect.StructureDamage);
-            //_damagePlayerGroups = CreateConfiguration(configuration.Configuration, Configuration.EEventEffect.PlayerDamage);
-            //_damageZombieGroups = CreateConfiguration(configuration.Configuration, Configuration.EEventEffect.ZombieDamage);
-            //_damageAnimalGroups = CreateConfiguration(configuration.Configuration, Configuration.EEventEffect.AnimalDamage);
-            //_damageVehicleGroups = CreateConfiguration(configuration.Configuration, Configuration.EEventEffect.VehicleDamage);
-            //_permissionGroups = CreateListConfiguration(configuration.Configuration, Configuration.EEventEffect.PermissionGroup);
+                if(group.EventProperties.Count > 0)
+                {
+                    foreach (var zone in zones)
+                    {
+                        zone.PlayerEntered += OnPlayerEnteredZone;
+                        zone.PlayerExited += OnPlayerExitedZone;
+                    }
+                }
+            }
 
-            //_chatGroups = CreateListConfiguration(configuration.Configuration, Configuration.EEventEffect.Chat);
-            //_walkThroughGroups = CreateListConfiguration(configuration.Configuration, Configuration.EEventEffect.WalkThrough);
-            //_executeCommandGroups = CreateListConfiguration(configuration.Configuration, Configuration.EEventEffect.ExecuteCommand);
-
-
-            //_globalConfiguration = configuration.Configuration.GlobalEffects;
-            //Console.WriteLine(configuration.Configuration.GroupEffects.Count);
-            //foreach (var group in configuration.Configuration.GroupEffects.Select(group => group.Name))
-            //{
-            //    _spawnedZones.AddRange(highlightSpawner.BuildZones(group));
-            //}
+            _configuration = groups.ToDictionary(group => group.Name);
 
             StructureManager.onDeployStructureRequested += OnStructureDeploying;
             BarricadeManager.onDeployBarricadeRequested += OnBarricadeDeploying;
@@ -80,59 +70,7 @@ namespace UHighlight.Services
             DamageTool.damageZombieRequested += OnZombieDamaging;
             DamageTool.damageAnimalRequested += OnAnimalDamaging;
             VehicleManager.onDamageVehicleRequested += OnVehicleDamaging;
-
-            foreach (HighlightedZone zone in _spawnedZones)
-            {
-                Console.WriteLine(zone.Group);
-                if (_chatGroups.ContainsKey(zone.Group))
-                {
-                    Console.WriteLine("Chat");
-                    zone.PlayerEntered += OnEnteredChat;
-                    zone.PlayerExited += OnExitedChat;
-                }
-
-                if (_walkThroughGroups.ContainsKey(zone.Group))
-                {
-                    zone.PlayerEntered += OnEnteredWalkThrough;
-                    zone.PlayerExited += OnExitedWalkThrough;
-                }
-
-
-                if (_executeCommandGroups.ContainsKey(zone.Group))
-                {
-                    zone.PlayerEntered += OnEnteredExecuteCommand;
-                    zone.PlayerExited += OnExitedExecuteCommand;
-                }
-            }
         }
-
-        #region Configuration
-        private Dictionary<string, Configuration.Effect> CreateConfiguration(Configuration configuration, Configuration.EEventEffect effectType)
-        {
-            return configuration.GroupEffects
-                .Select(group =>
-                (
-                    group.Name,
-                    group.Effects
-                        .FirstOrDefault(effect => effect.Type == effectType)
-                ))
-                .Where(group => group.Item2 != null)
-                .ToDictionary(group => group.Name, group => group.Item2);
-        }
-
-        private Dictionary<string, List<Configuration.Effect>> CreateListConfiguration(Configuration configuration, Configuration.EEventEffect effectType)
-        {
-            return configuration.GroupEffects
-                .Select(group =>
-                (
-                    group.Name,
-                    group.Effects
-                        .Where(effect => effect.Type == effectType)
-                ))
-                .Where(group => group.Item2.Count() > 0)
-                .ToDictionary(group => group.Name, group => group.Item2.ToList());
-        }
-        #endregion
 
         public void Dispose()
         {
@@ -167,38 +105,23 @@ namespace UHighlight.Services
 
         private bool CanDeployStructure(Vector3 point)
         {
-            return GetBoolValue
-            (
-                _deployStructureGroups,
-                Configuration.EEventEffect.PlaceStructure,
-                point,
-                true
-            );
+            return _positionnalZones
+                .Where(zone => zone.Collides(point))
+                .Select(zone => _configuration[zone.Group].PositionnalProperties)
+                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.PlaceStructure))
+                .Any();
         }
         #endregion
-
-        //private void OnEnterPermission(object sender, Player player)
-        //{
-        //    HighlightedZone zone = (HighlightedZone)sender;
-
-        //}
-
-        //private void OnExitPermission(object sender, Player player)
-        //{
-        //    HighlightedZone zone = (HighlightedZone)sender;
-
-        //}
 
         #region Damage
         private void OnBuildableDamaging(CSteamID instigatorSteamID, Transform buildableTransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin)
         {
-            float damageMultiplier = GetFloatValue
-            (
-                _damageStructureGroups,
-                Configuration.EEventEffect.StructureDamage,
-                buildableTransform.position,
-                1
-            );
+            float damageMultiplier = _positionnalZones
+                .Where(zone => zone.Collides(buildableTransform.position))
+                .Select(zone => _configuration[zone.Group].PositionnalProperties)
+                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.StructureDamage))
+                .Select(property => float.Parse(property.Data))
+                .Aggregate((acc, cur) => acc * cur);
 
             pendingTotalDamage = ConvertDamage(pendingTotalDamage * damageMultiplier);
 
@@ -210,13 +133,14 @@ namespace UHighlight.Services
 
         private void OnPlayerDamaging(ref DamagePlayerParameters parameters, ref bool shouldAllow)
         {
-            float damageMultiplier = GetFloatValue
-            (
-                _damagePlayerGroups,
-                Configuration.EEventEffect.PlayerDamage,
-                parameters.player.transform.position,
-                1
-            );
+            Vector3 point = parameters.player.transform.position;
+
+            float damageMultiplier = _positionnalZones
+                .Where(zone => zone.Collides(point))
+                .Select(zone => _configuration[zone.Group].PositionnalProperties)
+                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.PlayerDamage))
+                .Select(property => float.Parse(property.Data))
+                .Aggregate((acc, cur) => acc * cur);
 
             parameters.damage *= damageMultiplier;
 
@@ -228,13 +152,14 @@ namespace UHighlight.Services
 
         private void OnZombieDamaging(ref DamageZombieParameters parameters, ref bool shouldAllow)
         {
-            float damageMultiplier = GetFloatValue
-            (
-                _damageZombieGroups,
-                Configuration.EEventEffect.ZombieDamage,
-                parameters.zombie.transform.position,
-                1
-            );
+            Vector3 point = parameters.zombie.transform.position;
+
+            float damageMultiplier = _positionnalZones
+                .Where(zone => zone.Collides(point))
+                .Select(zone => _configuration[zone.Group].PositionnalProperties)
+                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.ZombieDamage))
+                .Select(property => float.Parse(property.Data))
+                .Aggregate((acc, cur) => acc * cur);
 
             parameters.damage *= damageMultiplier;
 
@@ -246,13 +171,14 @@ namespace UHighlight.Services
 
         private void OnAnimalDamaging(ref DamageAnimalParameters parameters, ref bool shouldAllow)
         {
-            float damageMultiplier = GetFloatValue
-            (
-                _damageAnimalGroups,
-                Configuration.EEventEffect.AnimalDamage,
-                parameters.animal.transform.position,
-                1
-            );
+            Vector3 point = parameters.animal.transform.position;
+
+            float damageMultiplier = _positionnalZones
+                .Where(zone => zone.Collides(point))
+                .Select(zone => _configuration[zone.Group].PositionnalProperties)
+                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.AnimalDamage))
+                .Select(property => float.Parse(property.Data))
+                .Aggregate((acc, cur) => acc * cur);
 
             parameters.damage *= damageMultiplier;
 
@@ -264,13 +190,12 @@ namespace UHighlight.Services
 
         private void OnVehicleDamaging(CSteamID instigatorSteamID, InteractableVehicle vehicle, ref ushort pendingTotalDamage, ref bool canRepair, ref bool shouldAllow, EDamageOrigin damageOrigin)
         {
-            float damageMultiplier = GetFloatValue
-            (
-                _damageVehicleGroups, 
-                Configuration.EEventEffect.VehicleDamage, 
-                vehicle.transform.position,
-                1
-            );
+            float damageMultiplier = _positionnalZones
+                .Where(zone => zone.Collides(vehicle.transform.position))
+                .Select(zone => _configuration[zone.Group].PositionnalProperties)
+                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.VehicleDamage))
+                .Select(property => float.Parse(property.Data))
+                .Aggregate((acc, cur) => acc * cur);
 
             pendingTotalDamage = ConvertDamage(pendingTotalDamage * damageMultiplier);
 
@@ -278,52 +203,6 @@ namespace UHighlight.Services
             {
                 shouldAllow = false;
             }
-        }
-
-        private float GetFloatValue(Dictionary<string, Configuration.Effect> configuration, Configuration.EEventEffect eventEffect, Vector3 position, float defaultValue)
-        {
-            HighlightedZone zone = _spawnedZones
-                .Where(zone => configuration.ContainsKey(zone.Group))
-                .Where(zone => zone.Collides(position))
-                .FirstOrDefault();
-
-            float value;
-            if (zone == null)
-            {
-                value = defaultValue;
-            }
-            else
-            {
-                value = float.Parse(configuration[zone.Group].Data);
-            }
-
-            return value;
-        }
-
-        private bool GetBoolValue(Dictionary<string, Configuration.Effect> configuration, Configuration.EEventEffect eventEffect, Vector3 position, bool defaultValue)
-        {
-            HighlightedZone zone = _spawnedZones
-                .Where(zone => configuration.ContainsKey(zone.Group))
-                .Where(zone => zone.Collides(position))
-                .FirstOrDefault();
-
-            bool value;
-            if (zone == null)
-            {
-                //Configuration.Effect effect = _globalConfiguration
-                //    .FirstOrDefault(effect => effect.Type == eventEffect);
-
-                //if (effect == null)
-                    value = defaultValue;
-                //else
-                //    value = bool.Parse(effect.Data);
-            }
-            else
-            {
-                value = bool.Parse(configuration[zone.Group].Data);
-            }
-
-            return value;
         }
 
         private ushort ConvertDamage(float damageToConvert)
@@ -337,89 +216,95 @@ namespace UHighlight.Services
         }
         #endregion
 
-        #region Chat
-        private void OnEnteredChat(object sender, Player player)
+        #region PlayerEvents
+        private void OnPlayerEnteredZone(object sender, Player player)
         {
             HighlightedZone zone = (HighlightedZone)sender;
 
-            SendChat(zone, player, Configuration.EZoneEvent.Enter);
+            var properties = _configuration[zone.Group]
+                .EventProperties
+                .Where(property => property.Event == EventZoneProperty.EEvent.Enter)
+                .GroupBy(property => property.Type);
+
+            OnChatTriggered
+            (
+                player,
+                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
+            );
+
+            OnWalkThroughTriggered
+            (
+                player,
+                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat),
+                zone
+            );
+
+            OnExecuteCommandTriggered
+            (
+                player,
+                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
+            );
         }
 
-        private void OnExitedChat(object sender, Player player)
+        private void OnPlayerExitedZone(object sender, Player player)
         {
             HighlightedZone zone = (HighlightedZone)sender;
 
-            SendChat(zone, player, Configuration.EZoneEvent.Exit);
+            var properties = _configuration[zone.Group]
+                .EventProperties
+                .Where(property => property.Event == EventZoneProperty.EEvent.Exit)
+                .GroupBy(property => property.Type);
+
+            OnChatTriggered
+            (
+                player, 
+                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
+            );
+
+            OnWalkThroughTriggered
+            (
+                player, 
+                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat), 
+                zone
+            );
+
+            OnExecuteCommandTriggered
+            (
+                player, 
+                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
+            );
         }
 
-        private void SendChat(HighlightedZone zone, Player player, Configuration.EZoneEvent zoneEvent)
+        private void OnChatTriggered(Player player, IEnumerable<EventZoneProperty> properties)
         {
-            List<Configuration.Effect> effects = _chatGroups[zone.Group];
-
-            foreach (Configuration.Effect effect in effects.Where(effect => effect.Event == zoneEvent))
+            foreach (EventZoneProperty property in properties)
             {
-                string text = effect.Data
+                string text = property.Data
                     .Replace("{Player}", player.GetSteamPlayer().playerID.characterName);
 
                 ChatManager.serverSendMessage(text, Color.white, toPlayer: player.GetSteamPlayer(), useRichTextFormatting: true);
             }
         }
-        #endregion
 
-        #region WalkThrough
-        private void OnEnteredWalkThrough(object sender, Player player)
+        private void OnWalkThroughTriggered(Player player, IEnumerable<EventZoneProperty> properties, HighlightedZone zone)
         {
-            HighlightedZone zone = (HighlightedZone)sender;
+            EventZoneProperty property = properties.FirstOrDefault();
 
-            PreventWalkThrough(zone, player, Configuration.EZoneEvent.Enter);
+            if (property == null)
+                return;
+            
+            Vector3 borderZonePoint = zone.Collider.ClosestPointOnBounds(player.transform.position);
+            Vector3 diff = (borderZonePoint - zone.Volume.Center).normalized;
+            Vector3 destination = borderZonePoint + diff;
+
+            player.teleportToLocation(destination, player.transform.eulerAngles.y);
         }
 
-        private void OnExitedWalkThrough(object sender, Player player)
+        private void OnExecuteCommandTriggered(Player player, IEnumerable<EventZoneProperty> properties)
         {
-            HighlightedZone zone = (HighlightedZone)sender;
-
-            PreventWalkThrough(zone, player, Configuration.EZoneEvent.Exit);
-        }
-
-        private void PreventWalkThrough(HighlightedZone zone, Player player, Configuration.EZoneEvent zoneEvent)
-        {
-            List<Configuration.Effect> effects = _walkThroughGroups[zone.Group];
-
-            Configuration.Effect effect = effects.FirstOrDefault(effect => effect.Event == zoneEvent);
-
-            if (effect != null)
+            foreach (EventZoneProperty property in properties)
             {
-                Vector3 borderZonePoint = zone.Collider.ClosestPointOnBounds(player.transform.position);
-                Vector3 diff = (borderZonePoint - zone.Volume.Center).normalized;
-                Vector3 destination = zoneEvent == Configuration.EZoneEvent.Enter ? borderZonePoint + diff : borderZonePoint - diff;
-
-                player.teleportToLocation(destination, player.transform.eulerAngles.y);
-            }
-        }
-        #endregion
-
-        #region ExecuteCommand
-        private void OnEnteredExecuteCommand(object sender, Player player)
-        {
-            HighlightedZone zone = (HighlightedZone)sender;
-
-            ExecuteCommand(zone, player, Configuration.EZoneEvent.Enter);
-        }
-
-        private void OnExitedExecuteCommand(object sender, Player player)
-        {
-            HighlightedZone zone = (HighlightedZone)sender;
-
-            ExecuteCommand(zone, player, Configuration.EZoneEvent.Exit);
-        }
-
-        private void ExecuteCommand(HighlightedZone zone, Player player, Configuration.EZoneEvent zoneEvent)
-        {
-            List<Configuration.Effect> effects = _executeCommandGroups[zone.Group];
-
-            foreach (Configuration.Effect effect in effects.Where(effect => effect.Event == zoneEvent))
-            {
-                string text = effect.Data
+                string text = property.Data
                     .Replace("{Player}", player.GetSteamPlayer().playerID.characterName)
                     .Replace("{PlayerID}", player.GetSteamID().ToString());
 

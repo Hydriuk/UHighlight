@@ -30,9 +30,9 @@ namespace UHighlight.Models
 
         public enum EType
         {
+            Chat,
             WalkThrough,
-            ExecuteCommand,
-            PermissionGroup
+            ExecuteCommand
         }
 
         public enum EEvent

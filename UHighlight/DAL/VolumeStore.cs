@@ -56,7 +56,7 @@ namespace UHighlight.DAL
                 ZoneGroup group = GetGroup(volume.Group);
                 group.Zones.Add(volume);
 
-                _groups.Update(group);
+                UpdateGroup(group);
             }
         }
 
@@ -64,6 +64,11 @@ namespace UHighlight.DAL
         {
             if (!_groups.Exists(group => group.Name == groupName))
                 _groups.Insert(new ZoneGroup() { Name = groupName });
+        }
+
+        public void UpdateGroup(ZoneGroup group)
+        {
+            _groups.Update(group);
         }
 
         public IEnumerable<string> GetGroupNames()
@@ -103,7 +108,7 @@ namespace UHighlight.DAL
             Volume zone = group.Zones.Find(zone => zone.Name == zoneName);
             group.Zones.Remove(zone);
 
-            _groups.Update(group);
+            UpdateGroup(group);
         }
 
         public void DeleteGroup(string groupName)
