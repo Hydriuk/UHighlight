@@ -9,6 +9,7 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
 using UHighlight.Extensions;
@@ -35,9 +36,8 @@ namespace UHighlight.Services
             _commandAdapter = commandAdapter;
             _configuration = new Dictionary<string, ZoneGroup>();
 
-            serviceAdapter.GetServiceAsync<IHighlightSpawner>()
-                .ContinueWith(async highlightSpawner => InitZones(await highlightSpawner, volumeStore));
-
+            InitZones(serviceAdapter, volumeStore).Wait();
+            
             StructureManager.onDeployStructureRequested += OnStructureDeploying;
             BarricadeManager.onDeployBarricadeRequested += OnBarricadeDeploying;
 
@@ -67,13 +67,16 @@ namespace UHighlight.Services
             }
         }
 
-        private void InitZones(IHighlightSpawner highlightSpawner, IVolumeStore volumeStore)
+        private async Task InitZones(IServiceAdapter serviceAdapter, IVolumeStore volumeStore)
         {
+            IHighlightSpawner highlightSpawner = await serviceAdapter.GetServiceAsync<IHighlightSpawner>();
+
             IEnumerable<ZoneGroup> groups = volumeStore.GetGroups();
 
             foreach (ZoneGroup group in groups)
             {
                 IEnumerable<HighlightedZone> zones = highlightSpawner.BuildZones(group.Name);
+
                 _spawnedZones.AddRange(zones);
 
                 if (group.GetPositionnalProperties().Count() > 0)

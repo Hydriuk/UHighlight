@@ -1,5 +1,4 @@
-﻿using Hydriuk.UnturnedModules.Adapters;
-#if OPENMOD
+﻿#if OPENMOD
 using OpenMod.API.Ioc;
 #endif
 using System.Collections.Generic;

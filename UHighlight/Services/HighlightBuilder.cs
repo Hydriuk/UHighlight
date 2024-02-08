@@ -5,6 +5,7 @@ using OpenMod.API.Ioc;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UHighlight.API;
 using UHighlight.Components;
 using UHighlight.Models;
@@ -26,12 +27,12 @@ namespace UHighlight.Services
 
         public IEnumerable<HighlightedZone> BuildZones(string group, float customSize = -1)
         {
-            IEnumerable<Volume> volumes = _volumeStore.GetVolumes(group);
-
-            foreach (Volume volume in volumes)
-            {
-                yield return BuildZone(volume, customSize);
-            }
+            return _volumeStore
+                .GetVolumes(group)
+                .Select(volume => BuildZone(volume, customSize))
+                // Call ToList to prevent the method to be called more than once for a single call
+                // Select contains a yield return, and these makes the IEnumerable to be executed each time it is enumerated
+                .ToList();
         }
 
         public HighlightedZone BuildZone(string group, string name, float customSize = -1)
