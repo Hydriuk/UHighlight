@@ -23,5 +23,8 @@ namespace UHighlight.API
         Volume GetVolume(string groupName, string zoneName);
         void DeleteVolume(string groupName, string zoneName);
         void DeleteGroup(string groupName);
+        List<ZoneProperty> GetProperties(string groupName);
+        void CreateProperty(string groupName, ZoneProperty property);
+        void DeleteProperty(string groupName, int index);
     }
 }

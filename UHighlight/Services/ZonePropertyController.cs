@@ -9,14 +9,11 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 using UHighlight.API;
 using UHighlight.Components;
-using UHighlight.DAL;
 using UHighlight.Extensions;
 using UHighlight.Models;
 using UnityEngine;
-using static SDG.Unturned.WeatherAsset;
 using Random = UnityEngine.Random;
 
 namespace UHighlight.Services
@@ -33,33 +30,13 @@ namespace UHighlight.Services
 
         private readonly ICommandAdapter _commandAdapter;
 
-        public ZonePropertyController(IHighlightSpawner highlightSpawner, ICommandAdapter commandAdapter, IVolumeStore volumeStore)
+        public ZonePropertyController(IServiceAdapter serviceAdapter, ICommandAdapter commandAdapter, IVolumeStore volumeStore)
         {
             _commandAdapter = commandAdapter;
+            _configuration = new Dictionary<string, ZoneGroup>();
 
-            IEnumerable<ZoneGroup> groups = volumeStore.GetGroups();
-            
-            foreach (ZoneGroup group in groups)
-            {
-                IEnumerable<HighlightedZone> zones = highlightSpawner.BuildZones(group.Name);
-                _spawnedZones.AddRange(zones);
-
-                if (group.PositionnalProperties.Count > 0)
-                {
-                    _positionnalZones.AddRange(zones);
-                }
-
-                if(group.EventProperties.Count > 0)
-                {
-                    foreach (var zone in zones)
-                    {
-                        zone.PlayerEntered += OnPlayerEnteredZone;
-                        zone.PlayerExited += OnPlayerExitedZone;
-                    }
-                }
-            }
-
-            _configuration = groups.ToDictionary(group => group.Name);
+            serviceAdapter.GetServiceAsync<IHighlightSpawner>()
+                .ContinueWith(async highlightSpawner => InitZones(await highlightSpawner, volumeStore));
 
             StructureManager.onDeployStructureRequested += OnStructureDeploying;
             BarricadeManager.onDeployBarricadeRequested += OnBarricadeDeploying;
@@ -90,6 +67,36 @@ namespace UHighlight.Services
             }
         }
 
+        private void InitZones(IHighlightSpawner highlightSpawner, IVolumeStore volumeStore)
+        {
+            IEnumerable<ZoneGroup> groups = volumeStore.GetGroups();
+
+            foreach (ZoneGroup group in groups)
+            {
+                IEnumerable<HighlightedZone> zones = highlightSpawner.BuildZones(group.Name);
+                _spawnedZones.AddRange(zones);
+
+                if (group.GetPositionnalProperties().Count() > 0)
+                {
+                    _positionnalZones.AddRange(zones);
+                }
+
+                if (group.GetEventProperties().Count() > 0)
+                {
+                    foreach (var zone in zones)
+                    {
+                        zone.PlayerEntered += OnPlayerEnteredZone;
+                        zone.PlayerExited += OnPlayerExitedZone;
+                    }
+                }
+            }
+
+            foreach (var item in groups.ToDictionary(group => group.Name))
+            {
+                _configuration.Add(item.Key, item.Value);
+            }
+        }
+
         #region PlaceStructure
         private void OnStructureDeploying(Structure structure, ItemStructureAsset asset, ref Vector3 point, ref float angle_x, ref float angle_y, ref float angle_z, ref ulong owner, ref ulong group, ref bool shouldAllow)
         {
@@ -105,10 +112,10 @@ namespace UHighlight.Services
 
         private bool CanDeployStructure(Vector3 point)
         {
-            return _positionnalZones
+            return !_positionnalZones
                 .Where(zone => zone.Collides(point))
-                .Select(zone => _configuration[zone.Group].PositionnalProperties)
-                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.PlaceStructure))
+                .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
+                .SelectMany(properties => properties.Where(property => property.Type == ZoneProperty.EType.PlaceStructure))
                 .Any();
         }
         #endregion
@@ -118,9 +125,10 @@ namespace UHighlight.Services
         {
             float damageMultiplier = _positionnalZones
                 .Where(zone => zone.Collides(buildableTransform.position))
-                .Select(zone => _configuration[zone.Group].PositionnalProperties)
-                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.StructureDamage))
+                .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
+                .SelectMany(properties => properties.Where(property => property.Type == ZoneProperty.EType.StructureDamage))
                 .Select(property => float.Parse(property.Data))
+                .Prepend(1) // Set base (default) value
                 .Aggregate((acc, cur) => acc * cur);
 
             pendingTotalDamage = ConvertDamage(pendingTotalDamage * damageMultiplier);
@@ -137,9 +145,10 @@ namespace UHighlight.Services
 
             float damageMultiplier = _positionnalZones
                 .Where(zone => zone.Collides(point))
-                .Select(zone => _configuration[zone.Group].PositionnalProperties)
-                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.PlayerDamage))
+                .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
+                .SelectMany(properties => properties.Where(property => property.Type == ZoneProperty.EType.PlayerDamage))
                 .Select(property => float.Parse(property.Data))
+                .Prepend(1) // Set base (default) value
                 .Aggregate((acc, cur) => acc * cur);
 
             parameters.damage *= damageMultiplier;
@@ -153,12 +162,13 @@ namespace UHighlight.Services
         private void OnZombieDamaging(ref DamageZombieParameters parameters, ref bool shouldAllow)
         {
             Vector3 point = parameters.zombie.transform.position;
-
+            
             float damageMultiplier = _positionnalZones
                 .Where(zone => zone.Collides(point))
-                .Select(zone => _configuration[zone.Group].PositionnalProperties)
-                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.ZombieDamage))
+                .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
+                .SelectMany(properties => properties.Where(property => property.Type == ZoneProperty.EType.ZombieDamage))
                 .Select(property => float.Parse(property.Data))
+                .Prepend(1) // Set base (default) value
                 .Aggregate((acc, cur) => acc * cur);
 
             parameters.damage *= damageMultiplier;
@@ -175,9 +185,10 @@ namespace UHighlight.Services
 
             float damageMultiplier = _positionnalZones
                 .Where(zone => zone.Collides(point))
-                .Select(zone => _configuration[zone.Group].PositionnalProperties)
-                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.AnimalDamage))
+                .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
+                .SelectMany(properties => properties.Where(property => property.Type == ZoneProperty.EType.AnimalDamage))
                 .Select(property => float.Parse(property.Data))
+                .Prepend(1) // Set base (default) value
                 .Aggregate((acc, cur) => acc * cur);
 
             parameters.damage *= damageMultiplier;
@@ -192,9 +203,10 @@ namespace UHighlight.Services
         {
             float damageMultiplier = _positionnalZones
                 .Where(zone => zone.Collides(vehicle.transform.position))
-                .Select(zone => _configuration[zone.Group].PositionnalProperties)
-                .SelectMany(properties => properties.Where(property => property.Type == PositionnalZoneProperty.EType.VehicleDamage))
+                .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
+                .SelectMany(properties => properties.Where(property => property.Type == ZoneProperty.EType.VehicleDamage))
                 .Select(property => float.Parse(property.Data))
+                .Prepend(1) // Set base (default) value
                 .Aggregate((acc, cur) => acc * cur);
 
             pendingTotalDamage = ConvertDamage(pendingTotalDamage * damageMultiplier);
@@ -221,74 +233,63 @@ namespace UHighlight.Services
         {
             HighlightedZone zone = (HighlightedZone)sender;
 
-            var properties = _configuration[zone.Group]
-                .EventProperties
-                .Where(property => property.Event == EventZoneProperty.EEvent.Enter)
-                .GroupBy(property => property.Type);
-
-            OnChatTriggered
-            (
-                player,
-                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
-            );
-
-            OnWalkThroughTriggered
-            (
-                player,
-                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat),
-                zone
-            );
-
-            OnExecuteCommandTriggered
-            (
-                player,
-                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
-            );
+            OnZoneCrossed(player, zone, ZoneProperty.EEvent.Enter);
         }
 
         private void OnPlayerExitedZone(object sender, Player player)
         {
             HighlightedZone zone = (HighlightedZone)sender;
 
+            OnZoneCrossed(player, zone, ZoneProperty.EEvent.Exit);
+        }
+
+        private void OnZoneCrossed(Player player, HighlightedZone zone, ZoneProperty.EEvent eventType)
+        {
             var properties = _configuration[zone.Group]
-                .EventProperties
-                .Where(property => property.Event == EventZoneProperty.EEvent.Exit)
+                .GetEventProperties()
+                .Where(property => property.Event == eventType)
                 .GroupBy(property => property.Type);
 
             OnChatTriggered
             (
-                player, 
-                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
+                player,
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.Chat)
             );
 
             OnWalkThroughTriggered
             (
-                player, 
-                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat), 
+                player,
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.WalkThrough),
                 zone
             );
 
             OnExecuteCommandTriggered
             (
-                player, 
-                properties.FirstOrDefault(property => property.Key == EventZoneProperty.EType.Chat)
+                player,
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.ExecuteCommand)
             );
         }
 
-        private void OnChatTriggered(Player player, IEnumerable<EventZoneProperty> properties)
+        private void OnChatTriggered(Player player, IEnumerable<ZoneProperty> properties)
         {
-            foreach (EventZoneProperty property in properties)
+            if (properties == null)
+                return;
+
+            foreach (ZoneProperty property in properties)
             {
                 string text = property.Data
                     .Replace("{Player}", player.GetSteamPlayer().playerID.characterName);
-
+                
                 ChatManager.serverSendMessage(text, Color.white, toPlayer: player.GetSteamPlayer(), useRichTextFormatting: true);
             }
         }
 
-        private void OnWalkThroughTriggered(Player player, IEnumerable<EventZoneProperty> properties, HighlightedZone zone)
+        private void OnWalkThroughTriggered(Player player, IEnumerable<ZoneProperty> properties, HighlightedZone zone)
         {
-            EventZoneProperty property = properties.FirstOrDefault();
+            if (properties == null)
+                return;
+
+            ZoneProperty property = properties.FirstOrDefault();
 
             if (property == null)
                 return;
@@ -300,9 +301,12 @@ namespace UHighlight.Services
             player.teleportToLocation(destination, player.transform.eulerAngles.y);
         }
 
-        private void OnExecuteCommandTriggered(Player player, IEnumerable<EventZoneProperty> properties)
+        private void OnExecuteCommandTriggered(Player player, IEnumerable<ZoneProperty> properties)
         {
-            foreach (EventZoneProperty property in properties)
+            if (properties == null)
+                return;
+
+            foreach (ZoneProperty property in properties)
             {
                 string text = property.Data
                     .Replace("{Player}", player.GetSteamPlayer().playerID.characterName)

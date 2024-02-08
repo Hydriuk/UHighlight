@@ -8,6 +8,7 @@ using SDG.Unturned;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using UHighlight.API;
 using UHighlight.Models;
@@ -21,6 +22,7 @@ namespace UHighlight.Services
     {
         private const int GROUPS_PAGE_SIZE = 7;
         private const int ZONES_PAGE_SIZE = 8;
+        private const int PROPERTIES_PAGE_SIZE = 6;
 
         private readonly ushort _effectID = 21700;
         private short _effectKey { get => (short)(_effectID + short.MaxValue); }
@@ -56,77 +58,72 @@ namespace UHighlight.Services
 
             switch (buttonName)
             {
+                // General
                 case "CloseUHighlightUIButton":
                     HideUI(player);
+                    player.disablePluginWidgetFlag(EPluginWidgetFlags.Modal);
                     break;
-
                 case "CaptureCursorButton":
                     player.enablePluginWidgetFlag(EPluginWidgetFlags.Modal);
                     break;
-
                 case "ReleaseCursorButton":
                     player.disablePluginWidgetFlag(EPluginWidgetFlags.Modal);
                     break;
 
+                // Group
                 case "GroupsPreviousPageButton":
                     playerData.SelectedGroupsPage = Math.Max(0, playerData.SelectedGroupsPage - 1);
                     UpdateUI(player);
                     break;
-
                 case "GroupsNextPageButton":
                     playerData.SelectedGroupsPage = Math.Min((_volumeStore.GetGroups().Count()-1) / GROUPS_PAGE_SIZE, playerData.SelectedGroupsPage + 1);
                     UpdateUI(player);
                     break;
 
+                // Zones
                 case "ZonesPreviousPageButton":
                     playerData.SelectedZonesPage = Math.Max(0, playerData.SelectedZonesPage - 1);
                     UpdateUI(player);
                     break;
-
                 case "ZonesNextPageButton":
                     playerData.SelectedZonesPage = Math.Min((_volumeStore.GetVolumes(playerData.SelectedGroup).Count()-1) / ZONES_PAGE_SIZE, playerData.SelectedZonesPage + 1);
                     UpdateUI(player);
                     break;
-
-
                 case "StartZoneCreationButton":
                     _volumeEditor.StartEditing(player, playerData.SelectedShape, playerData.SelectedMaterial, playerData.SelectedColor);
+                    player.disablePluginWidgetFlag(EPluginWidgetFlags.Modal);
+                    EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"CaptureCursorButton", true);
                     break;
-
                 case "ValidateZoneCreationButton":
                     if(playerData.CreatingZoneName != string.Empty)
                         _volumeEditor.Validate(player, playerData.SelectedGroup, playerData.CreatingZoneName);
                     UpdateUI(player);
                     break;
-
                 case "CancelZoneCreationButton":
                     _volumeEditor.StopEditing(player);
                     break;
-
                 case "CreateZoneGroupButton":
                     _volumeStore.CreateGroup(playerData.CreatingGroupName);
                     UpdateUI(player);
                     break;
-
                 case "HideZones":
                     _effectBuilder.KillAllEffects(player);
                     break;
-
-
+                // Zone shape
                 case "ZoneSetCubeButton":
                     playerData.SelectedShape = EVolumeShape.Cube;
                     break;
                 case "ZoneSetSphereButton":
                     playerData.SelectedShape = EVolumeShape.Sphere;
                     break;
-
+                // Zone material
                 case "ZoneSetSolidButton":
                     playerData.SelectedMaterial = "Solid";
                     break;
                 case "ZoneSetTransparentButton":
                     playerData.SelectedMaterial = "Transparent";
                     break;
-
+                // Zone color
                 case "ZoneSetRedButton":
                     playerData.SelectedColor = "Red";
                     break;
@@ -156,6 +153,69 @@ namespace UHighlight.Services
                     break;
                 case "ZoneSetPinkButton":
                     playerData.SelectedColor = "Pink";
+                    break;
+
+                // Properties
+                case "PropertiesPreviousPageButton":
+                    playerData.SelectedPropertiesPage = Math.Max(0, playerData.SelectedPropertiesPage - 1);
+                    break;
+                case "PropertiesNextPageButton":
+                    playerData.SelectedPropertiesPage = Math.Min
+                    (
+                        (_volumeStore.GetGroup(playerData.SelectedGroup).Properties.Count() - 1) / PROPERTIES_PAGE_SIZE, 
+                        playerData.SelectedPropertiesPage + 1
+                    );
+                    break;
+                case "CreatePropertyButton":
+                    _volumeStore.CreateProperty(playerData.SelectedGroup, new ZoneProperty() 
+                    { 
+                        Type = playerData.CreatingPropertyType, 
+                        Event = playerData.CreatingPropertyEvent, 
+                        Data = playerData.CreatingPropertyData 
+                    });
+                    ResetProperty(player);
+                    UpdateUI(player);
+                    break;
+                case "ClosePropertiesButton":
+                    ResetProperty(player);
+                    break;
+                // Property event
+                case "SetEnterEventButton":
+                    playerData.CreatingPropertyEvent = ZoneProperty.EEvent.Enter;
+                    break;
+                case "SetExitEventButton":
+                    playerData.CreatingPropertyEvent = ZoneProperty.EEvent.Exit;
+                    break;
+                // Property action
+                case "SetPlaceStructurePropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.PlaceStructure;
+                    break;
+                case "SetStructureDamagePropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.StructureDamage;
+                    break;
+                case "SetPlayerDamagePropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.PlayerDamage;
+                    break;
+                case "SetVehicleDamagePropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.VehicleDamage;
+                    break;
+                case "SetZombieDamagePropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.ZombieDamage;
+                    break;
+                case "SetAnimalDamagePropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.AnimalDamage;
+                    break;
+                case "SetPermissionPropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.PermissionGroup;
+                    break;
+                case "SetChatPropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.Chat;
+                    break;
+                case "SetCommandPropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.ExecuteCommand;
+                    break;
+                case "SetWalkThroughPropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.WalkThrough;
                     break;
 
                 default:
@@ -194,6 +254,11 @@ namespace UHighlight.Services
                 _volumeStore.DeleteVolume(playerData.SelectedGroup, playerData.DisplayedZones[index].Name);
                 UpdateUI(player);
             }
+            else if(Regex.IsMatch(buttonName, @"DeleteProperty \(\d\)"))
+            {
+                _volumeStore.DeleteProperty(playerData.SelectedGroup, index);
+                UpdateUI(player);
+            }
         }
 
         private void OnTextCommitted(Player player, string buttonName, string text)
@@ -211,6 +276,10 @@ namespace UHighlight.Services
                     playerData.CreatingZoneName = text;
                     break;
 
+                case "PropertyDataInput":
+                    playerData.CreatingPropertyData = text;
+                    break;
+
                 default:
                     OnTemplatedTextCommitted(player, buttonName, text, playerData);
                     break;
@@ -219,7 +288,16 @@ namespace UHighlight.Services
 
         private void OnTemplatedTextCommitted(Player player, string buttonName, string text, PlayerData playerData)
         {
+        }
 
+        private void ResetProperty(Player player)
+        {
+            if (!_playersData.TryGetValue(player, out PlayerData playerData))
+                return;
+
+            playerData.CreatingPropertyType = ZoneProperty.EType.PlaceStructure;
+            playerData.CreatingPropertyEvent = ZoneProperty.EEvent.Enter;
+            playerData.CreatingPropertyData = string.Empty;
         }
 
         public void ShowUI(Player player)
@@ -286,6 +364,7 @@ namespace UHighlight.Services
 
                 int zonePageCount = (zones.Count - 1) / ZONES_PAGE_SIZE + 1;
 
+                EffectManager.sendUIEffectText(_effectKey, player.GetTransportConnection(), true, "ZonesTitle", $"{playerData.SelectedGroup}'s zones");
                 EffectManager.sendUIEffectText(_effectKey, player.GetTransportConnection(), true, "ZonesPage", $"{playerData.SelectedZonesPage + 1}/{zonePageCount}");
 
                 EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"Zones", true);
@@ -309,6 +388,31 @@ namespace UHighlight.Services
             {
                 EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"Zones", false);
             }
+
+            if(playerData.SelectedGroup != string.Empty)
+            {
+                List<ZoneProperty> properties = _volumeStore.GetProperties(playerData.SelectedGroup);
+
+                int propertiesPageCount = (properties.Count - 1) / PROPERTIES_PAGE_SIZE + 1;
+
+                EffectManager.sendUIEffectText(_effectKey, player.GetTransportConnection(), true, "PropertiesPage", $"{playerData.SelectedPropertiesPage + 1}/{propertiesPageCount}");
+
+                playerData.DisplayedProperties = properties
+                    .Skip(playerData.SelectedPropertiesPage * PROPERTIES_PAGE_SIZE)
+                    .Take(PROPERTIES_PAGE_SIZE)
+                    .ToList();
+
+                for (int i = 0; i < PROPERTIES_PAGE_SIZE; i++)
+                {
+                    if(playerData.DisplayedProperties.Count > i)
+                    {
+                        EffectManager.sendUIEffectText(_effectKey, player.GetTransportConnection(), true, $"PropertyName ({i})", playerData.DisplayedProperties[i].Type.ToString());
+                        EffectManager.sendUIEffectText(_effectKey, player.GetTransportConnection(), true, $"PropertyData ({i})", playerData.DisplayedProperties[i].Data);
+                    }
+
+                    EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"Property ({i})", playerData.DisplayedProperties.Count > i);
+                }
+            }
         }
 
         private class PlayerData
@@ -316,6 +420,9 @@ namespace UHighlight.Services
             public int SelectedGroupsPage { get; set; }
             public string SelectedGroup { get; set; } = string.Empty;
             public int SelectedZonesPage { get; set; }
+            public string SelectedZone { get; set; } = string.Empty;
+            public int SelectedPropertiesPage { get; set; }
+
 
             public EVolumeShape SelectedShape { get; set; }
             public string SelectedMaterial { get; set; } = string.Empty;
@@ -324,9 +431,13 @@ namespace UHighlight.Services
             public string CreatingGroupName { get; set; } = string.Empty;
             public string CreatingZoneName { get; set; } = string.Empty;
 
+            public ZoneProperty.EType CreatingPropertyType { get; set; }
+            public ZoneProperty.EEvent CreatingPropertyEvent { get; set; }
+            public string CreatingPropertyData { get; set; } = string.Empty;
+
             public List<string> DisplayedGroups { get; set; } = new List<string>();
             public List<Volume> DisplayedZones { get; set; } = new List<Volume>();
-
+            public List<ZoneProperty> DisplayedProperties { get; set; } = new List<ZoneProperty>();
         }
     }
 }

@@ -5,9 +5,10 @@ using System.Text;
 
 namespace UHighlight.Models
 {
-    public class PositionnalZoneProperty
+    public class ZoneProperty
     {
         public EType Type { get; set; }
+        public EEvent Event { get; set; }
         public string Data { get; set; } = string.Empty;
 
         public enum EType
@@ -18,18 +19,7 @@ namespace UHighlight.Models
             VehicleDamage,
             ZombieDamage,
             AnimalDamage,
-            PermissionGroup
-        }
-    }
-
-    public class EventZoneProperty
-    {
-        public EType Type { get; set; }
-        public EEvent Event { get; set; }
-        public string Data { get; set; } = string.Empty;
-
-        public enum EType
-        {
+            PermissionGroup,
             Chat,
             WalkThrough,
             ExecuteCommand
@@ -50,7 +40,6 @@ namespace UHighlight.Models
             Outside = Exit
         }
     }
-
 
     //public class ZoneProperty<T> where T : struct
     //{

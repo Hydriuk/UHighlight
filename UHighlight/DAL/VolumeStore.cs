@@ -32,10 +32,9 @@ namespace UHighlight.DAL
 
         public bool Exists(string groupName, string zoneName)
         {
-            return _groups.Exists(group =>
-                group.Name == groupName &&
-                group.Zones.Any(volume => volume.Name == zoneName)
-            );
+            return _groups
+                .FindOne(group => group.Name == groupName)
+                .Zones.Any(volume => volume.Name == zoneName);
         }
 
         public void Upsert(Volume volume)
@@ -92,7 +91,7 @@ namespace UHighlight.DAL
         public IEnumerable<Volume> GetVolumes(string groupName)
         {
             return GetGroup(groupName)
-                .Zones;
+                ?.Zones ?? new List<Volume>();
         }
 
         public Volume GetVolume(string groupName, string zoneName)
@@ -114,6 +113,29 @@ namespace UHighlight.DAL
         public void DeleteGroup(string groupName)
         {
             _groups.DeleteMany(group => group.Name == groupName);
+        }
+
+        public void CreateProperty(string groupName, ZoneProperty property)
+        {
+            ZoneGroup group = GetGroup(groupName);
+
+            group.Properties.Add(property);
+
+            _groups.Update(group);
+        }
+
+        public void DeleteProperty(string groupName, int index)
+        {
+            ZoneGroup group = GetGroup(groupName);
+
+            group.Properties.RemoveAt(index);
+
+            _groups.Update(group);
+        }
+
+        public List<ZoneProperty> GetProperties(string groupName)
+        {
+            return GetGroup(groupName).Properties;
         }
 
         public void Dispose()
