@@ -33,13 +33,21 @@ namespace UHighlight.Services
         private readonly IVolumeStore _volumeStore;
         private readonly IEffectBuilder _effectBuilder;
         private readonly IThreadAdapter _threadAdapter;
+        private readonly IZonePropertyController _propertyController;
 
-        public AdminUIManager(IVolumeEditor volumeEditor, IVolumeStore volumeStore, IEffectBuilder effectBuilder, IThreadAdapter threadAdapter) 
+        public AdminUIManager(
+            IVolumeEditor volumeEditor, 
+            IVolumeStore volumeStore, 
+            IEffectBuilder effectBuilder, 
+            IThreadAdapter threadAdapter,
+            IZonePropertyController propertyController
+            ) 
         {
             _volumeEditor = volumeEditor;
             _volumeStore = volumeStore;
             _effectBuilder = effectBuilder;
             _threadAdapter = threadAdapter;
+            _propertyController = propertyController;
 
             EffectManager.onEffectButtonClicked += OnButtonClicked;
             EffectManager.onEffectTextCommitted += OnTextCommitted;
@@ -49,6 +57,11 @@ namespace UHighlight.Services
         {
             EffectManager.onEffectButtonClicked -= OnButtonClicked;
             EffectManager.onEffectTextCommitted -= OnTextCommitted;
+
+            foreach (var player in _playersData.Keys)
+            {
+                EffectManager.askEffectClearByID(_effectID, player.GetTransportConnection());
+            }
         }
 
         private void OnButtonClicked(Player player, string buttonName)
@@ -98,6 +111,7 @@ namespace UHighlight.Services
                     if(playerData.CreatingZoneName != string.Empty)
                         _volumeEditor.Validate(player, playerData.SelectedGroup, playerData.CreatingZoneName);
                     UpdateUI(player);
+                    ResetZones();
                     break;
                 case "CancelZoneCreationButton":
                     _volumeEditor.StopEditing(player);
@@ -175,6 +189,7 @@ namespace UHighlight.Services
                     });
                     ResetProperty(player);
                     UpdateUI(player);
+                    ResetZones();
                     break;
                 case "ClosePropertiesButton":
                     ResetProperty(player);
@@ -244,6 +259,7 @@ namespace UHighlight.Services
             {
                 _volumeStore.DeleteGroup(playerData.DisplayedGroups[index]);
                 UpdateUI(player);
+                ResetZones();
             }
             else if (Regex.IsMatch(buttonName, @"ShowZone \(\d\)"))
             {
@@ -253,11 +269,13 @@ namespace UHighlight.Services
             {
                 _volumeStore.DeleteVolume(playerData.SelectedGroup, playerData.DisplayedZones[index].Name);
                 UpdateUI(player);
+                ResetZones();
             }
             else if(Regex.IsMatch(buttonName, @"DeleteProperty \(\d\)"))
             {
                 _volumeStore.DeleteProperty(playerData.SelectedGroup, index);
                 UpdateUI(player);
+                ResetZones();
             }
         }
 
@@ -317,6 +335,8 @@ namespace UHighlight.Services
             _threadAdapter.RunOnMainThread(() =>
             {
                 EffectManager.sendUIEffect(_effectID, _effectKey, player.GetTransportConnection(), true);
+
+                player.enablePluginWidgetFlag(EPluginWidgetFlags.Modal);
 
                 UpdateUI(player);
             });
@@ -413,6 +433,11 @@ namespace UHighlight.Services
                     EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"Property ({i})", playerData.DisplayedProperties.Count > i);
                 }
             }
+        }
+
+        private void ResetZones()
+        {
+            _propertyController.Refresh();
         }
 
         private class PlayerData

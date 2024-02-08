@@ -12,5 +12,6 @@ namespace UHighlight.API
 #endif
     public interface IZonePropertyController : IDisposable
     {
+        void Refresh();
     }
 }

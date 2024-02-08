@@ -190,6 +190,9 @@ public class MyPlugin : RocketPlugin
 
 #### Using IHighlightSpawner
 
+You have to wait for both Level to be loaded and the framework (OpenMod or RocketMod) to be loaded in order to use this service.
+If in rocket mod, you reloaded the UHighlight plugin, you will then need to reload the plugins that depend on the UHighlight plugin
+
 ```csharp
     private HighlightedZone? _zone;
 

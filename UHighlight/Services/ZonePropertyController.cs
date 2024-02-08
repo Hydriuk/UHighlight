@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
+using UHighlight.DAL;
 using UHighlight.Extensions;
 using UHighlight.Models;
 using UnityEngine;
@@ -30,13 +31,17 @@ namespace UHighlight.Services
         private readonly Dictionary<string, ZoneGroup> _configuration;
 
         private readonly ICommandAdapter _commandAdapter;
+        private readonly IVolumeStore _volumeStore;
+        private readonly IHighlightSpawner _highlightSpawner;
 
         public ZonePropertyController(IServiceAdapter serviceAdapter, ICommandAdapter commandAdapter, IVolumeStore volumeStore)
         {
             _commandAdapter = commandAdapter;
+            _volumeStore = volumeStore;
+            _highlightSpawner = serviceAdapter.GetService<IHighlightSpawner>();
             _configuration = new Dictionary<string, ZoneGroup>();
 
-            InitZones(serviceAdapter, volumeStore).Wait();
+            InitZones();
             
             StructureManager.onDeployStructureRequested += OnStructureDeploying;
             BarricadeManager.onDeployBarricadeRequested += OnBarricadeDeploying;
@@ -67,15 +72,27 @@ namespace UHighlight.Services
             }
         }
 
-        private async Task InitZones(IServiceAdapter serviceAdapter, IVolumeStore volumeStore)
+        public void Refresh()
         {
-            IHighlightSpawner highlightSpawner = await serviceAdapter.GetServiceAsync<IHighlightSpawner>();
+            foreach (var zone in _spawnedZones)
+            {
+                zone.Dispose();
+            }
+            _spawnedZones.Clear();
+            _positionnalZones.Clear();
+            _configuration.Clear();
 
-            IEnumerable<ZoneGroup> groups = volumeStore.GetGroups();
+            InitZones();
+        }
+
+        private void InitZones()
+        {
+            IEnumerable<ZoneGroup> groups = _volumeStore.GetGroups();
+
 
             foreach (ZoneGroup group in groups)
             {
-                IEnumerable<HighlightedZone> zones = highlightSpawner.BuildZones(group.Name);
+                IEnumerable<HighlightedZone> zones = _highlightSpawner.BuildZones(group.Name);
 
                 _spawnedZones.AddRange(zones);
 
@@ -308,7 +325,7 @@ namespace UHighlight.Services
         {
             if (properties == null)
                 return;
-
+            
             foreach (ZoneProperty property in properties)
             {
                 string text = property.Data
