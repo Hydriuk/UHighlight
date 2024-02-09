@@ -58,10 +58,13 @@ namespace UHighlight.Services
             EffectManager.onEffectButtonClicked -= OnButtonClicked;
             EffectManager.onEffectTextCommitted -= OnTextCommitted;
 
-            foreach (var player in _playersData.Keys)
+            _threadAdapter.RunOnMainThread(() =>
             {
-                EffectManager.askEffectClearByID(_effectID, player.GetTransportConnection());
-            }
+                foreach (var player in _playersData.Keys)
+                {
+                    EffectManager.askEffectClearByID(_effectID, player.GetTransportConnection());
+                }
+            });
         }
 
         private void OnButtonClicked(Player player, string buttonName)
@@ -172,6 +175,7 @@ namespace UHighlight.Services
                 // Properties
                 case "PropertiesPreviousPageButton":
                     playerData.SelectedPropertiesPage = Math.Max(0, playerData.SelectedPropertiesPage - 1);
+                    UpdateUI(player);
                     break;
                 case "PropertiesNextPageButton":
                     playerData.SelectedPropertiesPage = Math.Min
@@ -179,6 +183,7 @@ namespace UHighlight.Services
                         (_volumeStore.GetGroup(playerData.SelectedGroup).Properties.Count() - 1) / PROPERTIES_PAGE_SIZE, 
                         playerData.SelectedPropertiesPage + 1
                     );
+                    UpdateUI(player);
                     break;
                 case "CreatePropertyButton":
                     _volumeStore.CreateProperty(playerData.SelectedGroup, new ZoneProperty() 

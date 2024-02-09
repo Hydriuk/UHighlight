@@ -9,6 +9,7 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
@@ -27,6 +28,8 @@ namespace UHighlight.Services
     {
         private readonly List<HighlightedZone> _spawnedZones = new List<HighlightedZone>();
         private readonly List<HighlightedZone> _positionnalZones = new List<HighlightedZone>();
+
+        private readonly Action<PlayerMovement, object> _velocitySetter = typeof(PlayerMovement).GetField("velocity", BindingFlags.Instance | BindingFlags.NonPublic).SetValue; 
 
         private readonly Dictionary<string, ZoneGroup> _configuration;
 
@@ -316,9 +319,12 @@ namespace UHighlight.Services
             
             Vector3 borderZonePoint = zone.Collider.ClosestPointOnBounds(player.transform.position);
             Vector3 diff = (borderZonePoint - zone.Volume.Center).normalized;
-            Vector3 destination = borderZonePoint + diff;
+            Vector3 destination = borderZonePoint;
 
-            player.teleportToLocation(destination, player.transform.eulerAngles.y);
+            if (!float.TryParse(property.Data, out float repultionForce))
+                return;
+
+            _velocitySetter(player.movement, diff * repultionForce);
         }
 
         private void OnExecuteCommandTriggered(Player player, IEnumerable<ZoneProperty> properties)
