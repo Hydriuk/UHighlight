@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using UHighlight.API;
+using UHighlight.Extensions;
 using UHighlight.Models;
 
 namespace UHighlight.Services
@@ -225,8 +226,11 @@ namespace UHighlight.Services
                 case "SetAnimalDamagePropertyButton":
                     playerData.CreatingPropertyType = ZoneProperty.EType.AnimalDamage;
                     break;
-                case "SetPermissionPropertyButton":
-                    playerData.CreatingPropertyType = ZoneProperty.EType.PermissionGroup;
+                case "SetGivePermissionPropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.GivePermissionGroup;
+                    break;
+                case "SetRemovePermissionPropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.RemovePermissionGroup;
                     break;
                 case "SetChatPropertyButton":
                     playerData.CreatingPropertyType = ZoneProperty.EType.Chat;
@@ -321,6 +325,8 @@ namespace UHighlight.Services
             playerData.CreatingPropertyType = ZoneProperty.EType.PlaceStructure;
             playerData.CreatingPropertyEvent = ZoneProperty.EEvent.Enter;
             playerData.CreatingPropertyData = string.Empty;
+
+            EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"ResetHighlightProperty", true);
         }
 
         public void ShowUI(Player player)
@@ -432,6 +438,18 @@ namespace UHighlight.Services
                     if(playerData.DisplayedProperties.Count > i)
                     {
                         EffectManager.sendUIEffectText(_effectKey, player.GetTransportConnection(), true, $"PropertyName ({i})", playerData.DisplayedProperties[i].Type.ToString());
+                        if (playerData.DisplayedProperties[i].IsEventProperty())
+                        {
+                            if(playerData.DisplayedProperties[i].Event == ZoneProperty.EEvent.Enter)
+                                EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true,  $"PropertyEnterEvent ({i})", true);
+                            else
+                                EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true,  $"PropertyExitEvent ({i})", true);
+                        }
+                        else
+                        {
+                            EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"ResetPropertyEvent ({i})", true);
+                        }
+
                         EffectManager.sendUIEffectText(_effectKey, player.GetTransportConnection(), true, $"PropertyData ({i})", playerData.DisplayedProperties[i].Data);
                     }
 

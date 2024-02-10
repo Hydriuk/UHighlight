@@ -19,7 +19,8 @@ namespace UHighlight.Models
             VehicleDamage,
             ZombieDamage,
             AnimalDamage,
-            PermissionGroup,
+            GivePermissionGroup,
+            RemovePermissionGroup,
             Chat,
             WalkThrough,
             ExecuteCommand

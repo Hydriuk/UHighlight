@@ -36,11 +36,13 @@ namespace UHighlight.Services
         private readonly ICommandAdapter _commandAdapter;
         private readonly IVolumeStore _volumeStore;
         private readonly IHighlightSpawner _highlightSpawner;
+        private readonly IPermissionAdapter _permissionAdapter;
 
-        public ZonePropertyController(IServiceAdapter serviceAdapter, ICommandAdapter commandAdapter, IVolumeStore volumeStore)
+        public ZonePropertyController(IServiceAdapter serviceAdapter, ICommandAdapter commandAdapter, IVolumeStore volumeStore, IPermissionAdapter permissionAdapter)
         {
             _commandAdapter = commandAdapter;
             _volumeStore = volumeStore;
+            _permissionAdapter = permissionAdapter;
             _highlightSpawner = serviceAdapter.GetService<IHighlightSpawner>();
             _configuration = new Dictionary<string, ZoneGroup>();
 
@@ -291,6 +293,18 @@ namespace UHighlight.Services
                 player,
                 properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.ExecuteCommand)
             );
+
+            OnGivePermissionTriggered
+            (
+                player,
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.GivePermissionGroup)
+            );
+
+            OnRemovePermissionTriggered
+            (
+                player,
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.RemovePermissionGroup)
+            );
         }
 
         private void OnChatTriggered(Player player, IEnumerable<ZoneProperty> properties)
@@ -339,6 +353,32 @@ namespace UHighlight.Services
                     .Replace("{PlayerID}", player.GetSteamID().ToString());
 
                 _commandAdapter.Execute(text);
+            }
+        }
+
+        private void OnGivePermissionTriggered(Player player, IEnumerable<ZoneProperty> properties)
+        {
+            if (properties == null)
+                return;
+
+            foreach (ZoneProperty property in properties)
+            {
+                string permissionGroup = property.Data;
+
+                _permissionAdapter.AddToGroup(player.GetSteamID(), permissionGroup);
+            }
+        }
+
+        private void OnRemovePermissionTriggered(Player player, IEnumerable<ZoneProperty> properties)
+        {
+            if (properties == null)
+                return;
+
+            foreach (ZoneProperty property in properties)
+            {
+                string permissionGroup = property.Data; Console.WriteLine("Remove");
+
+                _permissionAdapter.RemoveFromGroup(player.GetSteamID(), permissionGroup);
             }
         }
         #endregion

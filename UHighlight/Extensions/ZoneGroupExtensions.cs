@@ -16,13 +16,14 @@ namespace UHighlight.Extensions
             ZoneProperty.EType.VehicleDamage,
             ZoneProperty.EType.ZombieDamage,
             ZoneProperty.EType.AnimalDamage,
-            ZoneProperty.EType.PermissionGroup
         };
 
         private static readonly HashSet<ZoneProperty.EType> _eventTypes = new HashSet<ZoneProperty.EType>()
         {
             ZoneProperty.EType.Chat,
             ZoneProperty.EType.ExecuteCommand,
+            ZoneProperty.EType.GivePermissionGroup,
+            ZoneProperty.EType.RemovePermissionGroup,
             ZoneProperty.EType.WalkThrough
         };
 
@@ -34,6 +35,16 @@ namespace UHighlight.Extensions
         public static IEnumerable<ZoneProperty> GetEventProperties(this ZoneGroup group)
         {
             return group.Properties.Where(property => _eventTypes.Contains(property.Type));
+        }
+
+        public static bool IsEventProperty(this ZoneProperty property)
+        {
+            return _eventTypes.Contains(property.Type);
+        }
+
+        public static bool IsPositionnalProperty(this ZoneProperty property)
+        {
+            return _positionnalTypes.Contains(property.Type);
         }
     }
 }
