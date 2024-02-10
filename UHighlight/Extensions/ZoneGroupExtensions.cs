@@ -24,7 +24,7 @@ namespace UHighlight.Extensions
             ZoneProperty.EType.ExecuteCommand,
             ZoneProperty.EType.GivePermissionGroup,
             ZoneProperty.EType.RemovePermissionGroup,
-            ZoneProperty.EType.WalkThrough
+            ZoneProperty.EType.Repulse
         };
 
         public static IEnumerable<ZoneProperty> GetPositionnalProperties(this ZoneGroup group)

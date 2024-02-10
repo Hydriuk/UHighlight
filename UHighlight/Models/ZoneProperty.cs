@@ -22,7 +22,7 @@ namespace UHighlight.Models
             GivePermissionGroup,
             RemovePermissionGroup,
             Chat,
-            WalkThrough,
+            Repulse,
             ExecuteCommand
         }
 
@@ -41,23 +41,4 @@ namespace UHighlight.Models
             Outside = Exit
         }
     }
-
-    //public class ZoneProperty<T> where T : struct
-    //{
-
-    //    public readonly static ReadOnlyDictionary<EType, Type> TypeData = new ReadOnlyDictionary<EType, Type>(new Dictionary<EType, Type>() {
-    //        { EType.PlaceStructure, typeof(bool) },
-    //        { EType.StructureDamage, typeof(float) },
-    //        { EType.PlayerDamage, typeof(float) },
-    //        { EType.VehicleDamage, typeof(float) },
-    //        { EType.ZombieDamage, typeof(float) },
-    //        { EType.AnimalDamage, typeof(float) },
-    //        { EType.Chat, typeof(string) },
-    //        { EType.WalkThrough, typeof(bool) },
-    //        { EType.ExecuteCommand, typeof(string) },
-    //        { EType.PermissionGroup, typeof(string) },
-    //    });
-    //}
-
-
 }

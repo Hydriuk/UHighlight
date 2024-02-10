@@ -2,6 +2,7 @@
 using SDG.Unturned;
 using System.Collections.Generic;
 using System.Text;
+using UHighlight.Models;
 using UnityEngine;
 
 namespace UHighlight.RocketMod.Commands
@@ -10,13 +11,13 @@ namespace UHighlight.RocketMod.Commands
     {
         public static void Execute(UnturnedPlayer uPlayer, string[] command)
         {
-            IEnumerable<string> groups = UHighlightPlugin.Instance.VolumeStore.GetGroups();
+            IEnumerable<ZoneGroup> groups = UHighlightPlugin.Instance.VolumeStore.GetGroups();
 
             StringBuilder sb = new StringBuilder($"Volumes groups : ");
 
-            foreach (string group in groups)
+            foreach (ZoneGroup group in groups)
             {
-                sb.Append(group);
+                sb.Append(group.Name);
                 sb.Append(", ");
             }
 

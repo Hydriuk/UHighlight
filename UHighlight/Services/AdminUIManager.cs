@@ -238,8 +238,8 @@ namespace UHighlight.Services
                 case "SetCommandPropertyButton":
                     playerData.CreatingPropertyType = ZoneProperty.EType.ExecuteCommand;
                     break;
-                case "SetWalkThroughPropertyButton":
-                    playerData.CreatingPropertyType = ZoneProperty.EType.WalkThrough;
+                case "SetRepulsePropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.Repulse;
                     break;
 
                 default:

@@ -4,6 +4,7 @@ using Hydriuk.RocketModModules;
 using Hydriuk.RocketModModules.Adapters;
 using Hydriuk.UnturnedModules.Adapters;
 using Rocket.Core;
+using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using UHighlight.API;
 using UHighlight.DAL;
@@ -32,6 +33,7 @@ namespace UHighlight.RocketMod
         [PluginService] internal HighlightBuilder HighlightBuilder { get; private set; }
         [PluginService] internal VolumeTester VolumeTester { get; private set; }
         [PluginService] internal AdminUIManager AdminUIManager { get; private set; }
+        [PluginService] internal ZonePropertyController ZonePropertyController { get; private set; }
 
         // Public APIs instances are not public to prevent access before they are instanciated. They should be retreived using IServiceAdapter
         [PluginService] internal HighlightCommands HighlightCommands { get; private set; }
@@ -44,10 +46,14 @@ namespace UHighlight.RocketMod
 
         protected override void Load()
         {
+            Logger.Log("Loading");
+
             _serviceRegistrator = new ServiceRegistrator(this);
 
             _harmony = new Harmony("Hydriuk.UHighlight");
             _harmony.PatchAll();
+
+            Logger.Log("Loaded successfully");
         }
 
         protected override void Unload()

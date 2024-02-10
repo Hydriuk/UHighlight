@@ -38,15 +38,18 @@ namespace UHighlight.Services
         private readonly IHighlightSpawner _highlightSpawner;
         private readonly IPermissionAdapter _permissionAdapter;
 
-        public ZonePropertyController(IServiceAdapter serviceAdapter, ICommandAdapter commandAdapter, IVolumeStore volumeStore, IPermissionAdapter permissionAdapter)
+        public ZonePropertyController(IHighlightSpawner highlightSpawner, ICommandAdapter commandAdapter, IVolumeStore volumeStore, IPermissionAdapter permissionAdapter)
         {
             _commandAdapter = commandAdapter;
             _volumeStore = volumeStore;
             _permissionAdapter = permissionAdapter;
-            _highlightSpawner = serviceAdapter.GetService<IHighlightSpawner>();
+            _highlightSpawner = highlightSpawner;
             _configuration = new Dictionary<string, ZoneGroup>();
 
-            InitZones();
+            if (Level.isLoaded)
+                InitZones();
+            else
+                Level.onPostLevelLoaded += OnLevelLoaded;
             
             StructureManager.onDeployStructureRequested += OnStructureDeploying;
             BarricadeManager.onDeployBarricadeRequested += OnBarricadeDeploying;
@@ -90,10 +93,10 @@ namespace UHighlight.Services
             InitZones();
         }
 
+        private void OnLevelLoaded(int level) => InitZones();
         private void InitZones()
         {
             IEnumerable<ZoneGroup> groups = _volumeStore.GetGroups();
-
 
             foreach (ZoneGroup group in groups)
             {
@@ -281,10 +284,10 @@ namespace UHighlight.Services
                 properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.Chat)
             );
 
-            OnWalkThroughTriggered
+            OnRepulseTriggered
             (
                 player,
-                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.WalkThrough),
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.Repulse),
                 zone
             );
 
@@ -321,7 +324,7 @@ namespace UHighlight.Services
             }
         }
 
-        private void OnWalkThroughTriggered(Player player, IEnumerable<ZoneProperty> properties, HighlightedZone zone)
+        private void OnRepulseTriggered(Player player, IEnumerable<ZoneProperty> properties, HighlightedZone zone)
         {
             if (properties == null)
                 return;
@@ -376,7 +379,7 @@ namespace UHighlight.Services
 
             foreach (ZoneProperty property in properties)
             {
-                string permissionGroup = property.Data; Console.WriteLine("Remove");
+                string permissionGroup = property.Data;
 
                 _permissionAdapter.RemoveFromGroup(player.GetSteamID(), permissionGroup);
             }

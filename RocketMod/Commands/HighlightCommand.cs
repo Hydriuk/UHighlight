@@ -28,7 +28,7 @@ namespace UHighlight.RocketMod.Commands
 
             if (command.Length == 0)
             {
-                ChatManager.serverSendMessage("Not enough params", Color.red, toPlayer: uPlayer.SteamPlayer());
+                UICommand.Execute(uPlayer, new string[0]);
                 return;
             }
 
@@ -36,6 +36,10 @@ namespace UHighlight.RocketMod.Commands
 
             switch (command[0])
             {
+                case "ui":
+                    UICommand.Execute(uPlayer, subCommand);
+                    break;
+
                 case "create":
                 case "c":
                     CreateCommand.Execute(uPlayer, subCommand);
@@ -83,7 +87,7 @@ namespace UHighlight.RocketMod.Commands
                     break;
 
                 default:
-                    ChatManager.serverSendMessage("Wrong syntax", Color.red, toPlayer: uPlayer.SteamPlayer());
+                    ChatManager.serverSendMessage("Wrong syntax : uhl parameter not known", Color.red, toPlayer: uPlayer.SteamPlayer());
                     return;
             }
         }
