@@ -45,7 +45,7 @@ namespace UHighlight.RocketMod.Adapters
         {
             Execute(player, new[]
             {
-                "groups"
+                "listgroups"
             });
 
             return Task.CompletedTask;
@@ -77,7 +77,7 @@ namespace UHighlight.RocketMod.Adapters
         {
             Execute(player, new[]
             {
-                "volumes",
+                "listvolumes",
                 group
             });
 

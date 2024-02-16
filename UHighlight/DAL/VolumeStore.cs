@@ -30,11 +30,16 @@ namespace UHighlight.DAL
             _groups.EnsureIndex(group => group.Name);
         }
 
+        public bool Exists(string groupName)
+        {
+            return _groups.Exists(group => group.Name == groupName);
+        }
+
         public bool Exists(string groupName, string zoneName)
         {
             return _groups
-                .FindOne(group => group.Name == groupName)
-                .Zones.Any(volume => volume.Name == zoneName);
+                .FindOne(group => group.Name == groupName)?.Zones
+                .Any(volume => volume.Name == zoneName) ?? false;
         }
 
         public void Upsert(Volume volume)

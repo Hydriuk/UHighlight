@@ -12,6 +12,7 @@ namespace UHighlight.API
 #endif
     public interface IVolumeStore : IDisposable
     {
+        bool Exists(string groupName);
         bool Exists(string groupName, string zoneName);
         void Upsert(Volume volume);
         void CreateGroup(string groupName);

@@ -19,13 +19,11 @@ namespace UHighlight.Services
 
         private readonly IThreadAdapter _threadAdapter;
 
-        public ChatAdapter(/*IConfigurationAdapter<Configuration> configurationAdapter,*/ IThreadAdapter threadAdapter)
+        public ChatAdapter(IConfigurationAdapter<Configuration> configurationAdapter, IThreadAdapter threadAdapter)
         {
             _threadAdapter = threadAdapter;
 
-            //Configuration configuration = configurationAdapter.Configuration;
-
-            _iconUrl = "";
+            _iconUrl = configurationAdapter.Configuration.IconURL;
         }
 
         public void Send(Player player, string message)

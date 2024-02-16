@@ -44,6 +44,12 @@ namespace UHighlight.Services
 
         public void StartEditing(Player player, EVolumeShape shape, string material, string color)
         {
+            if(_editedVolumes.ContainsKey(player))
+            {
+                _chatAdapter.Send(player, $"You are already editing a volume");
+                return;
+            }
+
             IEditionStrategy strategy = shape switch
             {
                 EVolumeShape.Cube => new CubeStrategy(_effectBuilder, player, material, color),
@@ -60,7 +66,10 @@ namespace UHighlight.Services
         public void StopEditing(Player player)
         {
             if (!_editedVolumes.TryGetValue(player, out IEditionStrategy edition))
+            {
+                _chatAdapter.Send(player, $"You are not editing a volume");
                 return;
+            }
 
             edition.Cancel();
 
@@ -71,13 +80,34 @@ namespace UHighlight.Services
 
         public void Validate(Player player, string group, string name)
         {
+            if(group == string.Empty)
+            {
+                _chatAdapter.SendError(player, "You must enter a group name for the volume");
+                return;
+            }
+
+            if (!_volumeStore.Exists(group))
+            {
+                _chatAdapter.SendError(player, $"Group {group} not found");
+                return;
+            }
+
+            if(name == string.Empty)
+            {
+                _chatAdapter.SendError(player, "You must enter a name for the volume");
+                return;
+            }
+
             if (!_editedVolumes.TryGetValue(player, out IEditionStrategy edition))
                 return;
 
             Volume? volume = edition.Build();
 
             if (volume == null)
-                throw new NullReferenceException("The volume is missing a datum to be generated");
+            {
+                _chatAdapter.SendError(player, "The volume is not complete. Make sure every dimension of the volume is set.");
+                return;
+            }
 
             volume.Group = group;
             volume.Name = name;

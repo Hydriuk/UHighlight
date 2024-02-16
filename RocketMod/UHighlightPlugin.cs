@@ -22,7 +22,6 @@ namespace UHighlight.RocketMod
         private ServiceRegistrator _serviceRegistrator;
 
         [PluginService] private EnvironmentAdapter _environmentAdapter;
-        [PluginService] private ConfigurationAdapter<Configuration> _configurationAdapter;
         [PluginService] private ThreadAdapter _threadAdapter;
         [PluginService] private ServiceAdapter _serviceAdapter;
 
@@ -48,7 +47,7 @@ namespace UHighlight.RocketMod
         {
             Logger.Log("Loading");
 
-            _serviceRegistrator = new ServiceRegistrator(this);
+            _serviceRegistrator = new ServiceRegistrator(this, Configuration.Instance);
 
             _harmony = new Harmony("Hydriuk.UHighlight");
             _harmony.PatchAll();

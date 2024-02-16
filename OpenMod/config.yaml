@@ -1,2 +1,13 @@
-# See https://openmod.github.io/openmod-docs/devdoc/concepts/configuration.html
-# You can delete this file if you do not need a configuration
+# UHighlight - Configuration file
+# More information : https://unturnedstore.com/products/
+
+# # # # # # # # # # # # # # # # # # # # #
+# 
+#    Chat controls
+#
+# # # # # # #
+#
+# Icon used when the plugin sends chat messages
+IconUrl: https://avatars.akamai.steamstatic.com/2739fbda6470073462a3c08fa638948762ac34de.jpg
+#
+# # # # # # #

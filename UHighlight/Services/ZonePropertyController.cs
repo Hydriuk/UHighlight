@@ -280,15 +280,14 @@ namespace UHighlight.Services
 
             OnChatTriggered
             (
-                player,
+                player, zone,
                 properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.Chat)
             );
 
             OnRepulseTriggered
             (
-                player,
-                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.Repulse),
-                zone
+                player, zone,
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.Repulse)
             );
 
             OnExecuteCommandTriggered
@@ -310,7 +309,7 @@ namespace UHighlight.Services
             );
         }
 
-        private void OnChatTriggered(Player player, IEnumerable<ZoneProperty> properties)
+        private void OnChatTriggered(Player player, HighlightedZone zone, IEnumerable<ZoneProperty> properties)
         {
             if (properties == null)
                 return;
@@ -318,13 +317,14 @@ namespace UHighlight.Services
             foreach (ZoneProperty property in properties)
             {
                 string text = property.Data
-                    .Replace("{Player}", player.GetSteamPlayer().playerID.characterName);
+                    .Replace("{Player}", player.GetSteamPlayer().playerID.characterName)
+                    .Replace("{ZoneName}", zone.Name);
                 
                 ChatManager.serverSendMessage(text, Color.white, toPlayer: player.GetSteamPlayer(), useRichTextFormatting: true);
             }
         }
 
-        private void OnRepulseTriggered(Player player, IEnumerable<ZoneProperty> properties, HighlightedZone zone)
+        private void OnRepulseTriggered(Player player, HighlightedZone zone, IEnumerable<ZoneProperty> properties)
         {
             if (properties == null)
                 return;

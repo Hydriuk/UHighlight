@@ -20,11 +20,13 @@ namespace UHighlight.Services
 
         private readonly IHighlightBuilder _highlightBuilder;
         private readonly IEffectBuilder _effectBuilder;
+        private readonly IChatAdapter _chatAdapter;
 
-        public VolumeTester(IHighlightBuilder highlightBuilder, IEffectBuilder effectBuilder)
+        public VolumeTester(IHighlightBuilder highlightBuilder, IEffectBuilder effectBuilder, IChatAdapter chatAdapter)
         {
             _highlightBuilder = highlightBuilder;
             _effectBuilder = effectBuilder;
+            _chatAdapter = chatAdapter;
 
             Provider.onEnemyDisconnected += OnPlayerDisconnected;
         }
@@ -97,11 +99,7 @@ namespace UHighlight.Services
 
         private void SendMessage(Player player, HighlightedZone zone, string text)
         {
-            ChatManager.serverSendMessage(
-                $"{text} zone {zone.Group}/{zone.Name}",
-                Color.gray,
-                toPlayer: player.GetSteamPlayer()
-            );
+            _chatAdapter.Send(player, $"{text} zone {zone.Group}/{zone.Name}");
         }
     }
 }

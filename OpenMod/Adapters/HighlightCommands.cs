@@ -52,12 +52,12 @@ namespace UHighlight.OpenMod.Adapters
 
         public Task ExecuteGroups(Player player) => Execute(player, new[]
         {
-            "groups"
+            "listgroups"
         });
 
         public Task ExecuteVolumes(Player player, string group) => Execute(player, new[]
 {
-            "volumes", group
+            "listvolumes", group
         });
 
         private async Task Execute(Player player, params string[] args) => await Execute(await GetUser(player), args.Prepend("uhighlight").ToArray());
