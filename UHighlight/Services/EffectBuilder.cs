@@ -8,6 +8,7 @@ using SDG.Provider;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UHighlight.API;
 using UHighlight.Models;
 using UnityEngine;
@@ -73,9 +74,39 @@ namespace UHighlight.Services
 
         public bool Exists(string shape, string color, string material)
         {
-            shape = ToWordCase(shape);
-            color = ToWordCase(color);
-            material = ToWordCase(material);
+            shape = ToTitleCase(shape);
+            color = ToTitleCase(color);
+            material = ToTitleCase(material);
+
+            material = material switch
+            {
+                "T" => "Transparent",
+                "S" => "Solid",
+                _ => material
+            };
+
+            color = color switch
+            {
+                "R" => "Red",
+                "Re" => "Red",
+                "G" => "Green",
+                "Gr" => "Green",
+                "B" => "Blue",
+                "Bl" => "Blue",
+                "C" => "Cyan",
+                "Cy" => "Cyan",
+                "M" => "Magenta",
+                "Ma" => "Magenta",
+                "L" => "Lime",
+                "Li" => "Lime",
+                "Go" => "Gold",
+                "S" => "Silver",
+                "Si" => "Silver",
+                "Co" => "Copper",
+                "P" => "Pink",
+                "Pi" => "Pink",
+                _ => color
+            };
 
             return _effectGUIDProvider.ContainsKey($"{shape}_{material}_{color}");
         }
@@ -166,9 +197,9 @@ namespace UHighlight.Services
             };
         }
 
-        private string ToWordCase(string word)
+        private string ToTitleCase(string str)
         {
-            return word.Substring(0, 1).ToUpper() + word.Substring(1).ToLower();
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
         }
 
         private void ShowEffect(TriggerEffectParameters effectParameters, bool unique)

@@ -1,6 +1,7 @@
 ﻿using Rocket.Unturned.Player;
 using SDG.Unturned;
 using System;
+using System.Globalization;
 using UHighlight.Models;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            if (!Enum.TryParse(command[0], out EVolumeShape shape))
+            if (!Enum.TryParse(ToTitleCase(command[0]), out EVolumeShape shape))
             {
                 ChatManager.serverSendMessage($"<b>{shape}</b> was not recognized. Available shapes : {EVolumeShape.Cube}, {EVolumeShape.Cylinder}, {EVolumeShape.Sphere}", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);
                 return;
@@ -35,6 +36,11 @@ namespace UHighlight.RocketMod.Commands
             }
 
             UHighlightPlugin.Instance.VolumeEditor.StartEditing(uPlayer.Player, shape, command[1], command[2]);
+        }
+
+        private static string ToTitleCase(string str)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
         }
     }
 }

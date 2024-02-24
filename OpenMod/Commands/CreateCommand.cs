@@ -3,6 +3,7 @@ using OpenMod.Core.Commands;
 using OpenMod.Unturned.Commands;
 using OpenMod.Unturned.Users;
 using System;
+using System.Globalization;
 using UHighlight.API;
 using UHighlight.Models;
 
@@ -34,7 +35,7 @@ namespace UHighlight.OpenMod.Commands
             if (Context.Parameters.Count != 3)
                 throw new CommandWrongUsageException(Context);
 
-            if (!Enum.TryParse(Context.Parameters[0], out EVolumeShape shape))
+            if (!Enum.TryParse(ToTitleCase(Context.Parameters[0]), out EVolumeShape shape))
                 throw new CommandWrongUsageException($"<b>{shape}</b> was not recognized. Available shapes : {EVolumeShape.Cube}, {EVolumeShape.Cylinder}, {EVolumeShape.Sphere}");
 
             if (!_effectBuilder.Exists(Context.Parameters[0], Context.Parameters[1], Context.Parameters[2]))
@@ -43,6 +44,11 @@ namespace UHighlight.OpenMod.Commands
             _volumeEditor.StartEditing(user.Player.Player, shape, Context.Parameters[1], Context.Parameters[2]);
 
             return UniTask.CompletedTask;
+        }
+
+        private string ToTitleCase(string str)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
         }
     }
 }
