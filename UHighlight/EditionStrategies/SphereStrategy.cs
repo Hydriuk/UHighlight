@@ -10,16 +10,16 @@ namespace UHighlight.EditionStrategies
         private readonly Sphere _sphere;
 
         private readonly Player _player;
-        private readonly string _material;
-        private readonly string _color;
+        private readonly EVolumeMaterial _material;
+        private readonly EVolumeColor _color;
 
         private readonly IEffectBuilder _effectBuilder;
 
         public SphereStrategy(
             IEffectBuilder effectBuilder,
             Player player,
-            string material,
-            string color)
+            EVolumeMaterial material,
+            EVolumeColor color)
         {
             _effectBuilder = effectBuilder;
 
@@ -140,20 +140,20 @@ namespace UHighlight.EditionStrategies
             public Vector3 Center { get; set; }
             public float Radius { get; set; }
 
-            public Volume? BuildVolume(string material, string color)
+            public Volume? BuildVolume(EVolumeMaterial material, EVolumeColor color)
             {
                 if (Center == default || Radius == default)
                     return null;
 
-                return new Volume()
-                {
-                    Center = Center,
-                    Shape = EVolumeShape.Sphere,
-                    Material = material,
-                    Color = color,
-                    Size = GetSize(),
-                    Rotation = Vector3.forward
-                };
+                return new Volume
+                (
+                    Center,
+                    GetSize(),
+                    Vector3.forward,
+                    EVolumeShape.Sphere,
+                    material,
+                    color
+                );
             }
 
             private Vector3 GetSize()

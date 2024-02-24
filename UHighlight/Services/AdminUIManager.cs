@@ -136,41 +136,41 @@ namespace UHighlight.Services
                     break;
                 // Zone material
                 case "ZoneSetSolidButton":
-                    playerData.SelectedMaterial = "Solid";
+                    playerData.SelectedMaterial = EVolumeMaterial.Solid;
                     break;
                 case "ZoneSetTransparentButton":
-                    playerData.SelectedMaterial = "Transparent";
+                    playerData.SelectedMaterial = EVolumeMaterial.Transparent;
                     break;
                 // Zone color
                 case "ZoneSetRedButton":
-                    playerData.SelectedColor = "Red";
+                    playerData.SelectedColor = EVolumeColor.Red;
                     break;
                 case "ZoneSetGreenButton":
-                    playerData.SelectedColor = "Green";
+                    playerData.SelectedColor = EVolumeColor.Green;
                     break;
                 case "ZoneSetBlueButton":
-                    playerData.SelectedColor = "Blue";
+                    playerData.SelectedColor = EVolumeColor.Blue;
                     break;
                 case "ZoneSetMagentaButton":
-                    playerData.SelectedColor = "Magenta";
+                    playerData.SelectedColor = EVolumeColor.Magenta;
                     break;
                 case "ZoneSetLimeButton":
-                    playerData.SelectedColor = "Lime";
+                    playerData.SelectedColor = EVolumeColor.Lime;
                     break;
                 case "ZoneSetCyanButton":
-                    playerData.SelectedColor = "Cyan";
+                    playerData.SelectedColor = EVolumeColor.Cyan;
                     break;
                 case "ZoneSetGoldButton":
-                    playerData.SelectedColor = "Gold";
+                    playerData.SelectedColor = EVolumeColor.Green;
                     break;
                 case "ZoneSetSilverButton":
-                    playerData.SelectedColor = "Silver";
+                    playerData.SelectedColor = EVolumeColor.Silver;
                     break;
                 case "ZoneSetCopperButton":
-                    playerData.SelectedColor = "Copper";
+                    playerData.SelectedColor = EVolumeColor.Copper;
                     break;
                 case "ZoneSetPinkButton":
-                    playerData.SelectedColor = "Pink";
+                    playerData.SelectedColor = EVolumeColor.Pink;
                     break;
 
                 // Properties
@@ -337,8 +337,8 @@ namespace UHighlight.Services
             playerData = new PlayerData()
             {
                 SelectedShape = EVolumeShape.Cube,
-                SelectedMaterial = "Transparent",
-                SelectedColor = "Blue"
+                SelectedMaterial = EVolumeMaterial.Transparent,
+                SelectedColor = EVolumeColor.Blue
             };
 
             _playersData.Add(player, playerData);
@@ -473,8 +473,8 @@ namespace UHighlight.Services
 
 
             public EVolumeShape SelectedShape { get; set; }
-            public string SelectedMaterial { get; set; } = string.Empty;
-            public string SelectedColor { get; set; } = string.Empty;
+            public EVolumeMaterial SelectedMaterial { get; set; }
+            public EVolumeColor SelectedColor { get; set; }
 
             public string CreatingGroupName { get; set; } = string.Empty;
             public string CreatingZoneName { get; set; } = string.Empty;

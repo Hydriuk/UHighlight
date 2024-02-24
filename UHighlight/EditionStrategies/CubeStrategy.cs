@@ -10,16 +10,16 @@ namespace UHighlight.EditionStrategies
         private readonly Cube _cube;
 
         private readonly Player _player;
-        private readonly string _material;
-        private readonly string _color;
+        private readonly EVolumeMaterial _material;
+        private readonly EVolumeColor _color;
 
         private readonly IEffectBuilder _effectBuilder;
 
         public CubeStrategy(
             IEffectBuilder effectBuilder,
             Player player,
-            string material,
-            string color)
+            EVolumeMaterial material,
+            EVolumeColor color)
         {
             _effectBuilder = effectBuilder;
 
@@ -135,20 +135,20 @@ namespace UHighlight.EditionStrategies
             public Vector3 Corner2 { get; set; }
             public Quaternion Rotation { get; set; }
 
-            public Volume? BuildVolume(string material, string color)
+            public Volume? BuildVolume(EVolumeMaterial material, EVolumeColor color)
             {
                 if (Corner1 == default || Corner2 == default || Rotation == default)
                     return null;
 
-                return new Volume()
-                {
-                    Center = GetCenter(),
-                    Shape = EVolumeShape.Cube,
-                    Material = material,
-                    Color = color,
-                    Size = GetSize(),
-                    Rotation = GetDirection()
-                };
+                return new Volume
+                (
+                    GetCenter(),
+                    GetSize(),
+                    GetDirection(),
+                    EVolumeShape.Cube,
+                    material,
+                    color
+                );
             }
 
             private Vector3 GetCenter()

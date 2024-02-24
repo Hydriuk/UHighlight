@@ -5,8 +5,10 @@ using OpenMod.API.Ioc;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Contexts;
 using UHighlight.API;
 using UHighlight.EditionStrategies;
+using UHighlight.Extensions;
 using UHighlight.Models;
 
 namespace UHighlight.Services
@@ -42,7 +44,19 @@ namespace UHighlight.Services
             return _editedVolumes.ContainsKey(player);
         }
 
-        public void StartEditing(Player player, EVolumeShape shape, string material, string color)
+        public void StartEditing(Player player, string shapeString, string materialString, string colorString)
+        {
+            if(
+                !shapeString.TryParseVolumeShape(out EVolumeShape shape) ||
+                !materialString.TryParseVolumeMaterial(out EVolumeMaterial material) ||
+                !colorString.TryParseVolumeColor(out EVolumeColor color)
+            )
+                return;
+
+            StartEditing(player, shape, material, color);
+        }
+
+        public void StartEditing(Player player, EVolumeShape shape, EVolumeMaterial material, EVolumeColor color)
         {
             if(_editedVolumes.ContainsKey(player))
             {

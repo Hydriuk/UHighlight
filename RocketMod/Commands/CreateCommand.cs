@@ -2,6 +2,7 @@
 using SDG.Unturned;
 using System;
 using System.Globalization;
+using System.Runtime.Remoting.Contexts;
 using UHighlight.Models;
 using UnityEngine;
 
@@ -23,24 +24,13 @@ namespace UHighlight.RocketMod.Commands
                 return;
             }
 
-            if (!Enum.TryParse(ToTitleCase(command[0]), out EVolumeShape shape))
-            {
-                ChatManager.serverSendMessage($"<b>{shape}</b> was not recognized. Available shapes : {EVolumeShape.Cube}, {EVolumeShape.Cylinder}, {EVolumeShape.Sphere}", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);
-                return;
-            }
-
             if (!UHighlightPlugin.Instance.EffectBuilder.Exists(command[0], command[1], command[2]))
             {
                 ChatManager.serverSendMessage($"Shape <b>{command[0]}</b> with material <b>{command[1]}</b> and color <b>{command[2]}</b> is not known", Color.red, toPlayer: uPlayer.SteamPlayer(), useRichTextFormatting: true);
                 return;
             }
 
-            UHighlightPlugin.Instance.VolumeEditor.StartEditing(uPlayer.Player, shape, command[1], command[2]);
-        }
-
-        private static string ToTitleCase(string str)
-        {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
+            UHighlightPlugin.Instance.VolumeEditor.StartEditing(uPlayer.Player, command[0], command[1], command[2]);
         }
     }
 }

@@ -13,7 +13,8 @@ namespace UHighlight.API
     public interface IVolumeEditor : IDisposable
     {
         bool IsEditing(Player player);
-        void StartEditing(Player player, EVolumeShape shape, string material, string color);
+        void StartEditing(Player player, EVolumeShape shape, EVolumeMaterial material, EVolumeColor color);
+        void StartEditing(Player player, string shape, string material, string color);
         void StopEditing(Player player);
         void Validate(Player player, string group, string name);
         void SetSize(Player player, float size);

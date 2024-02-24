@@ -11,16 +11,16 @@ namespace UHighlight.EditionStrategies
         private Cylinder _cylinder;
 
         private readonly Player _player;
-        private readonly string _material;
-        private readonly string _color;
+        private readonly EVolumeMaterial _material;
+        private readonly EVolumeColor _color;
 
         private readonly IEffectBuilder _effectBuilder;
 
         public CylinderStrategy(
             IEffectBuilder effectBuilder,
             Player player,
-            string material,
-            string color)
+            EVolumeMaterial material,
+            EVolumeColor color)
         {
             _effectBuilder = effectBuilder;
 
@@ -152,22 +152,22 @@ namespace UHighlight.EditionStrategies
             public Vector3 Size { get; set; } = Vector3.one;
             public Quaternion Rotation { get; set; } = Quaternion.Euler(0, 0, 0);
 
-            public Volume? BuildVolume(string material, string color)
+            public Volume? BuildVolume(EVolumeMaterial material, EVolumeColor color)
             {
                 if (Center == default || Size == default)
                     return null;
 
                 Console.WriteLine($"{Rotation.eulerAngles.x} {Rotation.eulerAngles.y} {Rotation.eulerAngles.z}");
 
-                return new Volume()
-                {
-                    Center = Center,
-                    Shape = EVolumeShape.Cylinder,
-                    Material = material,
-                    Color = color,
-                    Size = Size,
-                    Rotation = GetDirection()
-                };
+                return new Volume
+                (
+                    Center,
+                    Size,
+                    GetDirection(),
+                    EVolumeShape.Cylinder,
+                    material,
+                    color
+                );
             }
 
             private Vector3 GetDirection()

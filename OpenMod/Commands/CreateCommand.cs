@@ -5,6 +5,7 @@ using OpenMod.Unturned.Users;
 using System;
 using System.Globalization;
 using UHighlight.API;
+using UHighlight.Extensions;
 using UHighlight.Models;
 
 namespace UHighlight.OpenMod.Commands
@@ -35,20 +36,12 @@ namespace UHighlight.OpenMod.Commands
             if (Context.Parameters.Count != 3)
                 throw new CommandWrongUsageException(Context);
 
-            if (!Enum.TryParse(ToTitleCase(Context.Parameters[0]), out EVolumeShape shape))
-                throw new CommandWrongUsageException($"<b>{shape}</b> was not recognized. Available shapes : {EVolumeShape.Cube}, {EVolumeShape.Cylinder}, {EVolumeShape.Sphere}");
-
             if (!_effectBuilder.Exists(Context.Parameters[0], Context.Parameters[1], Context.Parameters[2]))
                 throw new CommandWrongUsageException($"Shape <b>{Context.Parameters[0]}</b> with material <b>{Context.Parameters[1]}</b> and color <b>{Context.Parameters[2]}</b> is not known");
 
-            _volumeEditor.StartEditing(user.Player.Player, shape, Context.Parameters[1], Context.Parameters[2]);
+            _volumeEditor.StartEditing(user.Player.Player, Context.Parameters[0], Context.Parameters[1], Context.Parameters[2]);
 
             return UniTask.CompletedTask;
-        }
-
-        private string ToTitleCase(string str)
-        {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
         }
     }
 }

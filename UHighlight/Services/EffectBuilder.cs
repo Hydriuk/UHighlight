@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using UHighlight.API;
+using UHighlight.Extensions;
 using UHighlight.Models;
 using UnityEngine;
 
@@ -72,41 +73,14 @@ namespace UHighlight.Services
         public IEnumerable<string> GetColors() => _colors;
         public IEnumerable<string> GetMaterials() => _materials;
 
-        public bool Exists(string shape, string color, string material)
+        public bool Exists(string shapeString, string materialString, string colorString)
         {
-            shape = ToTitleCase(shape);
-            color = ToTitleCase(color);
-            material = ToTitleCase(material);
-
-            material = material switch
-            {
-                "T" => "Transparent",
-                "S" => "Solid",
-                _ => material
-            };
-
-            color = color switch
-            {
-                "R" => "Red",
-                "Re" => "Red",
-                "G" => "Green",
-                "Gr" => "Green",
-                "B" => "Blue",
-                "Bl" => "Blue",
-                "C" => "Cyan",
-                "Cy" => "Cyan",
-                "M" => "Magenta",
-                "Ma" => "Magenta",
-                "L" => "Lime",
-                "Li" => "Lime",
-                "Go" => "Gold",
-                "S" => "Silver",
-                "Si" => "Silver",
-                "Co" => "Copper",
-                "P" => "Pink",
-                "Pi" => "Pink",
-                _ => color
-            };
+            if(
+                !shapeString.TryParseVolumeShape(out EVolumeShape shape) || 
+                !materialString.TryParseVolumeMaterial(out EVolumeMaterial material) || 
+                !colorString.TryParseVolumeColor(out EVolumeColor color)
+            ) 
+                return false;
 
             return _effectGUIDProvider.ContainsKey($"{shape}_{material}_{color}");
         }
@@ -195,11 +169,6 @@ namespace UHighlight.Services
                 scale = volume.Size,
                 direction = volume.Rotation
             };
-        }
-
-        private string ToTitleCase(string str)
-        {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
         }
 
         private void ShowEffect(TriggerEffectParameters effectParameters, bool unique)

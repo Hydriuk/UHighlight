@@ -25,7 +25,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Components\HighlightedZone.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\HighlightedZoneExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ZoneGroupExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeColor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\EVolumeShape.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Volume.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ZoneGroup.cs" />

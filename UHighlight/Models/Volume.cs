@@ -22,7 +22,31 @@ namespace UHighlight.Models
         public float[] rotation { get => Rotation.Serialize(); set => Rotation = value.Deserialize(); }
 
         public EVolumeShape Shape { get; set; }
-        public string Color { get; set; } = string.Empty;
-        public string Material { get; set; } = string.Empty;
+        public EVolumeMaterial Material { get; set; } 
+        public EVolumeColor Color { get; set; }
+
+        public Volume(string group, string name, Vector3 center, Vector3 size, Vector3 rotation, EVolumeShape shape, EVolumeMaterial material, EVolumeColor color)
+        {
+            Group = group;
+            Name = name;
+            Center = center;
+            Size = size;
+            Rotation = rotation;
+            Shape = shape;
+            Material = material;
+            Color = color;
+        }
+
+        public Volume(Vector3 center, Vector3 size, Vector3 rotation, EVolumeShape shape, EVolumeMaterial material, EVolumeColor color)
+        {
+            Center = center;
+            Size = size;
+            Rotation = rotation;
+            Shape = shape;
+            Material = material;
+            Color = color;
+        }
+
+        internal Volume() {}
     }
 }
