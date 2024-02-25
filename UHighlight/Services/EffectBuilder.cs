@@ -8,7 +8,7 @@ using SDG.Provider;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Linq;
 using UHighlight.API;
 using UHighlight.Extensions;
 using UHighlight.Models;
@@ -82,7 +82,7 @@ namespace UHighlight.Services
             ) 
                 return false;
 
-            return _effectGUIDProvider.ContainsKey($"{shape}_{material}_{color}");
+            return _effectGUIDProvider.ContainsKey($"{shape}_{color}_{material}");
         }
 
         public void DisplayGroupEffects(string group, bool unique = false)
@@ -122,6 +122,15 @@ namespace UHighlight.Services
             ShowEffect(effectParams, unique);
         }
 
+        public void DisplayEffect(Volume volume, IEnumerable<Player> players, bool unique = false)
+        {
+            TriggerEffectParameters effectParams = BuildEffect(volume);
+
+            effectParams.SetRelevantTransportConnections(Provider.GatherClientConnectionsMatchingPredicate(client => players.Contains(client.player)));
+
+            ShowEffect(effectParams, unique);
+        }
+
         public void KillAllEffects(Player player)
         {
             foreach (Guid guid in _effectGUIDProvider.Values)
@@ -138,11 +147,16 @@ namespace UHighlight.Services
             }
         }
 
-        public void KillEffect(Volume volume, Player player)
+        public void KillEffect(Volume volume, IEnumerable<Player> players)
         {
             TriggerEffectParameters effectParams = BuildEffect(volume);
 
-            effectParams.SetRelevantPlayer(player.GetTransportConnection());
+            KillEffect(effectParams.asset.GUID, players);
+        }
+
+        public void KillEffect(Volume volume, Player player)
+        {
+            TriggerEffectParameters effectParams = BuildEffect(volume);
 
             KillEffect(effectParams.asset.GUID, player);
         }
@@ -195,6 +209,17 @@ namespace UHighlight.Services
             _threadAdapter.RunOnMainThread(() =>
             {
                 EffectManager.ClearEffectByGuid(guid, player.GetTransportConnection());
+            });
+        }
+
+        private void KillEffect(Guid guid, IEnumerable<Player> players)
+        {
+            _threadAdapter.RunOnMainThread(() =>
+            {
+                foreach (var player in players)
+                {
+                    EffectManager.ClearEffectByGuid(guid, player.GetTransportConnection());
+                }
             });
         }
     }

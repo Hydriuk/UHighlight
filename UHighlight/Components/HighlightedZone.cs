@@ -1,6 +1,9 @@
 ﻿using SDG.Unturned;
+using Steamworks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UHighlight.API;
 using UHighlight.Extensions;
 using UHighlight.Models;
 using UHighlight.Patches;
@@ -13,6 +16,7 @@ namespace UHighlight.Components
         public string Group { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
 
+        #region Entites
         public HashSet<Player> Players { get; } = new HashSet<Player>();
         public event EventHandler<Player>? PlayerEntered;
         public event EventHandler<Player>? PlayerExited;
@@ -36,10 +40,17 @@ namespace UHighlight.Components
         public HashSet<StructureDrop> Structures { get; } = new HashSet<StructureDrop>();
         public event EventHandler<StructureDrop>? StructureEntered;
         public event EventHandler<StructureDrop>? StructureExited;
+        #endregion
+
+        #region Display events
+        private Dictionary<object, Provider.ServerConnected> _onServerConnectedActions = new Dictionary<object, Provider.ServerConnected>();
+        #endregion
 
         public Volume Volume { get; private set; }
 
         internal Collider Collider;
+
+        private IEffectBuilder? _effectBuilder;
 
         internal HighlightedZone()
         {
@@ -47,8 +58,9 @@ namespace UHighlight.Components
             Collider = new Collider();
         }
 
-        internal void Init(string group, string name, Volume volume)
+        internal void Init(IEffectBuilder effectBuilder, string group, string name, Volume volume)
         {
+            _effectBuilder = effectBuilder;
             Group = group;
             Name = name;
             Volume = volume;
@@ -202,6 +214,128 @@ namespace UHighlight.Components
             {
                 Structures.Remove(drop);
                 StructureExited?.Invoke(this, drop);
+            }
+        }
+
+        /// <summary>
+        /// Displays the effect to all players
+        /// </summary>
+        /// <param name="unique">If true, effects with same shape and color will be cleared</param>
+        public void Show(bool unique = false)
+        {
+            _effectBuilder?.DisplayEffect(Volume, unique);
+
+            if (!_onServerConnectedActions.ContainsKey(true))
+            {
+                Provider.ServerConnected showAction = (CSteamID playerId) =>
+                {
+                    _effectBuilder?.DisplayEffect(Volume, PlayerTool.getPlayer(playerId), unique);
+                };
+
+                _onServerConnectedActions.Add(true, showAction);
+
+                Provider.onServerConnected += showAction;
+            }
+        }
+
+        /// <summary>
+        /// Displays the effect to a player
+        /// </summary>
+        /// <param name="player">Player to display the effect to</param>
+        /// <param name="unique">If true, effects with same shape and color will be cleared</param>
+        public void Show(Player player, bool unique = false)
+        {
+            _effectBuilder?.DisplayEffect(Volume, player);
+
+            if (!_onServerConnectedActions.ContainsKey(player))
+            {
+                Provider.ServerConnected showAction = (CSteamID playerId) =>
+                {
+                    Player connectedPlayer = PlayerTool.getPlayer(playerId);
+
+                    if (connectedPlayer == player)
+                    {
+                        _effectBuilder?.DisplayEffect(Volume, connectedPlayer, unique);
+                    }
+                };
+
+                _onServerConnectedActions.Add(player, showAction);
+
+                Provider.onServerConnected += showAction;
+            }
+        }
+
+        /// <summary>
+        /// Displays the effect to some players
+        /// </summary>
+        /// <param name="player">Players to display the effect to</param>
+        /// <param name="unique">If true, effects with same shape and color will be cleared</param>
+        public void Show(IEnumerable<Player> players, bool unique = false)
+        {
+            _effectBuilder?.DisplayEffect(Volume, players);
+
+            if (!_onServerConnectedActions.ContainsKey(players))
+            {
+                Provider.ServerConnected showAction = (CSteamID playerId) =>
+                {
+                    Player connectedPlayer = PlayerTool.getPlayer(playerId);
+
+                    if (players.Contains(connectedPlayer))
+                    {
+                        _effectBuilder?.DisplayEffect(Volume, connectedPlayer, unique);
+                    }
+                };
+
+                _onServerConnectedActions.Add(players, showAction);
+
+                Provider.onServerConnected += showAction;
+            }
+        }
+
+        /// <summary>
+        /// Kill the effect
+        /// </summary>
+        public void Hide()
+        {
+            _effectBuilder?.KillEffect(Volume);
+
+            if(_onServerConnectedActions.TryGetValue(true, out var action))
+            {
+                Provider.onServerConnected -= action;
+
+                _onServerConnectedActions.Remove(true);
+            }
+        }
+
+        /// <summary>
+        /// Kill the effect for a player
+        /// </summary>
+        /// <param name="player">Player for whom the kill the effect</param>
+        public void Hide(Player player)
+        {
+            _effectBuilder?.KillEffect(Volume, player);
+
+            if (_onServerConnectedActions.TryGetValue(player, out var action))
+            {
+                Provider.onServerConnected -= action;
+
+                _onServerConnectedActions.Remove(player);
+            }
+        }
+
+        /// <summary>
+        /// Kill the effect for some players
+        /// </summary>
+        /// <param name="players">Players for whom to kill the effect</param>
+        public void Hide(IEnumerable<Player> players)
+        {
+            _effectBuilder?.KillEffect(Volume, players);
+
+            if (_onServerConnectedActions.TryGetValue(players, out var action))
+            {
+                Provider.onServerConnected -= action;
+
+                _onServerConnectedActions.Remove(players);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿#if OPENMOD
+#if OPENMOD
 using Microsoft.Extensions.DependencyInjection;
 using OpenMod.API.Ioc;
 #endif
@@ -19,10 +19,12 @@ namespace UHighlight.Services
     internal class HighlightBuilder : IHighlightBuilder
     {
         private readonly IVolumeStore _volumeStore;
+        private readonly IEffectBuilder _effectBuilder;
 
-        public HighlightBuilder(IVolumeStore volumeStore)
+        public HighlightBuilder(IVolumeStore volumeStore, IEffectBuilder effectBuilder)
         {
             _volumeStore = volumeStore;
+            _effectBuilder = effectBuilder;
         }
 
         public IEnumerable<HighlightedZone> BuildZones(string group, float customSize = -1)
@@ -62,7 +64,7 @@ namespace UHighlight.Services
             collider.isTrigger = true;
 
             HighlightedZone zone = go.AddComponent<HighlightedZone>();
-            zone.Init(volume.Group, volume.Name, volume);
+            zone.Init(_effectBuilder, volume.Group, volume.Name, volume);
 
             return zone;
         }
