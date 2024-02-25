@@ -1,4 +1,4 @@
-#if OPENMOD
+﻿#if OPENMOD
 using Microsoft.Extensions.DependencyInjection;
 using OpenMod.API.Ioc;
 #endif
@@ -44,7 +44,7 @@ namespace UHighlight.Services
             return BuildZone(volume, customSize);
         }
 
-        private HighlightedZone BuildZone(Volume volume, float customSize)
+        public HighlightedZone BuildZone(Volume volume, float customSize = -1)
         {
             GameObject go = new GameObject();
 

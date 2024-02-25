@@ -4,6 +4,7 @@ using OpenMod.API.Ioc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UHighlight.Components;
+using UHighlight.Models;
 
 namespace UHighlight.API
 {
@@ -14,5 +15,7 @@ namespace UHighlight.API
     {
         IEnumerable<HighlightedZone> BuildZones(string group, float customSize = -1);
         HighlightedZone BuildZone(string group, string name, float customSize = -1);
+
+        HighlightedZone BuildZone(Volume volume);
     }
 }
