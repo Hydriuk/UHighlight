@@ -26,20 +26,13 @@ Creating a zone is easy, and you can see the zone you're creating, as well as sh
 2. [**Creating a zone**](#creating-a-zone)
     1. [Cube edition strategy](#cube-edition-strategy)
     2. [Sphere edition strategy](#sphere-edition-strategy)
-3. [**Dev guide**](#dev-guide)
-    1. [Objects description](#objects-description)
-        1. [**IHighlightCommands**](#ihighlightcommands)
-        2. [**IHighlightSpawner**](#ihighlightspawner)
-        3. [**HighlightedZone**](#highlightedzone)
-        4. [**IServiceAdapter** and **ServiceAdapter**](#iserviceadapter-and-serviceadapter)
-    2. [Code examples](#code-examples)
-        1. [Getting the services](#getting-the-services)
-        2. [Using IHighlightCommands](#using-ihighlightcommands)
-        3. [Using IHighlightSpawner](#using-ihighlightspawner)
-4. [**TODO**](#todo)
+3. [**TODO**](#todo)
 
 
 ## **Commands**
+
+### `/uhl`
+- **Description**: Opens the zone creation UI.
 
 ### `/uhl {create | c} <shape> <material> <color>`
 - **Description**: Start creating a new zone.
@@ -92,6 +85,65 @@ Creating a zone is easy, and you can see the zone you're creating, as well as sh
 ### `/uhl test stop`
 - **Description**: Despawn the tested zone.
 
+## **Using the UI**
+
+The UI is separated in 3 sections :
+- Groups
+- Zones
+- Properties
+
+At the top of the UI is the close button, a "Hide all aones" button and a "Lock cursor" button. The lock cursor can be used to toggle between keeping the cursor on screen and hiding it. (F.Y.I, to show your cursor, you can use one of the keys on your keyboard, configured in your ingame commands options, under the plugin section, named "Release Cursor")  
+
+
+### Groups
+
+This is the paginated list of groups configured in the plugin.
+
+In the groups sections you have 4 different types of buttons : 
+- Create button : You can create a group by entering a group name and clicking this button
+- Delete button : To delete the group
+- Display zones button : To display all zones of the group (to you only)
+- Show group information : To select the group, and display all its zones in the second section.
+
+### Zones
+
+This is the paginated list of zones in the selected group.
+
+In this section you can :
+- Use the "Properties" button to show the 3rd section with properties of the selected group
+- Delete a zone
+- Show a zone
+- Create a zone
+
+To create a zone, you must select a shape, material and color. You will also need to first click the "Create" button to start the creation of a new zone.  
+You will then be able to place the zone in the world.  
+Once you are happy with your zone, you will have to enter a name for the zone, and click "Validate"
+
+### Properties
+
+In this section you will find the list of properties assigned to the group.
+
+You can add as many properties as you want. Some properties will need some data value to work.  
+Here are the existing properties and their required data : 
+- `PlaceStructure`: Prevent placing structures. Data: None
+- `StructureDamage`: Change the amount of damage the structures take. Data (floating number): damage mutliplier
+- `PlayerDamage`: Change the amount of damage the players take. Data (floating number): damage mutliplier
+- `VehicleDamage`: Change the amount of damage the vehicles take. Data (floating number): damage mutliplier
+- `ZombieDamage`: Change the amount of damage the zombies take. Data (floating number): damage mutliplier
+- `AnimalDamage`:  Change the amount of damage the animals take. Data (floating number): damage mutliplier
+- `GivePermissionGroup`*: Give a permission group to the player. Data (string): group to give
+- `RemovePermissionGroup`*: Remove a permission group from the player. Data (string): group to remove
+- `Chat`*: Sends a chat message to the player. Data (string): Message to send
+- `Command`*: Executes a command. Data (string): Command to execute
+- `Repulse`*: Applies a repulsing force to the player. Data (floating number): Force. *This property doesn't fully work. It won't work in every situation*
+
+With properties marked by *, you will have to decide if the property should be activated when the player enters the zone, or when he exits the zone. You will have two new buttons for this when you select one of these properties.
+
+For `GivePermissionGroup`, `RemovePermissionGroup`, `Chat` and `Command`, you can write texts that will be replaced by the plugin:
+- `{Player}`: Will be replaced by the character name of the player who triggered the event
+- `{PlayerID}`: Will be replaced by the player id of the player who triggered the event
+- `{ZoneName}`: Will be replaced by the zone name of the zone from which the event was triggered
+
 ## **Creating a zone**
 
 ### Cube edition strategy
@@ -107,133 +159,3 @@ When creating a cube zone, use the following keys to edit the shape
 - `;` : Decrease sphere radius by 1m
 - `:` : Increase sphere radius by 1%
 - `$` : Decrease sphere radius by 1%
-
-## **Dev guide**
-> OpenMod and RocketMod both work. This guide is focus toward RocketMod. OpenMod will come later :)
-
-### Objects description
-
-#### **IHighlightCommands**
-
-This interface can be used to execute the different UHighlight commands from your plugin.  
-
-It is recommended to recreate all the commands from your plugin and use the `<category>` as an identifier for your plugin.  
-For example, you would create the command `/myplugin show <name>` that would execute `/uhl show myplugin <name>` to show the zone created from your plugin.  
-
-> Recreating the commands allows you to manage permissions yourself, as well as intercepting the command to create your own objects on your plugin.  
-> It also makes the command shorter to write for the user
-
-#### **IHighlightSpawner**
-
-This interface can be used to spawn zones. You can either create a single zone, or all zones from a category at once.
-
-#### **HighlightedZone**
-
-This class represents a zone. It is returned from `IHighlightSpawner` when building zones.  
-This class exposes 4 events :
-- `PlayerEntered` : A player entered the zone.
-- `PlayerExited` : A player exited the zone.
-- `VehicleEntered` : A vehicle entered the zone.
-- `VehicleExited` : A vehicle exited the zone.
-
-These events use `PlayerArgs` or `VehicleArgs` parameters.  
-In these parameters, you will find the entity (`Player` or `InteractableVehicle`) which triggered the event.  
-You will also find the `Category` and `Name` of the entered zone.
-
-On this object, you will also find a `Volume` property. It contains the different properties of the zone like center, size and orientation.
-
-#### **IServiceAdapter** and **ServiceAdapter**
-
-These objects will allow you to get a reference to both `IHighlightCommands` and `IHighlightSpawner` from the UHighlight plugin.  
-(They were necessary to make the plugin work for both OpenMod and RocketMod, consistently, by sharing the same code base).  
-You will need to get the services asynchronously. This is to ensure your plugin waits for UHighlight to load so that it can get the reference to the services.
-
-### Code examples
-
-#### Getting the services
-(How to get a reference to `IHighlightSpawner` and `IHighlightCommands` implementations.)
-
-```csharp
-public class MyPlugin : RocketPlugin
-{
-    private IServiceAdapter _uhighlightServiceAdapter;
-    private IHighlightSpawner _highlightSpawner;
-    private IHighlightCommands _highlightCommands;
-
-    protected override void Load()
-    {
-        _uhighlightServiceAdapter = new ServiceAdapter(UHighlightPlugin.Instance);
-
-        Task.Run(async () => {
-            _highlightSpawner = await serviceAdapter.GetServiceAsync<IHighlightSpawner>();
-            _highlightCommands = await serviceAdapter.GetServiceAsync<IHighlightCommands>();
-        });
-    }
-
-    protected override void Unload()
-    {
-        _uhighlightServiceAdapter.Dispose();
-    }
-}
-```
-
-#### Using IHighlightCommands
-
-```csharp
-    private const string MY_PLUGIN_CATEGORY = "myplugin";
-
-    public void ShowZone(Player player, string zoneName)
-    {
-        _highlightCommands.ExecuteShow(player, MY_PLUGIN_CATEGORY, zoneName);
-    }
-```
-
-#### Using IHighlightSpawner
-
-You have to wait for both Level to be loaded and the framework (OpenMod or RocketMod) to be loaded in order to use this service.
-If in rocket mod, you reloaded the UHighlight plugin, you will then need to reload the plugins that depend on the UHighlight plugin
-
-```csharp
-    private HighlightedZone? _zone;
-
-    public void SpawnZone(string zoneName)
-    {
-        _zone = await _highlightSpawner.BuildZone(MY_PLUGIN_CATEGORY, zoneName);
-
-        _zone.PlayerEntered += OnPlayerEntered;
-    }
-
-    private void OnPlayerEntered(object sender, PlayerArgs args)
-    {
-        Console.WriteLine($"{args.Player.name} just entered the zone {args.Name}");
-    }
-
-    public DespawnZone()
-    {
-        _zone?.Dispose();
-    }
-```
-
-## **TODO**
-
-- Error managing : Manage all edge cases. (Stoping a test before starting one is not managed yet :/)
-- Add comments to interfaces
-- Improve documentation (+add openmod vs. rocketmod +add the size configuration part)
-- Add edit zone command
-- Rename category to group
-- Add new edition strategies and improve existing ones (Create cubes and spheres in other ways)
-  - Per center cube
-  - Fix sphere strategy (keys both increasing size)
-  - Add Sizing keys to current cube strategy
-- Add cylinder zone shape
-- Add zone spawn strategies
-  - Random spawn from category
-  - First entered zone of category
-  - All spawn of category
-  - Sequence spawn of category
-  - All vs. player specific
-- Rework events parameters
-- Allow zone duplication
-- Allow asset zone creation (creating a zone on a house for example, so that all houses have the same zone. Configurable to choose which houses on the map needs a zone)
-- Add a way to show the zones to the player...
-- Suggestions ?

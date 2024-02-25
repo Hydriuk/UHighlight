@@ -42,9 +42,7 @@ namespace UHighlight.Components
         public event EventHandler<StructureDrop>? StructureExited;
         #endregion
 
-        #region Display events
         private Dictionary<object, Provider.ServerConnected> _onServerConnectedActions = new Dictionary<object, Provider.ServerConnected>();
-        #endregion
 
         public Volume Volume { get; private set; }
 
@@ -97,6 +95,11 @@ namespace UHighlight.Components
             BarricadeDestroyedPatch.BarricadeDestroyed -= OnBarricadeDestroyed;
             StructureDestroyedPatch.StructureDestroyed -= OnStructureDestroyed;
 
+            foreach (var action in _onServerConnectedActions.Values)
+                Provider.onServerConnected -= action;
+
+            _onServerConnectedActions.Clear();
+
             PlayerEntered = null;
             PlayerExited = null;
             VehicleEntered = null;
@@ -109,6 +112,7 @@ namespace UHighlight.Components
             Destroy(this);
         }
 
+        #region Entities methods
         private void OnTriggerEnter(Collider other)
         {
             if (other.transform.CompareTag("Player"))
@@ -216,6 +220,7 @@ namespace UHighlight.Components
                 StructureExited?.Invoke(this, drop);
             }
         }
+        #endregion
 
         /// <summary>
         /// Displays the effect to all players
@@ -243,8 +248,10 @@ namespace UHighlight.Components
         /// </summary>
         /// <param name="player">Player to display the effect to</param>
         /// <param name="unique">If true, effects with same shape and color will be cleared</param>
-        public void Show(Player player, bool unique = false)
+        public void Show(CSteamID playerId, bool unique = false)
         {
+            Player player = PlayerTool.getPlayer(playerId);
+
             _effectBuilder?.DisplayEffect(Volume, player);
 
             if (!_onServerConnectedActions.ContainsKey(player))
@@ -270,8 +277,10 @@ namespace UHighlight.Components
         /// </summary>
         /// <param name="player">Players to display the effect to</param>
         /// <param name="unique">If true, effects with same shape and color will be cleared</param>
-        public void Show(IEnumerable<Player> players, bool unique = false)
+        public void Show(IEnumerable<CSteamID> playerIds, bool unique = false)
         {
+            IEnumerable<Player> players = playerIds.Select(PlayerTool.getPlayer);
+
             _effectBuilder?.DisplayEffect(Volume, players);
 
             if (!_onServerConnectedActions.ContainsKey(players))
@@ -311,8 +320,10 @@ namespace UHighlight.Components
         /// Kill the effect for a player
         /// </summary>
         /// <param name="player">Player for whom the kill the effect</param>
-        public void Hide(Player player)
+        public void Hide(CSteamID playerId)
         {
+            Player player = PlayerTool.getPlayer(playerId);
+
             _effectBuilder?.KillEffect(Volume, player);
 
             if (_onServerConnectedActions.TryGetValue(player, out var action))
@@ -327,8 +338,10 @@ namespace UHighlight.Components
         /// Kill the effect for some players
         /// </summary>
         /// <param name="players">Players for whom to kill the effect</param>
-        public void Hide(IEnumerable<Player> players)
+        public void Hide(IEnumerable<CSteamID> playerIds)
         {
+            IEnumerable<Player> players = playerIds.Select(PlayerTool.getPlayer);
+
             _effectBuilder?.KillEffect(Volume, players);
 
             if (_onServerConnectedActions.TryGetValue(players, out var action))

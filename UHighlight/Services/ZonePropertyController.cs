@@ -290,19 +290,19 @@ namespace UHighlight.Services
 
             OnExecuteCommandTriggered
             (
-                player,
+                player, zone,
                 properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.ExecuteCommand)
             );
 
             OnGivePermissionTriggered
             (
-                player,
+                player, zone,
                 properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.GivePermissionGroup)
             );
 
             OnRemovePermissionTriggered
             (
-                player,
+                player, zone,
                 properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.RemovePermissionGroup)
             );
         }
@@ -314,10 +314,8 @@ namespace UHighlight.Services
 
             foreach (ZoneProperty property in properties)
             {
-                string text = property.Data
-                    .Replace("{Player}", player.GetSteamPlayer().playerID.characterName)
-                    .Replace("{ZoneName}", zone.Name);
-                
+                string text = FormatText(property.Data, player, zone);
+
                 ChatManager.serverSendMessage(text, Color.white, toPlayer: player.GetSteamPlayer(), useRichTextFormatting: true);
             }
         }
@@ -342,46 +340,52 @@ namespace UHighlight.Services
             _velocitySetter(player.movement, diff * repultionForce);
         }
 
-        private void OnExecuteCommandTriggered(Player player, IEnumerable<ZoneProperty> properties)
+        private void OnExecuteCommandTriggered(Player player, HighlightedZone zone, IEnumerable<ZoneProperty> properties)
         {
             if (properties == null)
                 return;
             
             foreach (ZoneProperty property in properties)
             {
-                string text = property.Data
-                    .Replace("{Player}", player.GetSteamPlayer().playerID.characterName)
-                    .Replace("{PlayerID}", player.GetSteamID().ToString());
+                string text = FormatText(property.Data, player, zone);
 
                 _commandAdapter.Execute(text);
             }
         }
 
-        private void OnGivePermissionTriggered(Player player, IEnumerable<ZoneProperty> properties)
+        private void OnGivePermissionTriggered(Player player, HighlightedZone zone, IEnumerable<ZoneProperty> properties)
         {
             if (properties == null)
                 return;
 
             foreach (ZoneProperty property in properties)
             {
-                string permissionGroup = property.Data;
+                string permissionGroup = FormatText(property.Data, player, zone);
 
                 _permissionAdapter.AddToGroup(player.GetSteamID(), permissionGroup);
             }
         }
 
-        private void OnRemovePermissionTriggered(Player player, IEnumerable<ZoneProperty> properties)
+        private void OnRemovePermissionTriggered(Player player, HighlightedZone zone, IEnumerable<ZoneProperty> properties)
         {
             if (properties == null)
                 return;
 
             foreach (ZoneProperty property in properties)
             {
-                string permissionGroup = property.Data;
+                string permissionGroup = FormatText(property.Data, player, zone);
 
                 _permissionAdapter.RemoveFromGroup(player.GetSteamID(), permissionGroup);
             }
         }
         #endregion
+
+        private string FormatText(string text, Player player, HighlightedZone zone)
+        {
+            return text
+                .Replace("{Player}", player.GetSteamPlayer().playerID.characterName)
+                .Replace("{PlayerID}", player.GetSteamID().ToString())
+                .Replace("{ZoneName}", zone.Name);
+        }
     }
 }
