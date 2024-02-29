@@ -1,33 +1,23 @@
 <link rel="stylesheet" href="C:\Users\Antonin\Documents\_workspace\Unturned\Projects\vscode-hydriuk.css"></link>
 <style>
     @media print {
-        @page { margin: 0; size: 25cm 150cm; }
+        @page { margin: 0; size: 25cm 105cm; }
         body { margin: 0cm; }
     }
 </style>
 
-# **UHighlight** <sub>*by [Hydriuk](https://github.com/Hydriuk)*</sub> - 0.3.0
+# **UHighlight** <sub>*by [Hydriuk](https://github.com/Hydriuk)*</sub> - 0.9.0
 
 This plugin allows you to create zones and have other plugins react to players entering the zone.  
 Creating a zone is easy, and you can see the zone you're creating, as well as show them to the players when you want.
 
-### **Required workshop** : https://steamcommunity.com/sharedfiles/filedetails/?id=3006499456
+## **Required workshop** : https://steamcommunity.com/sharedfiles/filedetails/?id=3006499456
 
-1. [**Commands**](#commands)
-    1. [`/uhl {create | c} <shape> <material> <color>`](#uhl-create--c-shape-material-color)
-    2. [`/uhl {validate | v} <group> <name>`](#uhl-validate--v-group-name)
-    3. [`/uhl cancel`](#uhl-cancel)
-    4. [`/uhl {show | s} <category> <name>`](#uhl-show--s-category-name)
-    5. [`/uhl {categories | cat}`](#uhl-categories--cat)
-    6. [`/uhl {volumes | vol} <category>`](#uhl-volumes--vol-category)
-    7. [`/uhl delete <category> <name>`](#uhl-delete-category-name)
-    8. [`/uhl test start <category> <name>`](#uhl-test-start-category-name)
-    9. [`/uhl test stop`](#uhl-test-stop)
-2. [**Creating a zone**](#creating-a-zone)
-    1. [Cube edition strategy](#cube-edition-strategy)
-    2. [Sphere edition strategy](#sphere-edition-strategy)
-3. [**TODO**](#todo)
+## Required libraries
 
+- LiteDB
+- 0Harmony
+- Hydriuk.OpenModModules or Hydriuk.RocketModModules
 
 ## **Commands**
 

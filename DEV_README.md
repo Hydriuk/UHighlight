@@ -1,12 +1,12 @@
 <link rel="stylesheet" href="C:\Users\Antonin\Documents\_workspace\Unturned\Projects\vscode-hydriuk.css"></link>
 <style>
     @media print {
-        @page { margin: 0; size: 25cm 70cm; }
+        @page { margin: 0; size: 25cm 110cm; }
         body { margin: 0cm; }
     }
 </style>
 
-# **UHighlight** <sub>*by [Hydriuk](https://github.com/Hydriuk)*</sub> - 0.8.0
+# **UHighlight** <sub>*by [Hydriuk](https://github.com/Hydriuk)*</sub> - 0.9.0
 
 This document presents how to integrate UHighlight in your plugins.
 
@@ -85,8 +85,7 @@ public class AmbianceZoneCommand : IRocketCommand
 At any time, you can spawn existing zones, or groups of zones. For this, you will use the `IHighlightSpawner` interface.  
 The methods of IHighlightSpawner will return `HighlightedZone` instances.  
 
-To get reference to a `IHighlightSpawner` instance, you will need to use `ServiceAdapter`.  
-When getting the `IHighlightSpawner` service from the `ServiceAdapter`, you should wait for both the UHighlight plugin and the level to load. Using the `GetServiceAsync` method will take care of that for you, so you can just await it. Don't forget to dispose `ServiceAdapter` when you don't need it anymore.  
+Know that when spawning zones, the plugin will first wait for both the framework (OpenMod/RocketMod) and the level to be loaded.  
 
 Your plugin is responsible for the lifetime of the zones it spawns. When you spawn zones, you must keep a references to them, to later dipose them when not needed anymore.
 

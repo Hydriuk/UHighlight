@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
 using UHighlight.Extensions;
@@ -32,22 +33,17 @@ namespace UHighlight.Services
         private readonly Dictionary<string, ZoneGroup> _configuration;
 
         private readonly ICommandAdapter _commandAdapter;
+        private readonly IPermissionAdapter _permissionAdapter;
         private readonly IVolumeStore _volumeStore;
         private readonly IHighlightSpawner _highlightSpawner;
-        private readonly IPermissionAdapter _permissionAdapter;
 
-        public ZonePropertyController(IHighlightSpawner highlightSpawner, ICommandAdapter commandAdapter, IVolumeStore volumeStore, IPermissionAdapter permissionAdapter)
+        public ZonePropertyController(ICommandAdapter commandAdapter, IPermissionAdapter permissionAdapter, IVolumeStore volumeStore, IHighlightSpawner highlightSpawner)
         {
-            _commandAdapter = commandAdapter;
-            _volumeStore = volumeStore;
-            _permissionAdapter = permissionAdapter;
             _highlightSpawner = highlightSpawner;
+            _volumeStore = volumeStore;
+            _commandAdapter = commandAdapter;
+            _permissionAdapter = permissionAdapter;
             _configuration = new Dictionary<string, ZoneGroup>();
-
-            if (Level.isLoaded)
-                InitZones();
-            else
-                Level.onPostLevelLoaded += OnLevelLoaded;
             
             StructureManager.onDeployStructureRequested += OnStructureDeploying;
             BarricadeManager.onDeployBarricadeRequested += OnBarricadeDeploying;
@@ -58,6 +54,8 @@ namespace UHighlight.Services
             DamageTool.damageZombieRequested += OnZombieDamaging;
             DamageTool.damageAnimalRequested += OnAnimalDamaging;
             VehicleManager.onDamageVehicleRequested += OnVehicleDamaging;
+
+            Task.Run(InitZones);
         }
 
         public void Dispose()
@@ -88,17 +86,16 @@ namespace UHighlight.Services
             _positionnalZones.Clear();
             _configuration.Clear();
 
-            InitZones();
+            _ = InitZones();
         }
 
-        private void OnLevelLoaded(int level) => InitZones();
-        private void InitZones()
+        private async Task InitZones()
         {
             IEnumerable<ZoneGroup> groups = _volumeStore.GetGroups();
 
             foreach (ZoneGroup group in groups)
             {
-                IEnumerable<HighlightedZone> zones = _highlightSpawner.BuildZones(group.Name);
+                IEnumerable<HighlightedZone> zones = await _highlightSpawner.BuildZones(group.Name);
 
                 _spawnedZones.AddRange(zones);
 
@@ -382,6 +379,9 @@ namespace UHighlight.Services
 
         private string FormatText(string text, Player player, HighlightedZone zone)
         {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
             return text
                 .Replace("{Player}", player.GetSteamPlayer().playerID.characterName)
                 .Replace("{PlayerID}", player.GetSteamID().ToString())

@@ -94,7 +94,7 @@ namespace UHighlight.Services
 
         public void Validate(Player player, string group, string name)
         {
-            if(group == string.Empty)
+            if(string.IsNullOrWhiteSpace(group))
             {
                 _chatAdapter.SendError(player, "You must enter a group name for the volume");
                 return;
@@ -106,7 +106,7 @@ namespace UHighlight.Services
                 return;
             }
 
-            if(name == string.Empty)
+            if(string.IsNullOrWhiteSpace(name))
             {
                 _chatAdapter.SendError(player, "You must enter a name for the volume");
                 return;

@@ -1,4 +1,5 @@
-﻿using Hydriuk.OpenModModules;
+﻿using Cysharp.Threading.Tasks;
+using Hydriuk.OpenModModules;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OpenMod.API.Eventing;
@@ -21,14 +22,37 @@ namespace UHighlight.OpenMod
         public IServiceProvider ServiceProvider { get; private set; }
 
         private readonly ILogger<UHighlightPlugin> _logger;
+        private readonly IEventBus _eventBus;
 
         public UHighlightPlugin(
-            IServiceProvider serviceProvider, 
+            IServiceProvider serviceProvider,
+            IEventBus eventBus, 
             ILogger<UHighlightPlugin> logger
         ) : base(serviceProvider)
         {
             ServiceProvider = serviceProvider;
             _logger = logger;
+            _eventBus = eventBus;
+        }
+
+        protected override UniTask OnLoadAsync()
+        {
+            _eventBus.Subscribe(this, typeof(ServiceRegistrator).Assembly);
+
+            _logger.LogInformation("[LateLoad] - Generating property zones");
+
+            ServiceProvider.GetRequiredService<IZonePropertyController>();
+
+            _logger.LogInformation("[LateLoad] - Property zones loaded");
+
+            return UniTask.CompletedTask;
+        }
+
+        protected override UniTask OnUnloadAsync()
+        {
+            _eventBus.Unsubscribe(this);
+
+            return UniTask.CompletedTask;
         }
     }
 
@@ -37,44 +61,6 @@ namespace UHighlight.OpenMod
         public void ConfigureServices(IOpenModServiceConfigurationContext openModStartupContext, IServiceCollection serviceCollection)
         {
             ServiceRegistrator.ConfigureServices<UHighlightPlugin>(openModStartupContext, serviceCollection);
-        }
-    }
-
-    [EventListenerLifetime(ServiceLifetime.Singleton)]
-    public class OpenModLoadedEvent : IEventListener<OpenModInitializedEvent>, IDisposable
-    {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<OpenModLoadedEvent> _logger;
-
-        public OpenModLoadedEvent(IServiceProvider serviceProvider, ILogger<OpenModLoadedEvent> logger)
-        {
-            _serviceProvider = serviceProvider;
-            _logger = logger;
-        }
-
-        public Task HandleEventAsync(object? sender, OpenModInitializedEvent @event)
-        {
-            if (Level.isLoaded)
-                LateLoad();
-            else
-                Level.onPostLevelLoaded += OnLevelLoaded;
-
-            return Task.CompletedTask;
-        }
-
-        private void OnLevelLoaded(int level) => LateLoad();
-        private void LateLoad()
-        {
-            _logger.LogInformation("[LateLoad] - Generating property zones");
-
-            _serviceProvider.GetRequiredService<IZonePropertyController>();
-
-            _logger.LogInformation("[LateLoad] - Property zones loaded");
-        }
-
-        public void Dispose()
-        {
-            Level.onPostLevelLoaded -= OnLevelLoaded;
         }
     }
 }

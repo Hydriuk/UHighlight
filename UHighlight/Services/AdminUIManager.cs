@@ -112,7 +112,7 @@ namespace UHighlight.Services
                     EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"CaptureCursorButton", true);
                     break;
                 case "ValidateZoneCreationButton":
-                    if(playerData.CreatingZoneName != string.Empty)
+                    if(!string.IsNullOrWhiteSpace(playerData.CreatingZoneName))
                         _volumeEditor.Validate(player, playerData.SelectedGroup, playerData.CreatingZoneName);
                     UpdateUI(player);
                     ResetZones();
@@ -389,7 +389,7 @@ namespace UHighlight.Services
                 EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"Group ({i})", playerData.DisplayedGroups.Count > i);
             }
 
-            if (playerData.SelectedGroup != string.Empty)
+            if (!string.IsNullOrWhiteSpace(playerData.SelectedGroup))
             {
                 List<Volume> zones = _volumeStore.GetVolumes(playerData.SelectedGroup).ToList();
 
@@ -420,7 +420,7 @@ namespace UHighlight.Services
                 EffectManager.sendUIEffectVisibility(_effectKey, player.GetTransportConnection(), true, $"Zones", false);
             }
 
-            if(playerData.SelectedGroup != string.Empty)
+            if(!string.IsNullOrWhiteSpace(playerData.SelectedGroup))
             {
                 List<ZoneProperty> properties = _volumeStore.GetProperties(playerData.SelectedGroup);
 

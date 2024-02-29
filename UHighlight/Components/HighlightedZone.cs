@@ -42,7 +42,7 @@ namespace UHighlight.Components
         public event EventHandler<StructureDrop>? StructureExited;
         #endregion
 
-        private Dictionary<object, Provider.ServerConnected> _onServerConnectedActions = new Dictionary<object, Provider.ServerConnected>();
+        private readonly Dictionary<object, Provider.ServerConnected> _onServerConnectedActions = new Dictionary<object, Provider.ServerConnected>();
 
         public Volume Volume { get; private set; }
 
