@@ -31,13 +31,9 @@ Groups are shared by all plugins. You should prefix your groups with your plugin
 Adapting the UHighlight commands will allow you to intercept the creation process, and ask the user for additionnal information needed by your own plugin.  
 For this, you will use the `IHighlightCommands` interface.  
 
-To get reference to a `IHighlightCommands` instance, you will need to use `ServiceAdapter`.  
-When getting the `IHighlightCommands` service from the `ServiceAdapter`, you should wait for both the UHighlight plugin and the level to load. Using the `GetServiceAsync` method will take care of that for you, so you can just await it. Don't forget to dispose `ServiceAdapter` when you don't need it anymore.  
-If you know the plugin has already loaded, you can inject it in your contructor as usual (or reuse an instance you already have instanciated).
-
-OpenMod example, plugin already loaded : 
+OpenMod example : 
 ```csharp
-public class AmbianceZoneCommand : IRocketCommand
+public class AmbianceZoneCommand : UnturnedCommand
 {
     private readonly IHighlightCommands _highlightCommands;
 
@@ -51,11 +47,13 @@ public class AmbianceZoneCommand : IRocketCommand
         UnturnedUser user = (UnturnedUser)Context.Actor;
 
         await _highlightCommands.ExecuteCreate(user.Player.Player, "Cube", "Transparent", "Blue");
+
+        /* Your own registration */
     }
 }
 ```
 
-RocketMod example, waiting for plugin to be loaded : 
+RocketMod example : 
 ```csharp
 public class AmbianceZoneCommand : IRocketCommand
 {
@@ -65,9 +63,7 @@ public class AmbianceZoneCommand : IRocketCommand
     {
         UnturnedPlayer uPlayer = (UnturnedPlayer)caller;
 
-        IServiceAdapter serviceAdapter = new ServiceAdapter();
-        IHighlightCommands highlightCommands = await serviceAdapter.GetServiceAsync<IHighlightCommands>();
-        serviceAdapter.Dispose();
+        IHighlightCommands highlightCommands = new HighlightCommands();
 
         string zoneName = command[0];
 
@@ -85,7 +81,7 @@ public class AmbianceZoneCommand : IRocketCommand
 At any time, you can spawn existing zones, or groups of zones. For this, you will use the `IHighlightSpawner` interface.  
 The methods of IHighlightSpawner will return `HighlightedZone` instances.  
 
-Know that when spawning zones, the plugin will first wait for both the framework (OpenMod/RocketMod) and the level to be loaded.  
+*Note that when spawning zones, the plugin will first wait for both the framework (OpenMod/RocketMod) and the level to be loaded before spawning the zones.*  
 
 Your plugin is responsible for the lifetime of the zones it spawns. When you spawn zones, you must keep a references to them, to later dipose them when not needed anymore.
 
@@ -95,13 +91,16 @@ public class Spawner : IDisposable
 {
     private readonly List<HighlightedZone> _zones = new List<HighlightedZone>();
 
+    private readonly IHighlightSpawner _highlightSpawner;
+
+    public Spawner(IHighlightSpawner highlightSpawner)
+    {
+        _highlightSpawner = highlightSpawner
+    }
+
     public async Task SpawnZones(string groupName)
     {
-        IServiceAdapter serviceAdapter = new ServiceAdapter();
-        IHighlightSpawner highlightSpawner = await serviceAdapter.GetServiceAsync<IHighlightSpawner>();
-        serviceAdapter.Dispose();
-
-        IEnumerable<HighlightedZone> zones = highlightSpawner.BuildZones(groupName);
+        IEnumerable<HighlightedZone> zones = _highlightSpawner.BuildZones(groupName);
 
         _zones.AddRange(zones);
     }

@@ -17,7 +17,7 @@ namespace UHighlight.Services
     internal class HighlightSpawner : IHighlightSpawner
     {
         private readonly Task<IHighlightBuilder> _builderTask;
-        private static readonly TaskCompletionSource<bool> _levelLoadedTask = new TaskCompletionSource<bool>();
+        private readonly TaskCompletionSource<bool> _levelLoadedTask = new TaskCompletionSource<bool>();
 
         public HighlightSpawner(IServiceAdapter serviceAdapter)
         {
