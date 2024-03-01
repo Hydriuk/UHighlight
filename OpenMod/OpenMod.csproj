@@ -12,9 +12,9 @@
     <WarningsAsErrors>nullable</WarningsAsErrors>
     <NoWarn>$(NoWarn);NU1701;NU1702;CS0436</NoWarn>
     <LangVersion>latest</LangVersion>
-    <Version>0.10.0</Version>
-    <InformationalVersion>0.10.0</InformationalVersion>
-    <PackageVersion>0.10.0</PackageVersion>
+    <Version>0.10.1</Version>
+    <InformationalVersion>0.10.1</InformationalVersion>
+    <PackageVersion>0.10.1</PackageVersion>
     <AssemblyName>UHighlight.OpenMod</AssemblyName>
     <Configurations>Release</Configurations>
   </PropertyGroup>

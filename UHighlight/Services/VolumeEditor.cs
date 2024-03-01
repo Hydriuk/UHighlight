@@ -5,7 +5,6 @@ using OpenMod.API.Ioc;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Contexts;
 using UHighlight.API;
 using UHighlight.EditionStrategies;
 using UHighlight.Extensions;
@@ -100,11 +99,8 @@ namespace UHighlight.Services
                 return;
             }
 
-            if (!_volumeStore.Exists(group))
-            {
-                _chatAdapter.SendError(player, $"Group {group} not found");
-                return;
-            }
+            // Create group if it does not exist
+            _volumeStore.CreateGroup(group);
 
             if(string.IsNullOrWhiteSpace(name))
             {

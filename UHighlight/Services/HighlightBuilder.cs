@@ -5,6 +5,7 @@ using OpenMod.API.Ioc;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
@@ -18,6 +19,8 @@ namespace UHighlight.Services
 #endif
     internal class HighlightBuilder : IHighlightBuilder
     {
+        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+
         private readonly IVolumeStore _volumeStore;
         private readonly IEffectBuilder _effectBuilder;
 
@@ -47,8 +50,10 @@ namespace UHighlight.Services
             return await BuildZone(volume, customSize);
         }
 
-        public Task<HighlightedZone> BuildZone(Volume volume, float customSize = -1)
+        public async Task<HighlightedZone> BuildZone(Volume volume, float customSize = -1)
         {
+            await _lock.WaitAsync();
+
             GameObject go = new GameObject();
 
             go.transform.position = volume.Center;
@@ -70,7 +75,9 @@ namespace UHighlight.Services
 
             zone.Init(_effectBuilder, volume.Group, volume.Name, volume);
 
-            return Task.FromResult(zone);
+            _lock.Release();
+
+            return zone;
         }
     }
 }

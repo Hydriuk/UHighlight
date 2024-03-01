@@ -82,6 +82,7 @@ At any time, you can spawn existing zones, or groups of zones. For this, you wil
 The methods of IHighlightSpawner will return `HighlightedZone` instances.  
 
 *Note that when spawning zones, the plugin will first wait for both the framework (OpenMod/RocketMod) and the level to be loaded before spawning the zones.*  
+*Zones creation of all plugins are queued together, and are created one after the other*  
 
 Your plugin is responsible for the lifetime of the zones it spawns. When you spawn zones, you must keep a references to them, to later dipose them when not needed anymore.
 
