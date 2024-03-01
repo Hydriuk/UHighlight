@@ -5,7 +5,7 @@ using OpenMod.API.Ioc;
 using SDG.Unturned;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
 using UHighlight.Models;
@@ -27,24 +27,27 @@ namespace UHighlight.Services
             _effectBuilder = effectBuilder;
         }
 
-        public IEnumerable<HighlightedZone> BuildZones(string group, float customSize = -1)
+        public async Task<IEnumerable<HighlightedZone>> BuildZones(string group, float customSize = -1)
         {
-            return _volumeStore
-                .GetVolumes(group)
-                .Select(volume => BuildZone(volume, customSize))
-                // Call ToList to prevent the method to be called more than once for a single call
-                // Select contains a yield return, and these makes the IEnumerable to be executed each time it is enumerated
-                .ToList();
+            IEnumerable<Volume> volumes = _volumeStore.GetVolumes(group);
+
+            List<HighlightedZone> zones = new List<HighlightedZone>();
+            foreach (var volume in volumes)
+            {
+                zones.Add(await BuildZone(volume, customSize));
+            }
+
+            return zones;
         }
 
-        public HighlightedZone BuildZone(string group, string name, float customSize = -1)
+        public async Task<HighlightedZone> BuildZone(string group, string name, float customSize = -1)
         {
             Volume volume = _volumeStore.GetVolume(group, name);
 
-            return BuildZone(volume, customSize);
+            return await BuildZone(volume, customSize);
         }
 
-        public HighlightedZone BuildZone(Volume volume, float customSize = -1)
+        public Task<HighlightedZone> BuildZone(Volume volume, float customSize = -1)
         {
             GameObject go = new GameObject();
 
@@ -64,9 +67,10 @@ namespace UHighlight.Services
             collider.isTrigger = true;
 
             HighlightedZone zone = go.AddComponent<HighlightedZone>();
+
             zone.Init(_effectBuilder, volume.Group, volume.Name, volume);
 
-            return zone;
+            return Task.FromResult(zone);
         }
     }
 }

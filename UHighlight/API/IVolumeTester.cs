@@ -3,6 +3,7 @@ using OpenMod.API.Ioc;
 #endif
 using SDG.Unturned;
 using System;
+using System.Threading.Tasks;
 
 namespace UHighlight.API
 {
@@ -11,7 +12,7 @@ namespace UHighlight.API
 #endif
     public interface IVolumeTester : IDisposable
     {
-        void StartTest(Player player, string group, string name);
-        void StopTest(Player player);
+        Task StartTest(Player player, string group, string name);
+        Task StopTest(Player player);
     }
 }

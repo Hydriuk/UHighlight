@@ -1,4 +1,5 @@
 ﻿#if OPENMOD
+using Microsoft.Extensions.DependencyInjection;
 using OpenMod.API.Ioc;
 #endif
 using Hydriuk.UnturnedModules.Adapters;
@@ -12,7 +13,7 @@ using UHighlight.Models;
 namespace UHighlight.Services
 {
 #if OPENMOD
-    [ServiceImplementation]
+    [ServiceImplementation(Lifetime = ServiceLifetime.Singleton)]
 #endif
     internal class HighlightSpawner : IHighlightSpawner
     {
@@ -42,7 +43,7 @@ namespace UHighlight.Services
             await _levelLoadedTask.Task;
             IHighlightBuilder highlightBuilder = await _builderTask;
 
-            return highlightBuilder.BuildZones(group, customSize);
+            return await highlightBuilder.BuildZones(group, customSize);
         }
 
         public async Task<HighlightedZone> BuildZone(string group, string name, float customSize = -1)
@@ -50,7 +51,7 @@ namespace UHighlight.Services
             await _levelLoadedTask.Task;
             IHighlightBuilder highlightBuilder = await _builderTask;
 
-            return highlightBuilder.BuildZone(group, name, customSize);
+            return await highlightBuilder.BuildZone(group, name, customSize);
         }
 
         public async Task<HighlightedZone> BuildZone(Volume volume)
@@ -58,7 +59,7 @@ namespace UHighlight.Services
             await _levelLoadedTask.Task;
             IHighlightBuilder highlightBuilder = await _builderTask;
 
-            return highlightBuilder.BuildZone(volume);
+            return await highlightBuilder.BuildZone(volume);
         }
     }
 }

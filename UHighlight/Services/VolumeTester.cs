@@ -5,6 +5,7 @@ using OpenMod.API.Ioc;
 using Hydriuk.UnturnedModules.Extensions;
 using SDG.Unturned;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UHighlight.API;
 using UHighlight.Components;
 using UnityEngine;
@@ -44,9 +45,9 @@ namespace UHighlight.Services
             }
         }
 
-        public void StartTest(Player player, string group, string name)
+        public async Task StartTest(Player player, string group, string name)
         {
-            HighlightedZone zone = _highlightBuilder.BuildZone(group, name);
+            HighlightedZone zone = await _highlightBuilder.BuildZone(group, name);
 
             InitZone(player, zone);
 
@@ -61,10 +62,10 @@ namespace UHighlight.Services
         }
 
         private void OnPlayerDisconnected(SteamPlayer sPlayer) => StopTest(sPlayer.player);
-        public void StopTest(Player player)
+        public Task StopTest(Player player)
         {
             if (!_testedZones.TryGetValue(player, out var zones))
-                return;
+                return Task.CompletedTask;
 
             foreach (var zone in zones)
             {
@@ -72,6 +73,8 @@ namespace UHighlight.Services
             }
 
             _testedZones.Remove(player);
+
+            return Task.CompletedTask;
         }
 
         private void InitZone(Player player, HighlightedZone zone)
