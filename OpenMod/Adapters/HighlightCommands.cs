@@ -62,8 +62,13 @@ namespace UHighlight.OpenMod.Adapters
 
         private async Task Execute(Player player, params string[] args) => await Execute(await GetUser(player), args.Prepend("uhighlight").ToArray());
 
-        private Task Execute(ICommandActor actor, params string[] args) => _commandExecutor.ExecuteAsync(actor, args, "/");
-
+        private async Task Execute(ICommandActor actor, params string[] args)
+        {
+            ICommandContext commandContext = await _commandExecutor.ExecuteAsync(actor, args, "/");
+            
+            if(commandContext.Exception != null)
+                throw commandContext.Exception;
+        }
         private async Task<IUser> GetUser(Player player)
         {
             IUser? user = await _userManager.FindUserAsync(KnownActorTypes.Player, player.GetSteamID().ToString(), UserSearchMode.FindById);

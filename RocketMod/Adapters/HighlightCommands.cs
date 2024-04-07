@@ -1,6 +1,7 @@
 ﻿using Rocket.Core;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using UHighlight.API;
@@ -86,6 +87,12 @@ namespace UHighlight.RocketMod.Adapters
 
         private void Execute(Player player, params string[] args) => Execute(UnturnedPlayer.FromPlayer(player), args.Prepend("uhighlight").ToArray());
 
-        private void Execute(UnturnedPlayer uPlayer, params string[] args) => R.Commands.Execute(uPlayer, string.Join(" ", args));
+        private void Execute(UnturnedPlayer uPlayer, params string[] args)
+        {
+            bool success = R.Commands.Execute(uPlayer, string.Join(" ", args));
+
+            if (!success)
+                throw new Exception("Error while executing command");
+        }
     }
 }
