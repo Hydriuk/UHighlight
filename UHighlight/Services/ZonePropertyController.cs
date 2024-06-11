@@ -146,6 +146,13 @@ namespace UHighlight.Services
         #region Damage
         private void OnBuildableDamaging(CSteamID instigatorSteamID, Transform buildableTransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin)
         {
+            if (damageOrigin == EDamageOrigin.Horde_Beacon_Self_Destruct ||
+                damageOrigin == EDamageOrigin.Trap_Wear_And_Tear || 
+                damageOrigin == EDamageOrigin.Carepackage_Timeout ||
+                damageOrigin == EDamageOrigin.Plant_Harvested ||
+                damageOrigin == EDamageOrigin.Charge_Self_Destruct)
+                return;
+
             float damageMultiplier = _positionnalZones
                 .Where(zone => zone.Collides(buildableTransform.position))
                 .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
@@ -156,7 +163,7 @@ namespace UHighlight.Services
 
             pendingTotalDamage = ConvertDamage(pendingTotalDamage * damageMultiplier);
 
-            if(pendingTotalDamage == 0)
+            if (pendingTotalDamage == 0)
             {
                 shouldAllow = false;
             }
