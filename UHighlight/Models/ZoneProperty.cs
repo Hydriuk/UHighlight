@@ -23,7 +23,8 @@ namespace UHighlight.Models
             RemovePermissionGroup,
             Chat,
             Repulse,
-            ExecuteCommand
+            ExecuteCommand,
+            NoEquip
         }
 
         public enum EEvent

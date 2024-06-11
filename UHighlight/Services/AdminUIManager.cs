@@ -241,6 +241,9 @@ namespace UHighlight.Services
                 case "SetRepulsePropertyButton":
                     playerData.CreatingPropertyType = ZoneProperty.EType.Repulse;
                     break;
+                case "SetNoEquipPropertyButton":
+                    playerData.CreatingPropertyType = ZoneProperty.EType.NoEquip;
+                    break;
 
                 default:
                     OnTemplatedButtonClicked(player, buttonName, playerData);

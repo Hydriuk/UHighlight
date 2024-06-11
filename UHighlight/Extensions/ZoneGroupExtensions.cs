@@ -16,6 +16,7 @@ namespace UHighlight.Extensions
             ZoneProperty.EType.VehicleDamage,
             ZoneProperty.EType.ZombieDamage,
             ZoneProperty.EType.AnimalDamage,
+            ZoneProperty.EType.NoEquip
         };
 
         private static readonly HashSet<ZoneProperty.EType> _eventTypes = new HashSet<ZoneProperty.EType>()

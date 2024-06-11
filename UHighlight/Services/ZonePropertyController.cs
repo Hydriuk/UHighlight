@@ -15,6 +15,7 @@ using UHighlight.API;
 using UHighlight.Components;
 using UHighlight.Extensions;
 using UHighlight.Models;
+using UHighlight.Patches;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -55,6 +56,8 @@ namespace UHighlight.Services
             DamageTool.damageAnimalRequested += OnAnimalDamaging;
             VehicleManager.onDamageVehicleRequested += OnVehicleDamaging;
 
+            ServerEquipPatch.PlayerEquip += OnPlayerEquip;
+
             Task.Run(InitZones);
         }
 
@@ -69,6 +72,8 @@ namespace UHighlight.Services
             DamageTool.damageZombieRequested -= OnZombieDamaging;
             DamageTool.damageAnimalRequested -= OnAnimalDamaging;
             VehicleManager.onDamageVehicleRequested -= OnVehicleDamaging;
+
+            ServerEquipPatch.PlayerEquip -= OnPlayerEquip;
 
             foreach (var zone in _spawnedZones)
             {
@@ -380,6 +385,44 @@ namespace UHighlight.Services
                 string permissionGroup = FormatText(property.Data, player, zone);
 
                 _permissionAdapter.RemoveFromGroup(player.GetSteamID(), permissionGroup);
+            }
+        }
+        #endregion
+
+        #region PlayerPatches
+        private bool OnPlayerEquip(Player player, Item item)
+        {
+            bool itemIncluded = _positionnalZones
+                .Where(zone => zone.Collides(player.transform.position))
+                .Select(zone => _configuration[zone.Group].GetPositionnalProperties())
+                .SelectMany(properties => properties.Where(property => property.Type == ZoneProperty.EType.NoEquip))
+                .Any(property => DoesDataIncludeItem(property.Data, item));
+
+            // Cancel equipment if item is included
+            return !itemIncluded;
+        }
+
+        private bool DoesDataIncludeItem(string data, Item item)
+        {
+            if (data.Equals("All", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            else if(ushort.TryParse(data, out ushort itemID))
+            {
+                return item.id == itemID;
+            }
+            else if (Guid.TryParse(data, out Guid itemGuid))
+            {
+                return item.GetAsset().GUID == itemGuid;
+            }
+            else if (Enum.TryParse(data, out EItemType itemType))
+            {
+                return item.GetAsset().type == itemType;
+            }
+            else
+            {
+                return false;
             }
         }
         #endregion

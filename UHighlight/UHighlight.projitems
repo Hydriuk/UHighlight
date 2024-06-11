@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ZoneGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ZoneProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Patches\BarricadeDestroyedPatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Patches\ServerEquipPatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Patches\StructureDestroyedPatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\AdminUIManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ChatAdapter.cs" />
