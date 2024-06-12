@@ -64,6 +64,7 @@ namespace UHighlight.Services
                 foreach (var player in _playersData.Keys)
                 {
                     EffectManager.askEffectClearByID(_effectID, player.GetTransportConnection());
+                    player.setPluginWidgetFlag(EPluginWidgetFlags.Modal, false);
                 }
             });
         }
