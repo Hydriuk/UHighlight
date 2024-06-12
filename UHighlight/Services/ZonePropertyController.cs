@@ -1,5 +1,7 @@
 ﻿using Hydriuk.UnturnedModules.Adapters;
 using Hydriuk.UnturnedModules.Extensions;
+using SDG.NetTransport;
+
 #if OPENMOD
 using Microsoft.Extensions.DependencyInjection;
 using OpenMod.API.Ioc;
@@ -269,6 +271,7 @@ namespace UHighlight.Services
             HighlightedZone zone = (HighlightedZone)sender;
 
             OnZoneCrossed(player, zone, ZoneProperty.EEvent.Enter);
+            OnZoneEntered(player, zone);
         }
 
         private void OnPlayerExitedZone(object sender, Player player)
@@ -313,6 +316,19 @@ namespace UHighlight.Services
             (
                 player, zone,
                 properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.RemovePermissionGroup)
+            );
+        }
+
+        private void OnZoneEntered(Player player, HighlightedZone zone)
+        {
+            var properties = _configuration[zone.Group]
+                .GetPositionnalProperties()
+                .GroupBy(property => property.Type);
+
+            DequipItem
+            (
+                player, zone,
+                properties.FirstOrDefault(property => property.Key == ZoneProperty.EType.NoEquip)
             );
         }
 
@@ -387,6 +403,27 @@ namespace UHighlight.Services
                 _permissionAdapter.RemoveFromGroup(player.GetSteamID(), permissionGroup);
             }
         }
+
+        private void DequipItem(Player player, HighlightedZone zone, IEnumerable<ZoneProperty> properties)
+        {
+            if (properties == null)
+                return;
+
+            Item? item = player.equipment.GetItem();
+
+            if (item == null)
+                return;
+
+            foreach (ZoneProperty property in properties)
+            {
+
+                if (DoesDataIncludeItem(property.Data, item))
+                {
+                    player.equipment.dequip();
+                    break;
+                }
+            }
+        }
         #endregion
 
         #region PlayerPatches
@@ -416,7 +453,7 @@ namespace UHighlight.Services
             {
                 return item.GetAsset().GUID == itemGuid;
             }
-            else if (Enum.TryParse(data, out EItemType itemType))
+            else if (Enum.TryParse(data, true, out EItemType itemType))
             {
                 return item.GetAsset().type == itemType;
             }
