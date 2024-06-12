@@ -270,6 +270,7 @@ namespace UHighlight.Services
             else if (Regex.IsMatch(buttonName, @"DeleteGroup \(\d\)"))
             {
                 _volumeStore.DeleteGroup(playerData.DisplayedGroups[index]);
+                playerData.SelectedGroup = string.Empty;
                 UpdateUI(player);
                 ResetZones();
             }
